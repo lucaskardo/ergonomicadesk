@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Env files — NEVER commit secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env*.local
+
+# Build outputs
+dist/
+.next/
+.medusa/
+.turbo/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sanity
+.sanity/
+
+# Railway
+.railway/

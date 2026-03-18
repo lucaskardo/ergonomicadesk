@@ -1,0 +1,48 @@
+# =============================================================================
+# Docker Compose — SOLO PARA DESARROLLO LOCAL
+# Levanta PostgreSQL, Redis y Meilisearch
+#
+# Uso: docker compose up
+# Parar: docker compose down
+# Borrar datos: docker compose down -v
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: medusa
+      POSTGRES_PASSWORD: medusa
+      POSTGRES_DB: medusa
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medusa"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    ports:
+      - "7700:7700"
+    volumes:
+      - msdata:/meili_data
+    environment:
+      MEILI_MASTER_KEY: dev-master-key-cambia-en-produccion
+
+volumes:
+  pgdata:
+  msdata:
