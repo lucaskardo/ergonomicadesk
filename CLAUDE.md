@@ -171,65 +171,114 @@ docker compose up     # Dev: postgres + redis + meilisearch
 
 ## Verified API patterns (DO NOT deviate — from official docs March 2026)
 
-### Next.js 16 + cacheComponents (CRITICAL)
-- params and searchParams are ASYNC Promises. Pattern:
-  export default async function Page({ params }: { params: Promise<{ handle: string }> }) {
-    const { handle } = await params
-  }
-- cookies(), headers(), draftMode() are ALL async — must await them
-- Async server components that fetch data MUST be inside <Suspense>, NOT at the page level
-- The page-level component must be SYNC, containing <Suspense> wrapping an async inner component
-- Add await connection() from "next/server" before any fetch inside the inner component
-- Correct page pattern:
-  function PageWrapper({ params }: { params: Promise<{ handle: string }> }) {
-    return (
-      <Suspense fallback={<Loading />}>
-        <InnerComponent paramsPromise={params} />
-      </Suspense>
-    )
-  }
-  async function InnerComponent({ paramsPromise }: { paramsPromise: Promise<{ handle: string }> }) {
-    await connection()
-    const { handle } = await paramsPromise
-    const data = await fetchData(handle)
-    return <div>{data.title}</div>
-  }
-  export default PageWrapper
-- Do NOT use export const dynamic = "force-dynamic" — incompatible with cacheComponents
-- Do NOT use "use server" at top of page files — that's for Server Actions only
-- Sanity Studio page needs "use client" directive
-- Do NOT use new Date() in server components — hardcode or move to client component
+### Next.js 16 + cacheComponents (CRITICAL — applies to ALL pages)
+- params is an ASYNC Promise. ALWAYS: { params: Promise<{ slug: string }> } then: const { slug } = await params
+- searchParams is ASYNC too: { searchParams: Promise<{ cat?: string }> }
+- cookies(), headers(), draftMode() are ALL async — must await
+- Page pattern with data fetching (THE ONLY CORRECT PATTERN):
+```
+// page.tsx — sync wrapper, async inner
+function Page({ params }: { params: Promise<{ handle: string }> }) {
+  return (
+    <Suspense fallback={<Skeleton />}>
+      <Inner paramsPromise={params} />
+    </Suspense>
+  )
+}
+async function Inner({ paramsPromise }: { paramsPromise: Promise<{ handle: string }> }) {
+  await connection() // from "next/server"
+  const { handle } = await paramsPromise
+  const data = await fetchSomething(handle)
+  return <div>{data.title}</div>
+}
+export default Page
+```
+- Do NOT put async on the page-level exported component when it accesses params
+- Do NOT use export const dynamic = "force-dynamic" — removed in Next.js 16
+- Do NOT use "use server" at top of page files — that directive is ONLY for Server Actions
+- Sanity Studio route needs "use client" directive
+- Do NOT use new Date() in server components — hardcode or use client component
+- generateMetadata also receives async params: export async function generateMetadata({ params }: { params: Promise<{ handle: string }> })
 
-### Medusa v2 Store API (CRITICAL)
-- Product list: medusa.store.product.list({ limit: 20, region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID, fields: "+variants.calculated_price" })
-- Product retrieve: medusa.store.product.retrieve(handle, { fields: "*variants.calculated_price", region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID })
-- ALWAYS use region_id for pricing. country_code DOES NOT work for calculated_price
-- The Store API requires x-publishable-api-key header (SDK sends it automatically if configured)
-- Products must be: status=published AND linked to sales channel AND sales channel linked to publishable key
-- fields: use + prefix to ADD to defaults, * prefix for all nested fields
+### Medusa v2 Store API — Products
+- List: sdk.store.product.list({ limit: 20, region_id: REGION_ID, fields: "+variants.calculated_price" })
+- Retrieve by ID: sdk.store.product.retrieve(id, { fields: "*variants.calculated_price", region_id: REGION_ID })
+- ALWAYS use region_id for pricing context. country_code alone DOES NOT return calculated_price
+- fields prefix: + adds to defaults, * returns ALL nested, - excludes
+- x-publishable-api-key header required (SDK sends automatically)
+- Products visible only if: status=published AND linked to sales channel AND sales channel linked to publishable API key
 
-### Medusa Config
-- Node.js: MUST use v20 LTS. v25 is NOT compatible.
-- loadEnv path must resolve to directory containing .env.local
-- Redis: uses REDIS_URL env var. "redisUrl not found" means .env.local is missing or path is wrong
-- File module: @medusajs/medusa/file-local-upload for dev, @medusajs/medusa/file-s3 for production
+### Medusa v2 Store API — Cart (for checkout implementation)
+- Create: sdk.store.cart.create({ region_id: region.id })
+- Add item: sdk.store.cart.createLineItem(cartId, { variant_id, quantity: 1 })
+- Update item: sdk.store.cart.updateLineItem(cartId, itemId, { quantity })
+- Remove item: sdk.store.cart.deleteLineItem(cartId, itemId) — returns { parent: cart }
+- Update cart: sdk.store.cart.update(cartId, { email, shipping_address: {...} })
+- Complete: sdk.store.cart.complete(cartId) — returns { type: "order", order } on success or { type: "cart", cart, error } on failure
+- Cart ID stored in localStorage on client side
+- Cart MUST have region_id set at creation
+- Cart must be associated with sales channel (automatic via publishable key)
 
-### NMI Payment Component
-- Amount is STRING type "299.00" not number
-- Use onChange (not onPay) when integrating 3DS
-- Backend POST to transact.php with application/x-www-form-urlencoded (NOT JSON)
-- Response is key=value pairs, parse with URLSearchParams
+### Medusa v2 Store API — Checkout flow order
+1. Create cart with region_id
+2. Add line items (variant_id + quantity)
+3. Update cart with email + shipping_address
+4. Add shipping method: sdk.store.cart.addShippingMethod(cartId, { option_id })
+5. Initialize payment session (provider-specific)
+6. Complete cart: sdk.store.cart.complete(cartId)
+
+### Medusa v2 — Custom Payment Provider (NMI)
+- Amount is STRING "299.00" not number — NMI 3DS and transact.php require string
+- Use onChange (not onPay) on NMI Payment Component when integrating 3DS
+- Backend POST to transact.php: Content-Type application/x-www-form-urlencoded (NOT JSON)
+- Response is key=value pairs NOT JSON — parse with URLSearchParams
+- After failed payment: call resetFields() on NmiPayments ref
+- Turnstile validation happens INSIDE backend checkout workflow, not separate frontend route
+
+### Medusa v2 — Tax
+- Tax regions created via Modules.TAX
+- ITBMS 7% for Panama (country_code "pa")
+- Prices stored WITHOUT tax. Tax calculated at checkout based on region
+- Store API returns tax-inclusive totals in cart when region has tax rate
+
+### Medusa v2 — Configuration
+- Node.js MUST be v20 LTS. v25 is NOT compatible (causes "Cannot read 'def'" errors)
+- loadEnv must point to directory containing .env.local
+- Redis: env var is REDIS_URL. "redisUrl not found" = .env.local missing or wrong path
+- File module dev: @medusajs/medusa/file-local-upload. Production: @medusajs/medusa/file-s3
+- Module names: no hyphens. Use underscores (delivery_panama not delivery-panama)
+- Custom modules registered in medusa-config.ts modules array: { resolve: "./src/modules/my_module" }
+
+### Sanity + next-sanity 12
+- defineLive() from "next-sanity/experimental/live" — requires cacheComponents: true
+- Studio embebido: "use client" + NextStudio component
+- CORS: add localhost:3000 in manage.sanity.io > API > CORS origins
+- Revalidation webhook: parseBody from "next-sanity/webhook"
+- sanityFetch for data fetching, SanityLive component in layout
+
+### Meilisearch
+- Plugin: @rokmohar/medusa-plugin-meilisearch (NOT old medusa-plugin-meilisearch)
+- Registered as plugin in medusa-config.ts, not module
+- Subscribers included in plugin since v1.0 + Medusa v2.4+
+
+### Cloudflare
+- Free plan sufficient: CDN, DDoS, SSL, DNS, 5 WAF rules, Turnstile, R2
+- Turnstile is free on ALL plans, even without Cloudflare account
+- R2 pricing: $0.015/GB/month
+- Domain: keep on Namecheap, only change nameservers to Cloudflare (at launch, not now)
 
 ### Environment variables
-- NEVER duplicate env vars in .env.local — dotenv uses the FIRST occurrence
-- Required storefront vars: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
+- NEVER duplicate vars in .env.local — dotenv uses FIRST occurrence, duplicates are IGNORED
+- Required storefront: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
+- Required backend: DATABASE_URL, REDIS_URL, COOKIE_SECRET, JWT_SECRET, STORE_CORS, ADMIN_CORS
 
-### Before writing ANY integration code
-- ALWAYS use context7 MCP to query official docs BEFORE implementing
-- ALWAYS verify API response shape with curl BEFORE writing frontend code
-- ALWAYS test with curl after implementing to confirm it works
+### Before writing ANY code
+- ALWAYS query official docs via context7 MCP BEFORE implementing any integration
+- ALWAYS verify API response with curl BEFORE writing frontend code
+- ALWAYS test with curl AFTER implementing to confirm it works
 - NEVER catch errors silently — always console.error in catch blocks
-- NEVER guess API parameters — check the docs first
+- NEVER guess API parameters — check docs first
+- When creating new pages: follow the Suspense wrapper pattern above EVERY TIME
 
 ## Claude Code execution rules
 - Execute immediately. Never brainstorm, never propose designs, never write design docs.
