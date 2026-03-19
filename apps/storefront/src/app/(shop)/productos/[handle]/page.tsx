@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Metadata } from "next"
 import { medusa } from "@/lib/medusa-client"
+import ProductActions from "@/components/product-actions"
 
 type Props = { params: Promise<{ handle: string }> }
 
@@ -133,31 +134,10 @@ async function Inner({ paramsPromise }: { paramsPromise: Promise<{ handle: strin
               )}
             </div>
 
-            {/* Variant selector */}
-            {variants.length > 1 && (
-              <div>
-                <p className="text-sm font-medium text-stone-700 mb-2">Variante</p>
-                <div className="flex flex-wrap gap-2">
-                  {variants.map((variant) => (
-                    <button
-                      key={variant.id}
-                      type="button"
-                      className="rounded-md border border-stone-300 px-3 py-1.5 text-sm text-stone-700 hover:border-stone-900 hover:text-stone-900 transition-colors first:border-stone-900 first:text-stone-900 first:font-medium"
-                    >
-                      {variant.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Add to cart */}
-            <button
-              type="button"
-              className="w-full rounded-lg bg-stone-900 px-6 py-3.5 text-sm font-semibold text-white hover:bg-stone-700 transition-colors md:w-auto"
-            >
-              Agregar al carrito
-            </button>
+            {/* Variant selector + Add to cart */}
+            <ProductActions
+              variants={variants.map((v) => ({ id: v.id ?? "", title: v.title }))}
+            />
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useCart } from "@/providers/cart"
 
 const navLinks = [
   { href: "/productos?cat=sillas", label: "Sillas" },
@@ -11,6 +12,7 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { totalItems } = useCart()
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-stone-200">
@@ -63,7 +65,8 @@ export default function Header() {
             </button>
 
             {/* Cart */}
-            <button
+            <Link
+              href="/carrito"
               className="relative p-2.5 text-stone-600 hover:text-stone-900 transition-colors"
               aria-label="Carrito"
             >
@@ -87,10 +90,12 @@ export default function Header() {
                   d="M16 10a4 4 0 01-8 0"
                 />
               </svg>
-              <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-stone-900 text-[10px] font-medium text-white leading-none">
-                0
-              </span>
-            </button>
+              {totalItems > 0 && (
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-stone-900 text-[10px] font-medium text-white leading-none">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </Link>
 
             {/* Hamburger — mobile only */}
             <button
