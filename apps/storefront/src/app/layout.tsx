@@ -1,41 +1,16 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { draftMode } from "next/headers"
-import { VisualEditing } from "next-sanity/visual-editing"
-import { SanityLive } from "@/sanity/lib/live"
-import "./globals.css"
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
+import { getBaseURL } from "@lib/util/env"
+import { Metadata } from "next"
+import "styles/globals.css"
 
 export const metadata: Metadata = {
-  title: "Ergonómica Desk",
-  description: "Muebles de oficina ergonómicos — Panamá",
+  metadataBase: new URL(getBaseURL()),
 }
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  const { isEnabled: isDraftMode } = await draftMode()
-
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html
-      lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        {children}
-        <SanityLive />
-        {isDraftMode && <VisualEditing />}
+    <html lang="en" data-mode="light">
+      <body>
+        <main className="relative">{props.children}</main>
       </body>
     </html>
   )
