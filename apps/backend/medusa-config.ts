@@ -68,26 +68,43 @@ module.exports = defineConfig({
       },
     },
 
-    // ── File Storage (Cloudflare R2 — S3-compatible) ─────────────────────────
-    {
-      resolve: "@medusajs/medusa/file",
-      options: {
-        providers: [
+    // ── File Storage ─────────────────────────────────────────────────────────
+    // Dev: local uploads. Production: Cloudflare R2 (S3-compatible).
+    ...(process.env.NODE_ENV !== "production"
+      ? [
           {
-            resolve: "@medusajs/medusa/file-s3",
-            id: "r2",
+            resolve: "@medusajs/medusa/file",
             options: {
-              file_url: process.env.CLOUDFLARE_R2_PUBLIC_URL,
-              access_key_id: process.env.CLOUDFLARE_R2_ACCESS_KEY,
-              secret_access_key: process.env.CLOUDFLARE_R2_SECRET_KEY,
-              region: "auto",
-              bucket: process.env.CLOUDFLARE_R2_BUCKET,
-              endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+              providers: [
+                {
+                  resolve: "@medusajs/medusa/file-local-upload",
+                  id: "local",
+                },
+              ],
             },
           },
-        ],
-      },
-    },
+        ]
+      : [
+          {
+            resolve: "@medusajs/medusa/file",
+            options: {
+              providers: [
+                {
+                  resolve: "@medusajs/medusa/file-s3",
+                  id: "r2",
+                  options: {
+                    file_url: process.env.CLOUDFLARE_R2_PUBLIC_URL,
+                    access_key_id: process.env.CLOUDFLARE_R2_ACCESS_KEY,
+                    secret_access_key: process.env.CLOUDFLARE_R2_SECRET_KEY,
+                    region: "auto",
+                    bucket: process.env.CLOUDFLARE_R2_BUCKET,
+                    endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+                  },
+                },
+              ],
+            },
+          },
+        ]),
 
     // ── Notifications (Resend) ───────────────────────────────────────────────
     // Provider implemented at src/modules/resend — see Medusa docs on
