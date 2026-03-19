@@ -111,6 +111,9 @@ module.exports = defineConfig({
 
     // ── RBAC (custom roles & permissions) ────────────────────────────────────
     { resolve: "./src/modules/rbac" },
+
+    // ── Delivery Panama (zonas de entrega) ────────────────────────────────────
+    { resolve: "./src/modules/delivery-panama" },
   ],
 
   plugins: [
