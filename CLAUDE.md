@@ -245,7 +245,7 @@ export default Page
 - Node.js MUST be v20 LTS. v25 is NOT compatible (causes "Cannot read 'def'" errors)
 - loadEnv must point to directory containing .env.local
 - Redis: env var is REDIS_URL. "redisUrl not found" = .env.local missing or wrong path
-- File module dev: @medusajs/medusa/file-local-upload. Production: @medusajs/medusa/file-s3
+- File module dev: no file provider configured (Medusa defaults to local storage). Production: @medusajs/medusa/file-s3
 - Module names: no hyphens. Use underscores (delivery_panama not delivery-panama)
 - Custom modules registered in medusa-config.ts modules array: { resolve: "./src/modules/my_module" }
 

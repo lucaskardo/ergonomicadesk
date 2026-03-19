@@ -69,22 +69,10 @@ module.exports = defineConfig({
     },
 
     // ── File Storage ─────────────────────────────────────────────────────────
-    // Dev: local uploads. Production: Cloudflare R2 (S3-compatible).
-    ...(process.env.NODE_ENV !== "production"
+    // Dev: no file provider configured — Medusa defaults to local storage.
+    // Production: Cloudflare R2 (S3-compatible).
+    ...(process.env.NODE_ENV === "production"
       ? [
-          {
-            resolve: "@medusajs/medusa/file",
-            options: {
-              providers: [
-                {
-                  resolve: "@medusajs/medusa/file-local-upload",
-                  id: "local",
-                },
-              ],
-            },
-          },
-        ]
-      : [
           {
             resolve: "@medusajs/medusa/file",
             options: {
@@ -104,7 +92,8 @@ module.exports = defineConfig({
               ],
             },
           },
-        ]),
+        ]
+      : []),
 
     // ── Notifications (Resend) ───────────────────────────────────────────────
     // Provider implemented at src/modules/resend — see Medusa docs on
