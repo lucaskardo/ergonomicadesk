@@ -169,25 +169,50 @@ docker compose up     # Dev: postgres + redis + meilisearch
 - Cloudflare R2: use scoped API token (R2 only), never Global API Key.
 - Railway: configure env vars in dashboard only, never via CLI with real values.
 
-## Verified API patterns (DO NOT deviate)
+## Verified API patterns (DO NOT deviate — from official docs March 2026)
 
-### Medusa Store API - Product listing
-- ALWAYS use region_id (not country_code) for pricing context
-- Pattern: medusa.store.product.list({ limit: 20, region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID, fields: "+variants.calculated_price" })
-- The Store API requires x-publishable-api-key header
-- Products must be: status=published AND linked to a sales channel AND that sales channel linked to the publishable key
+### Next.js 16 + cacheComponents (CRITICAL)
+- params and searchParams are ASYNC Promises. Pattern:
+  export default async function Page({ params }: { params: Promise<{ handle: string }> }) {
+    const { handle } = await params
+  }
+- cookies(), headers(), draftMode() are ALL async — must await them
+- Async server components that fetch data MUST be inside <Suspense>, NOT at the page level
+- The page-level component must be SYNC, containing <Suspense> wrapping an async inner component
+- Add await connection() from "next/server" before any fetch inside the inner component
+- Correct page pattern:
+  function PageWrapper({ params }: { params: Promise<{ handle: string }> }) {
+    return (
+      <Suspense fallback={<Loading />}>
+        <InnerComponent paramsPromise={params} />
+      </Suspense>
+    )
+  }
+  async function InnerComponent({ paramsPromise }: { paramsPromise: Promise<{ handle: string }> }) {
+    await connection()
+    const { handle } = await paramsPromise
+    const data = await fetchData(handle)
+    return <div>{data.title}</div>
+  }
+  export default PageWrapper
+- Do NOT use export const dynamic = "force-dynamic" — incompatible with cacheComponents
+- Do NOT use "use server" at top of page files — that's for Server Actions only
+- Sanity Studio page needs "use client" directive
+- Do NOT use new Date() in server components — hardcode or move to client component
+
+### Medusa v2 Store API (CRITICAL)
+- Product list: medusa.store.product.list({ limit: 20, region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID, fields: "+variants.calculated_price" })
+- Product retrieve: medusa.store.product.retrieve(handle, { fields: "*variants.calculated_price", region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID })
+- ALWAYS use region_id for pricing. country_code DOES NOT work for calculated_price
+- The Store API requires x-publishable-api-key header (SDK sends it automatically if configured)
+- Products must be: status=published AND linked to sales channel AND sales channel linked to publishable key
+- fields: use + prefix to ADD to defaults, * prefix for all nested fields
 
 ### Medusa Config
 - Node.js: MUST use v20 LTS. v25 is NOT compatible.
-- loadEnv path must resolve to the directory containing .env.local
-- Redis modules use REDIS_URL env var (not redisUrl)
-- File module: use @medusajs/medusa/file-local-upload for local dev, S3 only for production
-
-### Next.js 16 + cacheComponents
-- Async server components that fetch data MUST be wrapped in <Suspense>
-- Add await connection() from "next/server" before any fetch inside Suspense
-- Do NOT use export const dynamic = "force-dynamic" — incompatible with cacheComponents
-- Sanity Studio page needs "use client" directive
+- loadEnv path must resolve to directory containing .env.local
+- Redis: uses REDIS_URL env var. "redisUrl not found" means .env.local is missing or path is wrong
+- File module: @medusajs/medusa/file-local-upload for dev, @medusajs/medusa/file-s3 for production
 
 ### NMI Payment Component
 - Amount is STRING type "299.00" not number
@@ -196,13 +221,15 @@ docker compose up     # Dev: postgres + redis + meilisearch
 - Response is key=value pairs, parse with URLSearchParams
 
 ### Environment variables
-- Never duplicate env vars in .env.local — dotenv uses the FIRST occurrence
-- Required for storefront: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
+- NEVER duplicate env vars in .env.local — dotenv uses the FIRST occurrence
+- Required storefront vars: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
 
-### Before writing integration code
+### Before writing ANY integration code
 - ALWAYS use context7 MCP to query official docs BEFORE implementing
-- ALWAYS verify API response shape with a curl test BEFORE writing frontend code
-- NEVER catch errors silently — always console.error in dev
+- ALWAYS verify API response shape with curl BEFORE writing frontend code
+- ALWAYS test with curl after implementing to confirm it works
+- NEVER catch errors silently — always console.error in catch blocks
+- NEVER guess API parameters — check the docs first
 
 ## Claude Code execution rules
 - Execute immediately. Never brainstorm, never propose designs, never write design docs.
