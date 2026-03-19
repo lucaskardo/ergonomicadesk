@@ -108,6 +108,9 @@ module.exports = defineConfig({
         ],
       },
     },
+
+    // ── RBAC (custom roles & permissions) ────────────────────────────────────
+    { resolve: "./src/modules/rbac" },
   ],
 
   plugins: [
