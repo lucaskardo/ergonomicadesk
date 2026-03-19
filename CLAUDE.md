@@ -168,3 +168,14 @@ docker compose up     # Dev: postgres + redis + meilisearch
 - Turnstile: token travels with checkout payload to Medusa backend. Backend validates with Cloudflare INSIDE the checkout workflow BEFORE calling NMI. Never validate in a separate frontend route.
 - Cloudflare R2: use scoped API token (R2 only), never Global API Key.
 - Railway: configure env vars in dashboard only, never via CLI with real values.
+
+## Claude Code execution rules
+- Execute immediately. Never brainstorm, never propose designs, never write design docs.
+- Do not load skills unless explicitly requested. No superpowers:brainstorming.
+- Zero questions if the task is clear. Maximum 1 question if ambiguous.
+- Short answers. Show what was done in a brief summary table. No essays.
+- If a command fails, fix it and retry immediately. Do not explain options.
+- Do not ask "would you like me to proceed" — just proceed.
+- Prefer editing existing files over proposing rewrites.
+- One git commit per completed task with conventional commit message.
+- Use /compact proactively when context grows.
