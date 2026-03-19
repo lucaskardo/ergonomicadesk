@@ -169,6 +169,41 @@ docker compose up     # Dev: postgres + redis + meilisearch
 - Cloudflare R2: use scoped API token (R2 only), never Global API Key.
 - Railway: configure env vars in dashboard only, never via CLI with real values.
 
+## Verified API patterns (DO NOT deviate)
+
+### Medusa Store API - Product listing
+- ALWAYS use region_id (not country_code) for pricing context
+- Pattern: medusa.store.product.list({ limit: 20, region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID, fields: "+variants.calculated_price" })
+- The Store API requires x-publishable-api-key header
+- Products must be: status=published AND linked to a sales channel AND that sales channel linked to the publishable key
+
+### Medusa Config
+- Node.js: MUST use v20 LTS. v25 is NOT compatible.
+- loadEnv path must resolve to the directory containing .env.local
+- Redis modules use REDIS_URL env var (not redisUrl)
+- File module: use @medusajs/medusa/file-local-upload for local dev, S3 only for production
+
+### Next.js 16 + cacheComponents
+- Async server components that fetch data MUST be wrapped in <Suspense>
+- Add await connection() from "next/server" before any fetch inside Suspense
+- Do NOT use export const dynamic = "force-dynamic" — incompatible with cacheComponents
+- Sanity Studio page needs "use client" directive
+
+### NMI Payment Component
+- Amount is STRING type "299.00" not number
+- Use onChange (not onPay) when integrating 3DS
+- Backend POST to transact.php with application/x-www-form-urlencoded (NOT JSON)
+- Response is key=value pairs, parse with URLSearchParams
+
+### Environment variables
+- Never duplicate env vars in .env.local — dotenv uses the FIRST occurrence
+- Required for storefront: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
+
+### Before writing integration code
+- ALWAYS use context7 MCP to query official docs BEFORE implementing
+- ALWAYS verify API response shape with a curl test BEFORE writing frontend code
+- NEVER catch errors silently — always console.error in dev
+
 ## Claude Code execution rules
 - Execute immediately. Never brainstorm, never propose designs, never write design docs.
 - Do not load skills unless explicitly requested. No superpowers:brainstorming.
