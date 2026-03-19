@@ -16,9 +16,12 @@ import { useEffect, useState } from "react"
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
 
+type ShippingOption =
+  HttpTypes.StoreShippingOptionListResponse["shipping_options"][number]
+
 type ShippingProps = {
   cart: HttpTypes.StoreCart
-  availableShippingMethods: HttpTypes.StoreCartShippingOption[] | null
+  availableShippingMethods: ShippingOption[] | null
 }
 
 function formatAddress(address: HttpTypes.StoreCartAddress) {
@@ -343,7 +346,7 @@ const Shipping: React.FC<ShippingProps> = ({
                               <span className="text-base-regular text-ui-fg-muted">
                                 {formatAddress(
                                   option.service_zone?.fulfillment_set?.location
-                                    ?.address
+                                    ?.address as unknown as HttpTypes.StoreCartAddress
                                 )}
                               </span>
                             </div>

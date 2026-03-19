@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react"
 import { ChevronUpDown } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
-import { Fragment, useMemo } from "react"
+import React, { Fragment, useMemo } from "react"
 
 import Radio from "@modules/common/components/radio"
 import compareAddresses from "@lib/util/compare-addresses"
@@ -55,7 +55,7 @@ const AddressSelect = ({
           )}
         </Listbox.Button>
         <Transition
-          as={Fragment}
+          as={Fragment as unknown as React.ElementType}
           leave="transition ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"

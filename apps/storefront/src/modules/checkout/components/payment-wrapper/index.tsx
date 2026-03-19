@@ -39,7 +39,7 @@ const PaymentWrapper: React.FC<PaymentWrapperProps> = ({ cart, children }) => {
         stripeKey={stripeKey}
         stripePromise={stripePromise}
       >
-        {children}
+        {children as React.ReactNode}
       </StripeWrapper>
     )
   }

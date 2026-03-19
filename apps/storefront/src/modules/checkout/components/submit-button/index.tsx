@@ -26,7 +26,7 @@ export function SubmitButton({
       variant={variant || "primary"}
       data-testid={dataTestId}
     >
-      {children}
+      {children as React.ReactNode}
     </Button>
   )
 }

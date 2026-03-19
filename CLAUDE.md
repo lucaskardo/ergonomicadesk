@@ -5,7 +5,7 @@ E-commerce for ergonomic office furniture. Domain: ergonomicadesk.com. Market: P
 
 ## Stack
 - Monorepo: Turborepo + pnpm workspaces
-- Frontend: Next.js 15 (App Router, React Server Components, Tailwind CSS v4)
+- Frontend: Next.js 16.2 (App Router, React Server Components, Tailwind CSS v3) — **Medusa Next.js Starter v1.0.3**
 - Backend: Medusa.js v2 (v2.13+) — commerce engine, 17 modules, durable workflows
 - CMS: Sanity.io — editorial content. MVP 1: homepage + static pages only. MVP 4: blog, guides, portable text.
 - DB: PostgreSQL 16 (Railway managed)
@@ -24,10 +24,20 @@ E-commerce for ergonomic office furniture. Domain: ergonomicadesk.com. Market: P
 ## Structure
 ```
 apps/backend/              → Medusa v2 (port 9000)
-apps/storefront/           → Next.js 15 (port 3000)
-  app/(shop)/              → Public storefront pages
-  app/studio/[[...tool]]/  → Sanity Studio (embedded, protected)
-  sanity/                  → Sanity config, schemas, client, queries
+apps/storefront/           → Next.js 16.2 Medusa Starter (port 8000)
+  src/app/[countryCode]/   → All public pages (middleware injects country code)
+    (main)/                → Storefront routes: /, /products, /store, /categories, /collections, /account, /order
+    (checkout)/            → Checkout route
+  src/app/studio/          → Sanity Studio (embedded)
+  src/lib/                 → SDK config, data fetching, context, hooks, util
+    config.ts              → Medusa JS SDK init (uses MEDUSA_BACKEND_URL server-side)
+    data/                  → Server-side fetch functions: cart.ts, products.ts, regions.ts, etc.
+    context/               → modal-context.tsx (client-side modals)
+  src/modules/             → UI modules: account, cart, categories, checkout, collections,
+                             common, home, layout, order, products, shipping, skeletons, store
+  src/sanity/              → Sanity config, schemas, client, queries
+  src/styles/              → Global CSS
+  src/types/               → TypeScript types
 packages/shared/           → Shared TypeScript types and enums
 ```
 
@@ -77,6 +87,52 @@ TWO content systems with clear separation:
 - Register all custom modules in `medusa-config.ts`
 - Migrations: `npx medusa db:migrate`
 
+## Storefront (Medusa Next.js Starter) — key patterns
+
+### Region / country-code routing
+- `src/middleware.ts` fetches regions from Medusa (server-side only), maps ISO-2 country codes to regions.
+- Every URL is prefixed with the country code: `/pa/products/chair-x`.
+- Env var is `MEDUSA_BACKEND_URL` (NO `NEXT_PUBLIC_` prefix) — used only in middleware + server components.
+- `NEXT_PUBLIC_DEFAULT_REGION` fallback (default "us") used when geo-detection fails.
+- `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` required in both middleware and SDK.
+
+### Cart
+- Cart ID stored in a cookie (managed in `src/lib/data/cart.ts`).
+- Cart context managed via React Context (not Redux/Zustand).
+- Cart module at `src/modules/cart/` — components + templates.
+- Cart MUST be created with `region_id`. Region is derived from country code cookie.
+
+### Products
+- Fetched server-side in `src/lib/data/products.ts`.
+- Product pages at `src/app/[countryCode]/(main)/products/[handle]/`.
+- Always pass `region_id` to get `calculated_price` on variants.
+
+### Checkout
+- Multi-step checkout in `src/modules/checkout/` — address, shipping, payment, review steps.
+- Payment components in `src/modules/checkout/components/payment/` and `payment-wrapper/`.
+- Starter includes Stripe payment template — REPLACE with NMI (do not add Stripe deps).
+- Checkout step components: `shipping-address`, `shipping`, `payment`, `review`, `payment-button`.
+
+### Where to add customizations (safe zones)
+- **NMI payment provider**: replace `src/modules/checkout/components/payment/` and `payment-button/`. Keep the step structure intact.
+- **Sanity CMS**: already at `src/sanity/` and `src/app/studio/`. Add queries/schemas there.
+- **Delivery zones (Panama)**: shipping options created in Medusa Admin. Display in `src/modules/checkout/components/shipping/`.
+- **ITBMS 7%**: displayed in `src/modules/checkout/templates/checkout-summary/`. Add tax line below subtotal.
+- **WhatsApp floating button**: add as global client component in `src/modules/layout/` rendered in root layout.
+- **Free shipping progress bar**: add to `src/modules/cart/` components.
+- **Trust badges**: add to `src/modules/checkout/components/` summary area.
+
+### What NOT to touch in the starter
+- `src/middleware.ts` — core region routing. Extend only with care.
+- `src/lib/config.ts` — SDK init. Don't rewire.
+- `src/lib/data/` — server fetch functions. Add new ones; don't break existing.
+- `src/modules/common/` — shared UI primitives used everywhere.
+- Core checkout step flow in `src/modules/checkout/templates/checkout-form/`.
+
+### Ports
+- Storefront: **8000** (`next dev --turbopack -p 8000`)
+- Backend: **9000**
+
 ## NMI Payment Component integration (verified from docs.nmi.com)
 - Package: `@nmipayments/nmi-pay-react`
 - Use `onChange` (NOT `onPay`) when integrating 3DS — gives control to intercept before authentication.
@@ -105,12 +161,13 @@ TWO content systems with clear separation:
 - Queries: use `defineQuery` from `next-sanity` for type-safe GROQ queries.
 - Data fetching: use `defineLive()` to create `sanityFetch` and `SanityLive` component.
 - Fetch in Server Components with `const { data } = await sanityFetch({ query: MY_QUERY })`.
-- Studio embedded at `app/studio/[[...tool]]/page.tsx` using `NextStudio` from `next-sanity/studio`.
+- Studio embedded at `src/app/studio/[[...tool]]/page.tsx` using `NextStudio` from `next-sanity/studio`.
 - Visual Editing: `<VisualEditing />` from `next-sanity/visual-editing` rendered when draftMode is enabled. `<SanityLive />` always rendered.
 - Revalidation webhook: use `parseBody` from `next-sanity/webhook` with HMAC signature verification.
 - TypeGen: `npx sanity@latest typegen generate` for auto-generated TypeScript types from schemas.
+- CORS: add localhost:8000 in manage.sanity.io > API > CORS origins (storefront runs on 8000).
 
-## Responsive design (mobile-first, Tailwind v4)
+## Responsive design (mobile-first, Tailwind v3)
 - Mobile-first: base styles are mobile. Add `md:` and `lg:` for larger screens.
 - Breakpoints: sm=640px, md=768px, lg=1024px, xl=1280px.
 - Container: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`.
@@ -123,19 +180,75 @@ TWO content systems with clear separation:
 - Font: system font stack for zero loading time. Base 14px mobile, 16px desktop.
 - Buttons: `w-full` on mobile, auto-width on desktop where appropriate.
 
-## SEO rules (per Google Search Central)
+## SEO + AI Engine Optimization (GEO/AEO)
+
+### Technical SEO
 - SSR for all pages. Critical content server-rendered in HTML.
 - On-demand revalidation (not fixed ISR). Subscriber → revalidatePath.
-- Product schema (JSON-LD) on PDP only. Never on category pages.
-- Schemas: Product+Offer (with OfferShippingDetails), BreadcrumbList, Organization+MerchantReturnPolicy, LocalBusiness.
-- No FAQPage schema as SEO play (Google reduced rich results for these).
 - Sitemap XML dynamic from Medusa products + Sanity pages.
+- Meta tags: title, description, og:image on every page.
+- Canonical URLs on all pages.
+- No index on checkout, cart, account pages.
 - Internal linking: categories ↔ products ↔ guides ↔ blog posts.
 - All links as `<a href>` tags (Google doesn't crawl JS-only navigation).
-- Prices in structured data: without ITBMS (the actual product price).
+
+### Structured data (JSON-LD)
+- **PDP**: Product schema with name, description, sku, brand, image, offers (price, priceCurrency, availability), aggregateRating. Prices WITHOUT ITBMS.
+- **PDP**: BreadcrumbList schema.
+- **PDP**: FAQPage schema with 3-5 preguntas frecuentes about the product.
+- **Homepage**: Organization + LocalBusiness schema.
+- **All pages**: BreadcrumbList schema.
+- No FAQPage schema as SEO play on category/listing pages (Google reduced rich results).
+- Offer always includes OfferShippingDetails and MerchantReturnPolicy.
+
+### robots.txt — AI crawlers
+Allow these bots explicitly: GPTBot, ClaudeBot, PerplexityBot, Googlebot, Amazonbot, CCBot, anthropic-ai, ChatGPT-User. Do NOT block any major AI crawler.
+
+### GEO/AEO content rules
+- Product descriptions: conversational, benefit-first, not just specs. Answer "which chair is best for X?" style queries.
+- Registrar en chatgpt.com/merchants y Perplexity Merchant Program (gratuito).
+- Include brand name "ErgonomicaDesk" in titles and H1s for brand entity recognition.
+
+## Google Merchant Center + Shopping Feed
+- Endpoint: `src/app/api/feed/google.xml/route.ts` — generates product feed from Medusa.
+- Required fields per item: `id`, `title`, `description`, `link`, `image_link`, `price` (e.g. "299.00 USD"), `availability`, `brand`, `condition` (new), `gtin` or `mpn`.
+- Price WITHOUT ITBMS in feed (pre-tax price).
+- Register in Google Merchant Center with "Scheduled Fetch" pointing to `https://ergonomicadesk.com/api/feed/google.xml`.
+- Structured data on PDPs complements the feed — Google uses both.
+- Update feed whenever product prices/availability change (on-demand revalidation via webhook).
+
+## UX — Panama market specifics
+- **WhatsApp flotante**: client component in `src/modules/layout/components/whatsapp-button/`. Fixed position bottom-right. Links to WhatsApp Business number. Always visible except during active checkout payment step.
+- **Barra envío gratis**: "Te faltan $X para envío GRATIS" in cart drawer. Calculates against $100 threshold.
+- **Trust badges en checkout**: SSL, "Envío GRATIS en Ciudad de Panamá >$100", "Ensamblaje incluido", "Garantía del fabricante".
+- **Badge ITBMS**: All prices displayed with "+ITBMS" badge. Show breakdown: subtotal + ITBMS 7% + envío = total.
+- **Precios en USD**: Always show $ symbol. No other currency.
 
 ## Environment variables
-See `.env.example` for full list. NEVER hardcode secrets. Frontend public vars use `NEXT_PUBLIC_` prefix.
+
+### Storefront (apps/storefront/.env.local)
+```
+MEDUSA_BACKEND_URL=http://localhost:9000          # Server-side only (middleware + SDK)
+NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000  # Client-side (legacy, keep for safety)
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_...
+NEXT_PUBLIC_BASE_URL=http://localhost:8000        # Must match storefront port
+NEXT_PUBLIC_DEFAULT_REGION=pa                    # Panama as default
+REVALIDATE_WINDOW=0
+NEXT_PUBLIC_SANITY_PROJECT_ID=...
+NEXT_PUBLIC_SANITY_DATASET=production
+```
+
+### Backend (apps/backend/.env.local)
+```
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/medusa
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=...
+COOKIE_SECRET=...
+STORE_CORS=http://localhost:8000                 # Must match storefront port
+ADMIN_CORS=http://localhost:9000
+AUTH_CORS=http://localhost:8000,http://localhost:9000
+MEDUSA_BACKEND_URL=http://localhost:9000
+```
 
 ## Commands
 ```bash
@@ -243,6 +356,7 @@ export default Page
 
 ### Medusa v2 — Configuration
 - Node.js MUST be v20 LTS. v25 is NOT compatible (causes "Cannot read 'def'" errors)
+- `.nvmrc` in repo root contains `20` — always `nvm use` before running backend commands
 - loadEnv must point to directory containing .env.local
 - Redis: env var is REDIS_URL. "redisUrl not found" = .env.local missing or wrong path
 - File module dev: no file provider configured (Medusa defaults to local storage). Production: @medusajs/medusa/file-s3
@@ -252,7 +366,7 @@ export default Page
 ### Sanity + next-sanity 12
 - defineLive() from "next-sanity/experimental/live" — requires cacheComponents: true
 - Studio embebido: "use client" + NextStudio component
-- CORS: add localhost:3000 in manage.sanity.io > API > CORS origins
+- CORS: add localhost:8000 in manage.sanity.io > API > CORS origins (storefront on port 8000)
 - Revalidation webhook: parseBody from "next-sanity/webhook"
 - sanityFetch for data fetching, SanityLive component in layout
 
@@ -269,8 +383,8 @@ export default Page
 
 ### Environment variables
 - NEVER duplicate vars in .env.local — dotenv uses FIRST occurrence, duplicates are IGNORED
-- Required storefront: NEXT_PUBLIC_MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_MEDUSA_REGION_ID, NEXT_PUBLIC_SANITY_PROJECT_ID
-- Required backend: DATABASE_URL, REDIS_URL, COOKIE_SECRET, JWT_SECRET, STORE_CORS, ADMIN_CORS
+- Storefront critical: MEDUSA_BACKEND_URL (no prefix, server-side), NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY, NEXT_PUBLIC_BASE_URL=http://localhost:8000
+- Backend critical: DATABASE_URL, REDIS_URL, COOKIE_SECRET, JWT_SECRET, STORE_CORS=http://localhost:8000, ADMIN_CORS
 
 ### Before writing ANY code
 - ALWAYS query official docs via context7 MCP BEFORE implementing any integration

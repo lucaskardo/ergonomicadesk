@@ -1,7 +1,8 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import { revalidateTag } from "next/cache"
+import { revalidateTag as _revalidateTag } from "next/cache"
+const revalidateTag = (tag: string) => _revalidateTag(tag, {})
 import { cookies as nextCookies } from "next/headers"
 import { getAuthHeaders, getCacheTag, getCartId } from "./cookies"
 

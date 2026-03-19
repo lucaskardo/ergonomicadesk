@@ -3,7 +3,8 @@
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
-import { revalidateTag } from "next/cache"
+import { revalidateTag as _revalidateTag } from "next/cache"
+const revalidateTag = (tag: string) => _revalidateTag(tag, {})
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
@@ -339,7 +340,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     if (!formData) {
       throw new Error("No form data found when setting addresses")
     }
-    const cartId = getCartId()
+    const cartId = await getCartId()
     if (!cartId) {
       throw new Error("No existing cart found when setting addresses")
     }
@@ -418,7 +419,7 @@ export async function placeOrder(cartId?: string) {
     const orderCacheTag = await getCacheTag("orders")
     revalidateTag(orderCacheTag)
 
-    removeCartId()
+    await removeCartId()
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }
 

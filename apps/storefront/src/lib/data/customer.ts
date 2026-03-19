@@ -3,7 +3,8 @@
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
-import { revalidateTag } from "next/cache"
+import { revalidateTag as _revalidateTag } from "next/cache"
+const revalidateTag = (tag: string) => _revalidateTag(tag, {})
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
