@@ -1,6 +1,5 @@
 import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
-// Loads .env, .env.local, .env.{NODE_ENV} from apps/backend/ (process.cwd())
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 module.exports = defineConfig({
@@ -96,8 +95,6 @@ module.exports = defineConfig({
       : []),
 
     // ── Notifications (Resend) ───────────────────────────────────────────────
-    // Provider implemented at src/modules/resend — see Medusa docs on
-    // building a custom Notification Module Provider.
     {
       resolve: "@medusajs/medusa/notification",
       options: {
