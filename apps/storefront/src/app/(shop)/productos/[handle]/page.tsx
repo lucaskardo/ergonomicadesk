@@ -1,5 +1,3 @@
-"use server"
-
 import { Suspense } from "react"
 import { connection } from "next/server"
 import { notFound } from "next/navigation"
@@ -13,10 +11,14 @@ type Props = { params: Promise<{ handle: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params
   try {
-    const { product } = await medusa.store.product.retrieve(handle, {
+    const { products } = await medusa.store.product.list({
+      handle,
       region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID,
       fields: "title,description",
+      limit: 1,
     })
+    const product = products[0]
+    if (!product) return { title: "Producto | Ergonómica Desk" }
     return {
       title: `${product.title} | Ergonómica Desk`,
       description: product.description ?? undefined,
@@ -26,10 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-type ProductRetrieveResponse = Awaited<
-  ReturnType<typeof medusa.store.product.retrieve>
->
-type Product = ProductRetrieveResponse["product"]
+type ProductListResponse = Awaited<ReturnType<typeof medusa.store.product.list>>
+type Product = ProductListResponse["products"][0]
 type Variant = NonNullable<Product["variants"]>[0]
 
 function getVariantPrice(variant: Variant): number | null {
@@ -37,20 +37,19 @@ function getVariantPrice(variant: Variant): number | null {
   return cp?.calculated_amount ?? null
 }
 
-async function ProductDetail({ handle }: { handle: string }) {
+async function Inner({ paramsPromise }: { paramsPromise: Promise<{ handle: string }> }) {
   await connection()
+  const { handle } = await paramsPromise
 
-  let product: Product
+  const { products } = await medusa.store.product.list({
+    handle,
+    region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID,
+    fields: "*variants.calculated_price",
+    limit: 1,
+  })
 
-  try {
-    const response = await medusa.store.product.retrieve(handle, {
-      region_id: process.env.NEXT_PUBLIC_MEDUSA_REGION_ID,
-      fields: "+variants.calculated_price",
-    })
-    product = response.product
-  } catch {
-    notFound()
-  }
+  const product = products[0]
+  if (!product) notFound()
 
   const variants = product.variants ?? []
   const firstVariant = variants[0]
@@ -166,8 +165,7 @@ async function ProductDetail({ handle }: { handle: string }) {
   )
 }
 
-export default async function ProductPage({ params }: Props) {
-  const { handle } = await params
+export default function ProductPage({ params }: Props) {
   return (
     <Suspense
       fallback={
@@ -185,7 +183,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
       }
     >
-      <ProductDetail handle={handle} />
+      <Inner paramsPromise={params} />
     </Suspense>
   )
 }
