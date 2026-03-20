@@ -1,23 +1,22 @@
-import { getLang, getTranslations } from "@lib/i18n"
+import { getTranslations } from "@lib/i18n"
 import { LangProvider } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ChevronDown from "@modules/common/icons/chevron-down"
 
-export default async function CheckoutLayout({
+export default function CheckoutLayoutEn({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const lang = await getLang()
-  const t = getTranslations(lang)
+  const t = getTranslations("en")
 
   return (
-    <LangProvider lang={lang}>
+    <LangProvider lang="en">
       <div className="w-full bg-white relative small:min-h-screen">
         <div className="h-16 bg-white border-b">
           <nav className="flex h-full items-center content-container justify-between">
             <LocalizedClientLink
-              href="/cart"
+              href="/en/cart"
               className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
               data-testid="back-to-cart-link"
             >
@@ -30,7 +29,7 @@ export default async function CheckoutLayout({
               </span>
             </LocalizedClientLink>
             <LocalizedClientLink
-              href="/"
+              href="/en"
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base font-semibold tracking-tight"
               data-testid="store-link"
             >

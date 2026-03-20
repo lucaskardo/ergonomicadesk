@@ -4,12 +4,12 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 export const metadata: Metadata = {
-  title: "Carrito",
-  description: "Ver tu carrito de compras",
+  title: "Shopping Cart",
+  description: "View your shopping cart",
   robots: { index: false },
 }
 
-export default async function Cart() {
+export default async function CartEn() {
   const cart = await retrieveCart().catch((error) => {
     console.error(error)
     return notFound()

@@ -9,6 +9,8 @@ import { HttpTypes } from "@medusajs/types"
 import Trash from "@modules/common/icons/trash"
 import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
+import { useLang } from "@lib/i18n/context"
+import { getTranslations } from "@lib/i18n"
 
 type DiscountCodeProps = {
   cart: HttpTypes.StoreCart & {
@@ -17,6 +19,8 @@ type DiscountCodeProps = {
 }
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
+  const lang = useLang()
+  const t = getTranslations(lang)
   const [isOpen, setIsOpen] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState("")
 
@@ -66,7 +70,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
               className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="add-discount-button"
             >
-              Add Promotion Code(s)
+              {t.checkout.add_promo_codes}
             </button>
 
             {/* <Tooltip content="You can add multiple promotion codes">
@@ -89,7 +93,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                   variant="secondary"
                   data-testid="discount-apply-button"
                 >
-                  Apply
+                  {t.checkout.apply}
                 </SubmitButton>
               </div>
 
@@ -105,7 +109,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
           <div className="w-full flex items-center">
             <div className="flex flex-col w-full">
               <Heading className="txt-medium mb-2">
-                Promotion(s) applied:
+                {t.checkout.promotions_applied}
               </Heading>
 
               {promotions.map((promotion) => {

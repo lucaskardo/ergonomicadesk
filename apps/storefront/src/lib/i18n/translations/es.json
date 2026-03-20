@@ -29,7 +29,10 @@
     "tax": "ITBMS (7%)",
     "total": "Total",
     "free_shipping": "Envío gratis",
-    "cart_items": "Artículos del carrito"
+    "cart_items": "Artículos del carrito",
+    "item": "Artículo",
+    "quantity": "Cantidad",
+    "price": "Precio"
   },
   "checkout": {
     "shipping_address": "Dirección de envío",
@@ -39,6 +42,7 @@
     "continue_to_payment": "Continuar al pago",
     "place_order": "Realizar pedido",
     "back_to_cart": "Volver al carrito",
+    "back": "Volver",
     "first_name": "Nombre",
     "last_name": "Apellido",
     "company": "Empresa",
@@ -55,7 +59,27 @@
     "payment_method": "Método de pago",
     "order_summary": "Resumen del pedido",
     "discount_code": "Código de descuento",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "billing_address": "Dirección de facturación",
+    "contact": "Contacto",
+    "edit": "Editar",
+    "continue_to_delivery": "Continuar a entrega",
+    "billing_same_as_shipping_text": "La dirección de facturación y de envío son iguales.",
+    "shipping_method_label": "Método de envío",
+    "how_to_deliver": "¿Cómo deseas recibir tu pedido?",
+    "pick_up_order": "Recoge tu pedido",
+    "store_pickup": "Tienda",
+    "choose_store": "Elige una tienda cercana",
+    "delivery_method": "Método",
+    "payment_details": "Detalles del pago",
+    "gift_card": "Tarjeta de regalo",
+    "enter_card_details": "Ingresar datos de tarjeta",
+    "continue_to_review": "Continuar a revisión",
+    "another_step": "Aparecerá otro paso",
+    "add_promo_codes": "Agregar código(s) de promoción",
+    "promotions_applied": "Promoción(es) aplicada(s):",
+    "review_terms": "Al hacer clic en 'Realizar pedido', confirma que ha leído, entendido y acepta nuestros Términos de Uso, Términos de Venta y Política de Devoluciones, y reconoce que ha leído la Política de Privacidad de Ergonómica.",
+    "in_your_cart": "En tu carrito"
   },
   "order": {
     "thank_you": "¡Gracias!",

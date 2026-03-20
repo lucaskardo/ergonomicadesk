@@ -29,7 +29,10 @@
     "tax": "ITBMS (7%)",
     "total": "Total",
     "free_shipping": "Free shipping",
-    "cart_items": "Cart items"
+    "cart_items": "Cart items",
+    "item": "Item",
+    "quantity": "Quantity",
+    "price": "Price"
   },
   "checkout": {
     "shipping_address": "Shipping Address",
@@ -39,6 +42,7 @@
     "continue_to_payment": "Continue to payment",
     "place_order": "Place order",
     "back_to_cart": "Back to shopping cart",
+    "back": "Back",
     "first_name": "First name",
     "last_name": "Last name",
     "company": "Company",
@@ -55,7 +59,27 @@
     "payment_method": "Payment method",
     "order_summary": "Order Summary",
     "discount_code": "Discount code",
-    "apply": "Apply"
+    "apply": "Apply",
+    "billing_address": "Billing address",
+    "contact": "Contact",
+    "edit": "Edit",
+    "continue_to_delivery": "Continue to delivery",
+    "billing_same_as_shipping_text": "Billing and delivery address are the same.",
+    "shipping_method_label": "Shipping method",
+    "how_to_deliver": "How would you like your order delivered?",
+    "pick_up_order": "Pick up your order",
+    "store_pickup": "Store",
+    "choose_store": "Choose a store near you",
+    "delivery_method": "Method",
+    "payment_details": "Payment details",
+    "gift_card": "Gift card",
+    "enter_card_details": "Enter card details",
+    "continue_to_review": "Continue to review",
+    "another_step": "Another step will appear",
+    "add_promo_codes": "Add Promotion Code(s)",
+    "promotions_applied": "Promotion(s) applied:",
+    "review_terms": "By clicking the Place Order button, you confirm that you have read, understand and accept our Terms of Use, Terms of Sale and Returns Policy and acknowledge that you have read Ergonómica's Privacy Policy.",
+    "in_your_cart": "In your cart"
   },
   "order": {
     "thank_you": "Thank you!",
