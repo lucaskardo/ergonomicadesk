@@ -132,6 +132,7 @@ export default function ProductActions({
       countryCode,
     })
 
+    router.refresh()
     setIsAdding(false)
   }
 
