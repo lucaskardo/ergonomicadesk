@@ -32,7 +32,10 @@
     "cart_items": "Cart items",
     "item": "Item",
     "quantity": "Quantity",
-    "price": "Price"
+    "price": "Price",
+    "remove": "Remove",
+    "go_to_cart": "Go to cart",
+    "subtotal_excl_taxes": "Subtotal (excl. taxes)"
   },
   "checkout": {
     "shipping_address": "Shipping Address",

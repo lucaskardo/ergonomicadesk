@@ -32,7 +32,10 @@
     "cart_items": "Artículos del carrito",
     "item": "Artículo",
     "quantity": "Cantidad",
-    "price": "Precio"
+    "price": "Precio",
+    "remove": "Eliminar",
+    "go_to_cart": "Ver carrito",
+    "subtotal_excl_taxes": "Subtotal (sin impuestos)"
   },
   "checkout": {
     "shipping_address": "Dirección de envío",
