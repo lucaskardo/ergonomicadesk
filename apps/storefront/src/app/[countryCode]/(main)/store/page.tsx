@@ -4,8 +4,8 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import StoreTemplate from "@modules/store/templates"
 
 export const metadata: Metadata = {
-  title: "Store",
-  description: "Explore all of our products.",
+  title: "Tienda | Ergonómica",
+  description: "Explora nuestra selección de escritorios standing, sillas ergonómicas y accesorios para tu home office.",
 }
 
 type Params = {

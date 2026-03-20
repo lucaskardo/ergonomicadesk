@@ -49,13 +49,21 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
     const title = productCategory.name + " | Ergonómica"
 
-    const description = productCategory.description ?? `${productCategory.name} — Ergonómica.`
+    const description = productCategory.description ?? `${title} category.`
+
+    const baseUrl = `https://ergonomicadesk.com/${params.countryCode}`
+    const categoryPath = params.category.join("/")
 
     return {
       title,
       description,
       alternates: {
-        canonical: `${params.category.join("/")}`,
+        canonical: `${baseUrl}/en/categories/${categoryPath}`,
+        languages: {
+          es: `${baseUrl}/categories/${categoryPath}`,
+          en: `${baseUrl}/en/categories/${categoryPath}`,
+          "x-default": `${baseUrl}/categories/${categoryPath}`,
+        },
       },
     }
   } catch (error) {
@@ -63,7 +71,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 }
 
-export default async function CategoryPage(props: Props) {
+export default async function CategoryEnPage(props: Props) {
   const searchParams = await props.searchParams
   const params = await props.params
   const { sortBy, page } = searchParams

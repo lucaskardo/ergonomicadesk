@@ -15,118 +15,80 @@ export async function generateStaticParams() {
     const countryCodes = await listRegions().then((regions) =>
       regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
     )
-
-    if (!countryCodes) {
-      return []
-    }
-
+    if (!countryCodes) return []
     const promises = countryCodes.map(async (country) => {
       const { response } = await listProducts({
         countryCode: country,
         queryParams: { limit: 100, fields: "handle" },
       })
-
-      return {
-        country,
-        products: response.products,
-      }
+      return { country, products: response.products }
     })
-
     const countryProducts = await Promise.all(promises)
-
     return countryProducts
-      .flatMap((countryData) =>
-        countryData.products.map((product) => ({
-          countryCode: countryData.country,
-          handle: product.handle,
-        }))
-      )
-      .filter((param) => param.handle)
-  } catch (error) {
-    console.error(
-      `Failed to generate static paths for product pages: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }.`
-    )
+      .flatMap((d) => d.products.map((p) => ({ countryCode: d.country, handle: p.handle })))
+      .filter((p) => p.handle)
+  } catch {
     return []
   }
 }
 
-function getImagesForVariant(
-  product: HttpTypes.StoreProduct,
-  selectedVariantId?: string
-) {
-  if (!selectedVariantId || !product.variants) {
-    return product.images
-  }
-
+function getImagesForVariant(product: HttpTypes.StoreProduct, selectedVariantId?: string) {
+  if (!selectedVariantId || !product.variants) return product.images
   const variant = product.variants!.find((v) => v.id === selectedVariantId)
-  if (!variant || !variant.images || !variant.images.length) {
-    return product.images
-  }
-
+  if (!variant || !variant.images || !variant.images.length) return product.images
   const imageIdsMap = new Map(variant.images.map((i) => [i.id, true]))
   return product.images!.filter((i) => imageIdsMap.has(i.id))
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
-  const { handle } = params
-  const region = await getRegion(params.countryCode)
-
-  if (!region) {
-    notFound()
-  }
+  const { handle, countryCode } = params
+  const region = await getRegion(countryCode)
+  if (!region) notFound()
 
   const product = await listProducts({
-    countryCode: params.countryCode,
+    countryCode,
     queryParams: { handle },
   }).then(({ response }) => response.products[0])
 
-  if (!product) {
-    notFound()
-  }
+  if (!product) notFound()
 
+  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
   return {
     title: `${product.title} | Ergonómica`,
     description: `${product.title}`,
-    alternates: {
-      canonical: `https://ergonomicadesk.com/${params.countryCode}/products/${handle}`,
-      languages: {
-        es: `https://ergonomicadesk.com/${params.countryCode}/products/${handle}`,
-        en: `https://ergonomicadesk.com/${params.countryCode}/en/products/${handle}`,
-        "x-default": `https://ergonomicadesk.com/${params.countryCode}/products/${handle}`,
-      },
-    },
     openGraph: {
       title: `${product.title} | Ergonómica`,
       description: `${product.title}`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
+    alternates: {
+      canonical: `${baseUrl}/en/products/${handle}`,
+      languages: {
+        es: `${baseUrl}/products/${handle}`,
+        en: `${baseUrl}/en/products/${handle}`,
+        "x-default": `${baseUrl}/products/${handle}`,
+      },
+    },
   }
 }
 
-export default async function ProductPage(props: Props) {
+export default async function ProductEnPage(props: Props) {
   const params = await props.params
   const region = await getRegion(params.countryCode)
   const searchParams = await props.searchParams
-
   const selectedVariantId = searchParams.v_id
 
-  if (!region) {
-    notFound()
-  }
+  if (!region) notFound()
 
   const pricedProduct = await listProducts({
     countryCode: params.countryCode,
     queryParams: { handle: params.handle },
   }).then(({ response }) => response.products[0])
 
-  const images = getImagesForVariant(pricedProduct, selectedVariantId)
+  if (!pricedProduct) notFound()
 
-  if (!pricedProduct) {
-    notFound()
-  }
+  const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
   return (
     <ProductTemplate

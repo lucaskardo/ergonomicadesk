@@ -1,11 +1,8 @@
 import { Metadata } from "next"
-
 import FeaturedProducts from "@modules/home/components/featured-products"
 import Hero from "@modules/home/components/hero"
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
-import { getLang } from "@lib/i18n"
-import { OrganizationJsonLd } from "@modules/common/components/json-ld/organization"
 
 export async function generateMetadata({
   params,
@@ -15,11 +12,11 @@ export async function generateMetadata({
   const { countryCode } = await params
   const baseUrl = `https://ergonomicadesk.com/${countryCode}`
   return {
-    title: "Ergonómica — Home office a otro nivel | Muebles ergonómicos Panamá",
+    title: "Ergonómica — Your home office, elevated | Ergonomic Furniture Panama",
     description:
-      "Escritorios standing, sillas ergonómicas y accesorios de oficina en Panamá. Envío gratis en Ciudad de Panamá. Garantía de 1-5 años.",
+      "Standing desks, ergonomic chairs, and office accessories in Panama. Free delivery in Panama City. 1-5 year warranty.",
     alternates: {
-      canonical: `${baseUrl}/`,
+      canonical: `${baseUrl}/en/`,
       languages: {
         es: `${baseUrl}/`,
         en: `${baseUrl}/en/`,
@@ -29,13 +26,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function Home(props: {
+export default async function HomeEn(props: {
   params: Promise<{ countryCode: string }>
 }) {
   const params = await props.params
   const { countryCode } = params
   const region = await getRegion(countryCode)
-  const lang = await getLang()
   const { collections } = await listCollections({ fields: "id, handle, title" })
 
   if (!collections || !region) {
@@ -44,7 +40,6 @@ export default async function Home(props: {
 
   return (
     <>
-      <OrganizationJsonLd lang={lang} />
       <Hero />
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">

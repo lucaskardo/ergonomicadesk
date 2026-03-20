@@ -8,15 +8,10 @@ import { Fragment } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CountrySelect from "../country-select"
 import LanguageSelect from "../language-select"
+import LanguageSwitcher from "../language-switcher"
 import { HttpTypes } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
-
-const SideMenuItems = {
-  Home: "/",
-  Store: "/store",
-  Account: "/account",
-  Cart: "/cart",
-}
+import { useLang } from "@lib/i18n/context"
 
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
@@ -27,6 +22,13 @@ type SideMenuProps = {
 const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
   const countryToggleState = useToggleState()
   const languageToggleState = useToggleState()
+  const lang = useLang()
+
+  const menuItems = [
+    { label: lang === "en" ? "Home" : "Inicio", href: "/" },
+    { label: lang === "en" ? "Store" : "Tienda", href: "/store" },
+    { label: lang === "en" ? "Cart" : "Carrito", href: "/cart" },
+  ]
 
   return (
     <div className="h-full">
@@ -39,7 +41,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                   data-testid="nav-menu-button"
                   className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
                 >
-                  Menu
+                  {lang === "en" ? "Menu" : "Menú"}
                 </Popover.Button>
               </div>
 
@@ -72,22 +74,23 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                       </button>
                     </div>
                     <ul className="flex flex-col gap-6 items-start justify-start">
-                      {Object.entries(SideMenuItems).map(([name, href]) => {
-                        return (
-                          <li key={name}>
-                            <LocalizedClientLink
-                              href={href}
-                              className="text-3xl leading-10 hover:text-ui-fg-disabled"
-                              onClick={close}
-                              data-testid={`${name.toLowerCase()}-link`}
-                            >
-                              {name}
-                            </LocalizedClientLink>
-                          </li>
-                        )
-                      })}
+                      {menuItems.map(({ label, href }) => (
+                        <li key={href}>
+                          <LocalizedClientLink
+                            href={href}
+                            className="text-3xl leading-10 hover:text-ui-fg-disabled"
+                            onClick={close}
+                            data-testid={`${label.toLowerCase()}-link`}
+                          >
+                            {label}
+                          </LocalizedClientLink>
+                        </li>
+                      ))}
                     </ul>
                     <div className="flex flex-col gap-y-6">
+                      <div className="flex justify-between items-center">
+                        <LanguageSwitcher />
+                      </div>
                       {!!locales?.length && (
                         <div
                           className="flex justify-between"
@@ -126,8 +129,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                         />
                       </div>
                       <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Medusa Store. All rights
-                        reserved.
+                        © 2026 Ergonómica. Panamá.
                       </Text>
                     </div>
                   </div>

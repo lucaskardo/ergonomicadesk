@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "store": "Store",
+    "cart": "Cart",
+    "search": "Search",
+    "home": "Home",
+    "account": "Account",
+    "lang_es": "ES",
+    "lang_en": "EN"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "description": "Description",
+    "product_information": "Product Information",
+    "select_variant": "Select variant",
+    "out_of_stock": "Out of stock",
+    "sku": "SKU",
+    "reviews": "Reviews"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "go_to_checkout": "Go to checkout",
+    "empty": "Your cart is empty",
+    "item_count_one": "{{count}} item",
+    "item_count_other": "{{count}} items",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "ITBMS (7%)",
+    "total": "Total",
+    "free_shipping": "Free shipping",
+    "cart_items": "Cart items"
+  },
+  "checkout": {
+    "shipping_address": "Shipping Address",
+    "delivery": "Delivery",
+    "payment": "Payment",
+    "review": "Review",
+    "continue_to_payment": "Continue to payment",
+    "place_order": "Place order",
+    "back_to_cart": "Back to shopping cart",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "company": "Company",
+    "address": "Address",
+    "apartment": "Apartment, suite, etc.",
+    "city": "City",
+    "state": "State",
+    "postal_code": "Postal code",
+    "country": "Country",
+    "phone": "Phone",
+    "email": "Email",
+    "nit": "NIT / RUC (optional)",
+    "same_as_shipping": "Same as shipping address",
+    "payment_method": "Payment method",
+    "order_summary": "Order Summary",
+    "discount_code": "Discount code",
+    "apply": "Apply"
+  },
+  "order": {
+    "thank_you": "Thank you!",
+    "order_placed": "Your order was placed successfully",
+    "order_date": "Order date",
+    "order_number": "Order number",
+    "order_confirmed": "Order confirmed",
+    "help": "Need help?",
+    "contact_us": "Contact us"
+  },
+  "footer": {
+    "products": "Products",
+    "explore": "Explore",
+    "support": "Support",
+    "contact": "Contact",
+    "visit_showroom": "Visit our showroom",
+    "follow_us": "Follow us",
+    "privacy_policy": "Privacy Policy",
+    "terms": "Terms and Conditions",
+    "faq": "FAQ",
+    "deliveries": "Deliveries",
+    "returns": "Returns",
+    "cancellations": "Cancellations",
+    "hours": "Monday–Friday 12PM–6PM, Saturdays 9AM–12PM",
+    "copyright": "© 2026 Ergonómica. Panama. All rights reserved."
+  },
+  "trust": {
+    "free_shipping": "Free delivery >$99",
+    "assembly": "Assembly included",
+    "warranty": "1-5 year warranty",
+    "returns": "7-day returns"
+  },
+  "hero": {
+    "headline": "Your home office, elevated",
+    "subheadline": "Standing desks, ergonomic chairs, and everything you need for your home office. Free delivery in Panama City.",
+    "cta": "Shop now"
+  },
+  "whatsapp": {
+    "tooltip": "Questions? Chat with us"
+  },
+  "store": {
+    "title": "Store",
+    "description": "Explore all of our products.",
+    "all_products": "All products",
+    "filter": "Filter",
+    "sort": "Sort"
+  }
+}

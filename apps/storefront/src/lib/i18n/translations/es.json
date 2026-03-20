@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "menu": "Menú",
+    "store": "Tienda",
+    "cart": "Carrito",
+    "search": "Buscar",
+    "home": "Inicio",
+    "account": "Cuenta",
+    "lang_es": "ES",
+    "lang_en": "EN"
+  },
+  "product": {
+    "add_to_cart": "Agregar al carrito",
+    "description": "Descripción",
+    "product_information": "Información del producto",
+    "select_variant": "Seleccionar variante",
+    "out_of_stock": "Agotado",
+    "sku": "SKU",
+    "reviews": "Reseñas"
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "go_to_checkout": "Proceder al pago",
+    "empty": "Tu carrito está vacío",
+    "item_count_one": "{{count}} artículo",
+    "item_count_other": "{{count}} artículos",
+    "subtotal": "Subtotal",
+    "shipping": "Envío",
+    "tax": "ITBMS (7%)",
+    "total": "Total",
+    "free_shipping": "Envío gratis",
+    "cart_items": "Artículos del carrito"
+  },
+  "checkout": {
+    "shipping_address": "Dirección de envío",
+    "delivery": "Entrega",
+    "payment": "Pago",
+    "review": "Revisión",
+    "continue_to_payment": "Continuar al pago",
+    "place_order": "Realizar pedido",
+    "back_to_cart": "Volver al carrito",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "company": "Empresa",
+    "address": "Dirección",
+    "apartment": "Apartamento, suite, etc.",
+    "city": "Ciudad",
+    "state": "Provincia",
+    "postal_code": "Código postal",
+    "country": "País",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "nit": "NIT / RUC (opcional)",
+    "same_as_shipping": "Igual que la dirección de envío",
+    "payment_method": "Método de pago",
+    "order_summary": "Resumen del pedido",
+    "discount_code": "Código de descuento",
+    "apply": "Aplicar"
+  },
+  "order": {
+    "thank_you": "¡Gracias!",
+    "order_placed": "Tu pedido fue realizado exitosamente",
+    "order_date": "Fecha del pedido",
+    "order_number": "Número de pedido",
+    "order_confirmed": "Pedido confirmado",
+    "help": "¿Necesitas ayuda?",
+    "contact_us": "Contáctenos"
+  },
+  "footer": {
+    "products": "Productos",
+    "explore": "Explorar",
+    "support": "Soporte",
+    "contact": "Contacto",
+    "visit_showroom": "Visita nuestro showroom",
+    "follow_us": "Síguenos",
+    "privacy_policy": "Políticas de Privacidad",
+    "terms": "Términos y Condiciones",
+    "faq": "Preguntas frecuentes",
+    "deliveries": "Entregas",
+    "returns": "Devoluciones",
+    "cancellations": "Cancelaciones",
+    "hours": "Lunes–Viernes 12PM–6PM, Sábados 9AM–12PM",
+    "copyright": "© 2026 Ergonómica. Panamá. Todos los derechos reservados."
+  },
+  "trust": {
+    "free_shipping": "Envío gratis >$99",
+    "assembly": "Ensamblaje incluido",
+    "warranty": "Garantía 1-5 años",
+    "returns": "Devoluciones en 7 días"
+  },
+  "hero": {
+    "headline": "Home office a otro nivel",
+    "subheadline": "Escritorios standing, sillas ergonómicas y todo lo que necesitas para tu oficina en casa. Envío gratis en Ciudad de Panamá.",
+    "cta": "Ver catálogo"
+  },
+  "whatsapp": {
+    "tooltip": "¿Dudas? Escríbenos"
+  },
+  "store": {
+    "title": "Tienda",
+    "description": "Explora todos nuestros productos.",
+    "all_products": "Todos los productos",
+    "filter": "Filtrar",
+    "sort": "Ordenar"
+  }
+}

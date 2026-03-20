@@ -59,7 +59,7 @@ export default async function seedFreeShipping({ container }: ExecArgs) {
               {
                 attribute: "item_total",
                 operator: "gte",
-                value: "10000",
+                value: 10000,
               },
             ],
           },
@@ -71,7 +71,7 @@ export default async function seedFreeShipping({ container }: ExecArgs) {
               {
                 attribute: "item_total",
                 operator: "gte",
-                value: "10000",
+                value: 10000,
               },
             ],
           },
