@@ -48,6 +48,9 @@ const StoreTemplate = async ({
 
       {/* Product grid */}
       <div className="w-full">
+        <h1 className="text-2xl font-semibold text-ui-fg-base mb-4">
+          Todos los Productos
+        </h1>
         <Suspense fallback={<SkeletonProductGrid />}>
           <PaginatedProductsCountWrapper
             sortBy={sort}
