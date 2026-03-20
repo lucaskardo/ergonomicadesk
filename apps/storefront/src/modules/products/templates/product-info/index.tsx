@@ -26,6 +26,13 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           {product.title}
         </Heading>
 
+        {/* SKU display */}
+        {product.variants?.[0]?.sku && (
+          <p className="text-xs text-gray-400 font-mono -mt-2">
+            SKU: {product.variants[0].sku}
+          </p>
+        )}
+
         <Text
           className="text-medium text-ui-fg-subtle whitespace-pre-line"
           data-testid="product-description"

@@ -129,5 +129,43 @@
     "all_products": "Todos los productos",
     "filter": "Filtrar",
     "sort": "Ordenar"
+  },
+  "specs": {
+    "warranty": "Garantía",
+    "weight": "Peso",
+    "max_weight_capacity": "Capacidad de peso",
+    "height_range": "Rango de altura",
+    "speed": "Velocidad",
+    "motors": "Motores",
+    "noise_level": "Nivel de ruido",
+    "memory_presets": "Memorias",
+    "anti_collision": "Anticolisión",
+    "tools_included": "Herramientas incluidas",
+    "compatible_top_length": "Largo compatible",
+    "compatible_top_width": "Ancho compatible",
+    "back_material": "Material respaldo",
+    "seat_material": "Material asiento",
+    "lumbar_support": "Soporte lumbar",
+    "armrests": "Apoyabrazos",
+    "headrest": "Reposacabezas",
+    "base_material": "Base",
+    "gas_lift": "Pistón",
+    "bifma_certified": "Certificado BIFMA",
+    "material": "Material",
+    "dimensions": "Dimensiones",
+    "cable_management": "Manejo de cables",
+    "lock_type": "Cerradura",
+    "soft_close": "Cierre suave",
+    "wheels": "Ruedas",
+    "privacy_panel": "Panel de privacidad",
+    "compatible_frames": "Bases compatibles"
+  },
+  "categories": {
+    "standing-desks": "Standing Desks",
+    "office": "Oficina",
+    "chairs": "Sillas",
+    "storage": "Almacenamiento",
+    "accessories": "Accesorios",
+    "collections": "Colecciones"
   }
 }

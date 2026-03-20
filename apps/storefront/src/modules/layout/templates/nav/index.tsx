@@ -9,24 +9,56 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 import LanguageSwitcher from "@modules/layout/components/language-switcher"
+import SearchButton from "@modules/layout/components/search-button"
+
+// Category nav links (bilingual)
+const NAV_CATEGORIES = [
+  { handle: "standing-desks", es: "Standing Desks", en: "Standing Desks" },
+  { handle: "office", es: "Oficina", en: "Office" },
+  { handle: "chairs", es: "Sillas", en: "Chairs" },
+  { handle: "storage", es: "Almacenamiento", en: "Storage" },
+  { handle: "accessories", es: "Accesorios", en: "Accessories" },
+]
 
 export default async function Nav() {
-  const [regions, locales, currentLocale] = await Promise.all([
+  const [regions, locales, currentLocale, lang] = await Promise.all([
     listRegions().then((regions: StoreRegion[]) => regions),
     listLocales(),
     getLocale(),
+    getLang(),
   ])
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 group">
-      <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-        <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
-          <div className="flex-1 basis-0 h-full flex items-center">
+      <header className="relative mx-auto border-b duration-200 bg-white border-ui-border-base">
+        {/* Main nav row */}
+        <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-16 text-small-regular">
+          {/* Left: hamburger (mobile) + category links (desktop) */}
+          <div className="flex items-center gap-x-6 h-full">
             <div className="h-full">
               <SideMenu regions={regions} locales={locales} currentLocale={currentLocale} />
             </div>
+            {/* Desktop category links */}
+            <div className="hidden large:flex items-center gap-x-4 h-full">
+              {NAV_CATEGORIES.map((cat) => (
+                <LocalizedClientLink
+                  key={cat.handle}
+                  href={`/categories/${cat.handle}`}
+                  className="hover:text-ui-fg-base transition-colors whitespace-nowrap text-xs font-medium"
+                >
+                  {lang === "en" ? cat.en : cat.es}
+                </LocalizedClientLink>
+              ))}
+              <LocalizedClientLink
+                href="/store"
+                className="hover:text-ui-fg-base transition-colors whitespace-nowrap text-xs font-medium"
+              >
+                {lang === "en" ? "Collections" : "Colecciones"}
+              </LocalizedClientLink>
+            </div>
           </div>
 
+          {/* Center: Logo */}
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
@@ -37,8 +69,10 @@ export default async function Nav() {
             </LocalizedClientLink>
           </div>
 
-          <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-            <div className="hidden small:flex items-center gap-x-6 h-full">
+          {/* Right: Search + Language + Cart */}
+          <div className="flex items-center gap-x-4 h-full flex-1 basis-0 justify-end">
+            <SearchButton />
+            <div className="hidden small:flex items-center gap-x-4 h-full">
               <LanguageSwitcher />
             </div>
             <Suspense

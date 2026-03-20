@@ -129,5 +129,43 @@
     "all_products": "All products",
     "filter": "Filter",
     "sort": "Sort"
+  },
+  "specs": {
+    "warranty": "Warranty",
+    "weight": "Weight",
+    "max_weight_capacity": "Weight capacity",
+    "height_range": "Height range",
+    "speed": "Speed",
+    "motors": "Motors",
+    "noise_level": "Noise level",
+    "memory_presets": "Memory presets",
+    "anti_collision": "Anti-collision",
+    "tools_included": "Tools included",
+    "compatible_top_length": "Compatible top length",
+    "compatible_top_width": "Compatible top width",
+    "back_material": "Back material",
+    "seat_material": "Seat material",
+    "lumbar_support": "Lumbar support",
+    "armrests": "Armrests",
+    "headrest": "Headrest",
+    "base_material": "Base material",
+    "gas_lift": "Gas lift",
+    "bifma_certified": "BIFMA certified",
+    "material": "Material",
+    "dimensions": "Dimensions",
+    "cable_management": "Cable management",
+    "lock_type": "Lock",
+    "soft_close": "Soft close",
+    "wheels": "Wheels",
+    "privacy_panel": "Privacy panel",
+    "compatible_frames": "Compatible frames"
+  },
+  "categories": {
+    "standing-desks": "Standing Desks",
+    "office": "Office",
+    "chairs": "Chairs",
+    "storage": "Storage",
+    "accessories": "Accessories",
+    "collections": "Collections"
   }
 }
