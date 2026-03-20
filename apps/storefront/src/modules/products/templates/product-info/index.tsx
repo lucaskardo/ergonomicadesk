@@ -1,14 +1,13 @@
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ProductSku from "@modules/products/components/product-sku"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
-  selectedVariant?: HttpTypes.StoreProductVariant
 }
 
-const ProductInfo = ({ product, selectedVariant }: ProductInfoProps) => {
-  const displayVariant = selectedVariant ?? product.variants?.[0]
+const ProductInfo = ({ product }: ProductInfoProps) => {
   return (
     <div id="product-info">
       <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto">
@@ -28,15 +27,7 @@ const ProductInfo = ({ product, selectedVariant }: ProductInfoProps) => {
           {product.title}
         </Heading>
 
-        {/* SKU display — updates when variant is selected via v_id URL param */}
-        {displayVariant?.sku && (
-          <p className="text-xs text-gray-400 font-mono -mt-2">
-            SKU: {displayVariant.sku}
-          </p>
-        )}
-        {selectedVariant?.title && selectedVariant.title !== product.title && (
-          <p className="text-sm text-gray-500 -mt-2">{selectedVariant.title}</p>
-        )}
+        <ProductSku product={product} />
 
         <Text
           className="text-medium text-ui-fg-subtle whitespace-pre-line"
