@@ -144,32 +144,34 @@ export default async function seedShipping({ container }: ExecArgs) {
         provider_id: "manual_manual",
         service_zone_id: serviceZoneId,
         shipping_profile_id: shippingProfile.id,
-        type: {
-          label: o.name,
-          description: o.name,
-          code: o.code,
-        },
-        prices: [
-          {
-            currency_code: "usd",
-            amount: o.amount,
-          },
-          {
-            region_id: region.id,
-            amount: o.amount,
-          },
-        ],
+        type: { label: o.name, description: o.name, code: o.code },
+        prices:
+          o.code === "panama_city"
+            ? [
+                { currency_code: "usd", amount: 1500 },
+                { region_id: region.id, amount: 1500 },
+                {
+                  currency_code: "usd",
+                  amount: 0,
+                  rules: [
+                    { attribute: "item_total", operator: "gte", value: "10000" },
+                  ],
+                },
+                {
+                  region_id: region.id,
+                  amount: 0,
+                  rules: [
+                    { attribute: "item_total", operator: "gte", value: "10000" },
+                  ],
+                },
+              ]
+            : [
+                { currency_code: "usd", amount: o.amount },
+                { region_id: region.id, amount: o.amount },
+              ],
         rules: [
-          {
-            attribute: "enabled_in_store",
-            value: "true",
-            operator: "eq",
-          },
-          {
-            attribute: "is_return",
-            value: "false",
-            operator: "eq",
-          },
+          { attribute: "enabled_in_store", value: "true", operator: "eq" },
+          { attribute: "is_return", value: "false", operator: "eq" },
         ],
       })),
     })
