@@ -10,6 +10,7 @@ import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import SearchButton from "@modules/layout/components/search-button"
+import AnnouncementBar from "@modules/layout/components/announcement-bar"
 
 // Category nav links (bilingual)
 const NAV_CATEGORIES = [
@@ -30,6 +31,7 @@ export default async function Nav() {
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 group">
+      <AnnouncementBar />
       <header className="relative mx-auto border-b duration-200 bg-white border-ui-border-base">
         {/* Main nav row */}
         <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-16 text-small-regular">

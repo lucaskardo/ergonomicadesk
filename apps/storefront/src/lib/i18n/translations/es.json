@@ -167,5 +167,60 @@
     "storage": "Almacenamiento",
     "accessories": "Accesorios",
     "collections": "Colecciones"
+  },
+  "home": {
+    "hero": {
+      "pretitle": "Home Office a Otro Nivel",
+      "title": "Muebles Ergonómicos\npara Tu Productividad",
+      "subtitle": "Escritorios de pie, sillas ergonómicas y soluciones de oficina con envío gratis y ensamblaje incluido en Ciudad de Panamá.",
+      "cta_primary": "Explorar Productos",
+      "cta_secondary": "Arma Tu Escritorio"
+    },
+    "trust": {
+      "shipping": "Envío Gratis >$99",
+      "shipping_sub": "Ciudad de Panamá",
+      "assembly": "Ensamblaje Incluido",
+      "assembly_sub": "En todos los muebles",
+      "warranty": "Hasta 5 Años Garantía",
+      "warranty_sub": "En productos seleccionados",
+      "support": "Soporte Directo",
+      "support_sub": "WhatsApp 24/7"
+    },
+    "categories": {
+      "standing_desks": "Standing Desks",
+      "chairs": "Sillas",
+      "office": "Oficina",
+      "storage": "Almacenamiento",
+      "accessories": "Accesorios",
+      "from": "Desde"
+    },
+    "build": {
+      "pretitle": "Standing Desks",
+      "title": "Arma Tu Escritorio\nde Pie Ideal",
+      "description": "Escoge entre 8 bases motorizadas y más de 60 combinaciones de sobres de melamina y madera natural. Pantalla táctil con 3 memorias, tecnología anticolisión y hasta 5 años de garantía.",
+      "speed": "Velocidad hasta 38mm/s",
+      "noise": "Ultra silencioso <48dB",
+      "capacity": "Hasta 200kg de capacidad",
+      "cta": "Ver Bases y Sobres"
+    },
+    "featured": {
+      "title": "Los Más Vendidos",
+      "subtitle": "Productos favoritos de nuestros clientes",
+      "view_all": "Ver todos los productos →"
+    },
+    "b2b": {
+      "pretitle": "Para Empresas",
+      "title": "Soluciones Corporativas",
+      "subtitle": "Equipamos oficinas, coworkings y espacios comerciales. Descuentos por volumen, asesoría personalizada y entrega e instalación incluida.",
+      "cta": "Solicitar Cotización"
+    },
+    "social": {
+      "followers": "15K+",
+      "followers_label": "Seguidores en Instagram",
+      "offices": "500+",
+      "offices_label": "Oficinas Equipadas",
+      "years": "5 Años",
+      "years_label": "En el mercado panameño"
+    }
   }
 }

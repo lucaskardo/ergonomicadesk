@@ -1,82 +1,76 @@
 "use client"
 
 import { useLang } from "@lib/i18n/context"
-import Link from "next/link"
 import { useParams } from "next/navigation"
+import Link from "next/link"
 
 const Hero = () => {
   const lang = useLang()
   const { countryCode } = useParams()
   const langPrefix = lang === "en" ? "/en" : ""
-  const storePath = `/${countryCode}${langPrefix}/store`
+  const base = `/${countryCode}${langPrefix}`
 
-  const content = {
-    es: {
-      headline: "Home office a otro nivel",
-      subheadline:
-        "Escritorios standing, sillas ergonómicas y todo lo que necesitas para tu oficina en casa. Envío gratis en Ciudad de Panamá.",
-      cta: "Ver catálogo",
-    },
-    en: {
-      headline: "Your home office, elevated",
-      subheadline:
-        "Standing desks, ergonomic chairs, and everything you need for your home office. Free delivery in Panama City.",
-      cta: "Shop now",
-    },
-  }[lang]
-
-  const trustItems = {
-    es: [
-      { icon: "🚚", label: "Envío gratis >$99" },
-      { icon: "🔧", label: "Ensamblaje incluido" },
-      { icon: "🛡️", label: "Garantía 1-5 años" },
-      { icon: "↩️", label: "Devoluciones en 7 días" },
-    ],
-    en: [
-      { icon: "🚚", label: "Free delivery >$99" },
-      { icon: "🔧", label: "Assembly included" },
-      { icon: "🛡️", label: "1-5 year warranty" },
-      { icon: "↩️", label: "7-day returns" },
-    ],
-  }[lang]
+  const content =
+    lang === "en"
+      ? {
+          pretitle: "Home Office Next Level",
+          title: "Ergonomic Furniture\nfor Your Productivity",
+          subtitle:
+            "Standing desks, ergonomic chairs and office solutions with free shipping and assembly included in Panama City.",
+          cta_primary: "Browse Products",
+          cta_secondary: "Build Your Desk",
+        }
+      : {
+          pretitle: "Home Office a Otro Nivel",
+          title: "Muebles Ergonómicos\npara Tu Productividad",
+          subtitle:
+            "Escritorios de pie, sillas ergonómicas y soluciones de oficina con envío gratis y ensamblaje incluido en Ciudad de Panamá.",
+          cta_primary: "Explorar Productos",
+          cta_secondary: "Arma Tu Escritorio",
+        }
 
   return (
-    <div className="w-full border-b border-ui-border-base">
-      {/* Hero section */}
-      <div className="h-[60vh] w-full relative bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center text-center px-6 gap-6">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-ui-fg-base leading-tight max-w-3xl">
-          {content.headline}
-        </h1>
-        <p className="text-lg text-ui-fg-subtle max-w-xl leading-relaxed">
-          {content.subheadline}
-        </p>
-        <Link
-          href={storePath}
-          className="mt-2 inline-flex items-center px-8 py-3 bg-ui-fg-base text-white text-sm font-medium rounded-full hover:bg-ui-fg-subtle transition-colors duration-200"
-        >
-          {content.cta}
-        </Link>
-      </div>
-
-      {/* Trust badges */}
-      <div className="bg-white border-t border-ui-border-base py-6 px-6">
-        <div className="content-container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {trustItems.map((item) => (
-              <div
-                key={item.label}
-                className="flex flex-col items-center text-center gap-2 py-2"
+    <section className="bg-gray-50 border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="flex flex-col md:flex-row items-center gap-12">
+          {/* Text — 60% */}
+          <div className="flex-1 md:w-3/5">
+            <p className="text-sm uppercase tracking-widest text-teal-600 font-semibold">
+              {content.pretitle}
+            </p>
+            <h1 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight whitespace-pre-line">
+              {content.title}
+            </h1>
+            <p className="mt-5 text-lg text-gray-600 max-w-lg leading-relaxed">
+              {content.subtitle}
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <Link
+                href={`${base}/store`}
+                className="inline-flex justify-center items-center px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200"
               >
-                <span className="text-2xl">{item.icon}</span>
-                <span className="text-xs sm:text-sm text-ui-fg-subtle font-medium">
-                  {item.label}
-                </span>
-              </div>
-            ))}
+                {content.cta_primary}
+              </Link>
+              <Link
+                href={`${base}/categories/standing-desks`}
+                className="inline-flex justify-center items-center px-8 py-3 border-2 border-gray-300 hover:border-teal-600 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
+              >
+                {content.cta_secondary}
+              </Link>
+            </div>
+          </div>
+
+          {/* Image placeholder — 40% */}
+          <div className="w-full md:w-2/5">
+            <div className="aspect-[4/3] bg-gray-200 rounded-2xl flex items-center justify-center">
+              <span className="text-gray-400 text-sm font-medium">
+                {lang === "en" ? "Photo coming soon" : "Foto próximamente"}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

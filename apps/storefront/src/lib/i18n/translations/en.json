@@ -167,5 +167,60 @@
     "storage": "Storage",
     "accessories": "Accessories",
     "collections": "Collections"
+  },
+  "home": {
+    "hero": {
+      "pretitle": "Home Office Next Level",
+      "title": "Ergonomic Furniture\nfor Your Productivity",
+      "subtitle": "Standing desks, ergonomic chairs and office solutions with free shipping and assembly included in Panama City.",
+      "cta_primary": "Browse Products",
+      "cta_secondary": "Build Your Desk"
+    },
+    "trust": {
+      "shipping": "Free Shipping >$99",
+      "shipping_sub": "Panama City",
+      "assembly": "Assembly Included",
+      "assembly_sub": "On all furniture",
+      "warranty": "Up to 5yr Warranty",
+      "warranty_sub": "On selected products",
+      "support": "Direct Support",
+      "support_sub": "WhatsApp 24/7"
+    },
+    "categories": {
+      "standing_desks": "Standing Desks",
+      "chairs": "Chairs",
+      "office": "Office",
+      "storage": "Storage",
+      "accessories": "Accessories",
+      "from": "From"
+    },
+    "build": {
+      "pretitle": "Standing Desks",
+      "title": "Build Your Ideal\nStanding Desk",
+      "description": "Choose from 8 motorized frames and over 60 combinations of melamine and natural wood tops. Touch screen with 3 presets, anti-collision technology and up to 5 years warranty.",
+      "speed": "Speed up to 38mm/s",
+      "noise": "Ultra-quiet <48dB",
+      "capacity": "Up to 200kg capacity",
+      "cta": "View Frames & Tops"
+    },
+    "featured": {
+      "title": "Bestsellers",
+      "subtitle": "Customer favorites",
+      "view_all": "View all products →"
+    },
+    "b2b": {
+      "pretitle": "For Businesses",
+      "title": "Corporate Solutions",
+      "subtitle": "We outfit offices, coworkings and commercial spaces. Volume discounts, personalized consulting and delivery with installation included.",
+      "cta": "Request Quote"
+    },
+    "social": {
+      "followers": "15K+",
+      "followers_label": "Instagram Followers",
+      "offices": "500+",
+      "offices_label": "Offices Outfitted",
+      "years": "5 Years",
+      "years_label": "In the Panamanian market"
+    }
   }
 }

@@ -1,8 +1,12 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
 import Hero from "@modules/home/components/hero"
-import { listCollections } from "@lib/data/collections"
+import TrustBar from "@modules/home/components/trust-bar"
+import CategoryGrid from "@modules/home/components/category-grid"
+import BuildYourDesk from "@modules/home/components/build-your-desk"
+import FeaturedProductsHome from "@modules/home/components/featured-products-home"
+import B2BBanner from "@modules/home/components/b2b-banner"
+import SocialProof from "@modules/home/components/social-proof"
 import { getRegion } from "@lib/data/regions"
 import { getLang } from "@lib/i18n"
 import { OrganizationJsonLd } from "@modules/common/components/json-ld/organization"
@@ -32,25 +36,19 @@ export async function generateMetadata({
 export default async function Home(props: {
   params: Promise<{ countryCode: string }>
 }) {
-  const params = await props.params
-  const { countryCode } = params
-  const region = await getRegion(countryCode)
-  const lang = await getLang()
-  const { collections } = await listCollections({ fields: "id, handle, title" })
-
-  if (!collections || !region) {
-    return null
-  }
+  const { countryCode } = await props.params
+  const [region, lang] = await Promise.all([getRegion(countryCode), getLang()])
 
   return (
     <>
       <OrganizationJsonLd lang={lang} />
       <Hero />
-      <div className="py-12">
-        <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
-        </ul>
-      </div>
+      <TrustBar />
+      <CategoryGrid />
+      <BuildYourDesk />
+      {region && <FeaturedProductsHome region={region} lang={lang} />}
+      <B2BBanner />
+      <SocialProof />
     </>
   )
 }
