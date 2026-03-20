@@ -16,6 +16,7 @@ type ProductTemplateProps = {
   region: HttpTypes.StoreRegion
   countryCode: string
   images: HttpTypes.StoreProductImage[]
+  selectedVariant?: HttpTypes.StoreProductVariant
 }
 
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
@@ -23,6 +24,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   region,
   countryCode,
   images,
+  selectedVariant,
 }) => {
   if (!product || !product.id) {
     return notFound()
@@ -35,7 +37,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         data-testid="product-container"
       >
         <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
-          <ProductInfo product={product} />
+          <ProductInfo product={product} selectedVariant={selectedVariant} />
           <ProductTabs product={product} />
         </div>
         <div className="block w-full relative">

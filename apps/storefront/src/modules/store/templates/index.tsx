@@ -6,18 +6,20 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import CategorySidebar from "@modules/store/components/category-sidebar"
 import { listCategories } from "@lib/data/categories"
 
-import PaginatedProducts from "./paginated-products"
+import PaginatedProductsCountWrapper from "./paginated-products-count-wrapper"
 
 const StoreTemplate = async ({
   sortBy,
   page,
   countryCode,
   categoryId,
+  q,
 }: {
   sortBy?: SortOptions
   page?: string
   countryCode: string
   categoryId?: string
+  q?: string
 }) => {
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
@@ -47,11 +49,13 @@ const StoreTemplate = async ({
       {/* Product grid */}
       <div className="w-full">
         <Suspense fallback={<SkeletonProductGrid />}>
-          <PaginatedProducts
+          <PaginatedProductsCountWrapper
             sortBy={sort}
             page={pageNumber}
             countryCode={countryCode}
             categoryId={categoryId}
+            q={q}
+            initialQuery={q}
           />
         </Suspense>
       </div>

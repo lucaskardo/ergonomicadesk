@@ -128,12 +128,17 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
+  const selectedVariant = selectedVariantId
+    ? pricedProduct.variants?.find((v) => v.id === selectedVariantId)
+    : undefined
+
   return (
     <ProductTemplate
       product={pricedProduct}
       region={region}
       countryCode={params.countryCode}
       images={images ?? []}
+      selectedVariant={selectedVariant}
     />
   )
 }

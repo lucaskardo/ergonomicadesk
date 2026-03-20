@@ -4,9 +4,11 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
+  selectedVariant?: HttpTypes.StoreProductVariant
 }
 
-const ProductInfo = ({ product }: ProductInfoProps) => {
+const ProductInfo = ({ product, selectedVariant }: ProductInfoProps) => {
+  const displayVariant = selectedVariant ?? product.variants?.[0]
   return (
     <div id="product-info">
       <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto">
@@ -26,11 +28,14 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           {product.title}
         </Heading>
 
-        {/* SKU display */}
-        {product.variants?.[0]?.sku && (
+        {/* SKU display — updates when variant is selected via v_id URL param */}
+        {displayVariant?.sku && (
           <p className="text-xs text-gray-400 font-mono -mt-2">
-            SKU: {product.variants[0].sku}
+            SKU: {displayVariant.sku}
           </p>
+        )}
+        {selectedVariant?.title && selectedVariant.title !== product.title && (
+          <p className="text-sm text-gray-500 -mt-2">{selectedVariant.title}</p>
         )}
 
         <Text

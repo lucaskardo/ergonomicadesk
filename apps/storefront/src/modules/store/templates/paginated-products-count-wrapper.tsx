@@ -2,6 +2,7 @@ import { listProductsWithSort } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
+import StoreSearch from "@modules/store/components/store-search"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 const PRODUCT_LIMIT = 12
@@ -15,7 +16,7 @@ type PaginatedProductsParams = {
   q?: string
 }
 
-export default async function PaginatedProducts({
+export default async function PaginatedProductsCountWrapper({
   sortBy,
   page,
   collectionId,
@@ -23,6 +24,7 @@ export default async function PaginatedProducts({
   productsIds,
   countryCode,
   q,
+  initialQuery,
 }: {
   sortBy?: SortOptions
   page: number
@@ -31,6 +33,7 @@ export default async function PaginatedProducts({
   productsIds?: string[]
   countryCode: string
   q?: string
+  initialQuery?: string
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
@@ -46,16 +49,16 @@ export default async function PaginatedProducts({
       : [categoryId]
   }
 
-  if (q) {
-    queryParams["q"] = q
-  }
-
   if (productsIds) {
     queryParams["id"] = productsIds
   }
 
   if (sortBy === "created_at") {
     queryParams["order"] = "created_at"
+  }
+
+  if (q) {
+    queryParams["q"] = q
   }
 
   const region = await getRegion(countryCode)
@@ -77,6 +80,7 @@ export default async function PaginatedProducts({
 
   return (
     <>
+      <StoreSearch initialQuery={initialQuery} totalCount={count} />
       <ul
         className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
         data-testid="products-list"

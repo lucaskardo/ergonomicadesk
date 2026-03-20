@@ -25,6 +25,12 @@ export default function CategoryTemplate({
 
   if (!category || !countryCode) notFound()
 
+  // Collect all category IDs: parent + all children (so parent pages show products from subcategories)
+  const allCategoryIds = [
+    category.id,
+    ...(category.category_children?.map((c) => c.id) ?? []),
+  ]
+
   const parents = [] as HttpTypes.StoreProductCategory[]
 
   const getParents = (category: HttpTypes.StoreProductCategory) => {
@@ -87,7 +93,7 @@ export default function CategoryTemplate({
           <PaginatedProducts
             sortBy={sort}
             page={pageNumber}
-            categoryId={category.id}
+            categoryId={allCategoryIds}
             countryCode={countryCode}
           />
         </Suspense>
