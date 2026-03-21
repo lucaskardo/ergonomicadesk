@@ -10,6 +10,7 @@ import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
 import ProductActionsWrapper from "./product-actions-wrapper"
+import ProductTracker from "@modules/products/components/product-tracker"
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -32,6 +33,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
   return (
     <>
+      <ProductTracker product={product} selectedVariant={selectedVariant} />
       <div
         className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
         data-testid="product-container"

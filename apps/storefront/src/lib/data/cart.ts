@@ -16,6 +16,7 @@ import {
 } from "./cookies"
 import { getRegion } from "./regions"
 import { getLocale } from "@lib/data/locale-actions"
+import { cookies } from "next/headers"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -401,6 +402,33 @@ export async function placeOrder(cartId?: string) {
 
   const headers = {
     ...(await getAuthHeaders()),
+  }
+
+  // Attach UTM attribution + session data to cart metadata before completing
+  try {
+    const cookieStore = await cookies()
+    const utmRaw = cookieStore.get("_ergo_utm")?.value
+    const pagesRaw = cookieStore.get("_ergo_pages")?.value
+    const viewedRaw = cookieStore.get("_ergo_viewed")?.value
+
+    const utm = utmRaw ? JSON.parse(decodeURIComponent(utmRaw)) : {}
+    const sessionPages = pagesRaw || "0"
+    const productsViewed: string[] = viewedRaw
+      ? JSON.parse(decodeURIComponent(viewedRaw))
+      : []
+
+    const metadata = {
+      attribution: {
+        ...utm,
+        session_pages: sessionPages,
+      },
+      products_viewed: productsViewed,
+      funnel_checkout_started: new Date().toISOString(),
+    }
+
+    await sdk.store.cart.update(id, { metadata }, headers)
+  } catch {
+    // Non-critical — proceed with order completion even if metadata fails
   }
 
   const cartRes = await sdk.store.cart

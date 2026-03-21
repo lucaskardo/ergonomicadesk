@@ -1,5 +1,11 @@
 import { StorePrice } from "@medusajs/types"
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, unknown>[]
+  }
+}
+
 export type FeaturedProduct = {
   id: string
   title: string

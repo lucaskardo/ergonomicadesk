@@ -1,6 +1,7 @@
 "use client"
 
 import { useLang } from "@lib/i18n/context"
+import { trackEvent } from "@lib/tracking"
 
 export default function WhatsAppButton() {
   const lang = useLang()
@@ -13,6 +14,9 @@ export default function WhatsAppButton() {
       rel="noreferrer"
       className="fixed bottom-6 right-6 z-50 group"
       aria-label="WhatsApp"
+      onClick={() =>
+        trackEvent("contact_whatsapp", { page: window.location.pathname })
+      }
     >
       <div className="relative flex items-center">
         {/* Tooltip */}

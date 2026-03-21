@@ -7,6 +7,7 @@ import CategorySidebar from "@modules/store/components/category-sidebar"
 import { listCategories } from "@lib/data/categories"
 
 import PaginatedProductsCountWrapper from "./paginated-products-count-wrapper"
+import StoreHeading from "@modules/store/components/store-heading"
 
 const StoreTemplate = async ({
   sortBy,
@@ -48,9 +49,7 @@ const StoreTemplate = async ({
 
       {/* Product grid */}
       <div className="w-full">
-        <h1 className="text-2xl font-semibold text-ui-fg-base mb-4">
-          Todos los Productos
-        </h1>
+        <StoreHeading />
         <Suspense fallback={<SkeletonProductGrid />}>
           <PaginatedProductsCountWrapper
             sortBy={sort}

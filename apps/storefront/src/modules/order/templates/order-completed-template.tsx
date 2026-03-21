@@ -7,6 +7,7 @@ import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import { HttpTypes } from "@medusajs/types"
+import PurchaseTracker from "@modules/order/components/purchase-tracker"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
@@ -17,6 +18,7 @@ export default async function OrderCompletedTemplate({
 }: OrderCompletedTemplateProps) {
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">
+      <PurchaseTracker order={order} />
       <div className="content-container flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
         <div
           className="flex flex-col gap-4 max-w-4xl h-full bg-white w-full py-10"

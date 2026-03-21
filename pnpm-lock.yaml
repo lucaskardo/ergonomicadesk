@@ -117,6 +117,9 @@ importers:
       '@medusajs/ui':
         specifier: latest
         version: 4.1.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
+      '@next/third-parties':
+        specifier: ^16.2.1
+        version: 16.2.1(next@16.2.0(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@radix-ui/react-accordion':
         specifier: ^1.2.1
         version: 1.2.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3055,6 +3058,12 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@next/third-parties@16.2.1':
+    resolution: {integrity: sha512-XyeT9WVBUdVXMrKFz0wTSrMc+O5JN2B08yU7JpK8YJiP/qBgc3q1kIfjop/pdnhT4W4oLjwXaqrMh7uWaoYILQ==}
+    peerDependencies:
+      next: ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0-beta.0
+      react: 19.2.4
 
   '@noble/ed25519@3.0.1':
     resolution: {integrity: sha512-t/T8LuK0ym8ALQudCCQCtrRdMSxBnRgHXw+wg+YsSlE6d+on7sX3flqlSJ2mOs9xEuchM36kj9SuX5MG7pXQMA==}
@@ -11025,6 +11034,9 @@ packages:
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
 
+  third-party-capital@1.0.20:
+    resolution: {integrity: sha512-oB7yIimd8SuGptespDAZnNkzIz+NWaJCu2RMsbs4Wmp9zSDUM8Nhi3s2OOcqYuv3mN4hitXc8DVx+LyUmbUDiA==}
+
   through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
 
@@ -15538,6 +15550,12 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@16.2.0':
     optional: true
+
+  '@next/third-parties@16.2.1(next@16.2.0(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      next: 16.2.0(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      third-party-capital: 1.0.20
 
   '@noble/ed25519@3.0.1': {}
 
@@ -25514,6 +25532,8 @@ snapshots:
   thenify@3.3.1:
     dependencies:
       any-promise: 1.3.0
+
+  third-party-capital@1.0.20: {}
 
   through2@2.0.5:
     dependencies:

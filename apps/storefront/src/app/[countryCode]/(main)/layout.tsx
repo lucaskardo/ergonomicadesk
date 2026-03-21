@@ -11,6 +11,7 @@ import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 import WhatsAppButton from "@modules/common/components/whatsapp-button"
+import UtmCapture from "@modules/layout/components/utm-capture"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -44,6 +45,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
       {props.children}
       <Footer />
       <WhatsAppButton />
+      <UtmCapture />
     </LangProvider>
   )
 }

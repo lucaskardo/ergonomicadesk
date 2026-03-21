@@ -45,6 +45,32 @@ export function ProductJsonLd({
         "@type": "Organization",
         name: "Ergonómica",
       },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "PA",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          businessDays: {
+            "@type": "OpeningHoursSpecification",
+            minValue: 1,
+            maxValue: 3,
+          },
+        },
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "USD",
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+      },
     },
   }
 
