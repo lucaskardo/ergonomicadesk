@@ -223,3 +223,4 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Execute immediately, no brainstorming
 - One git commit per task
 - Use /compact when context grows
+- SIEMPRE hacer git push origin main al final de cada tarea completada
