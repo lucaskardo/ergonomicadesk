@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
+import { ProductJsonLd } from "@modules/common/components/json-ld/product"
 import { HttpTypes } from "@medusajs/types"
 
 type Props = {
@@ -132,13 +133,32 @@ export default async function ProductPage(props: Props) {
     ? pricedProduct.variants?.find((v) => v.id === selectedVariantId)
     : undefined
 
+  const firstVariant = pricedProduct.variants?.[0]
+  const priceAmount =
+    firstVariant?.calculated_price?.calculated_amount ??
+    firstVariant?.calculated_price?.original_amount ??
+    0
+
   return (
-    <ProductTemplate
-      product={pricedProduct}
-      region={region}
-      countryCode={params.countryCode}
-      images={images ?? []}
-      selectedVariant={selectedVariant}
-    />
+    <>
+      <ProductJsonLd
+        name={pricedProduct.title ?? ""}
+        description={pricedProduct.description ?? null}
+        image={pricedProduct.thumbnail ?? null}
+        sku={firstVariant?.sku ?? null}
+        price={priceAmount}
+        currency="USD"
+        url={`https://ergonomicadesk.com/${params.countryCode}/products/${params.handle}`}
+        lang="es"
+        inStock={(firstVariant?.inventory_quantity ?? 1) > 0}
+      />
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+        images={images ?? []}
+        selectedVariant={selectedVariant}
+      />
+    </>
   )
 }
