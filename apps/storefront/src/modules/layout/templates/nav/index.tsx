@@ -5,6 +5,7 @@ import { listLocales } from "@lib/data/locales"
 import { getLocale } from "@lib/data/locale-actions"
 import { getLang } from "@lib/i18n"
 import { StoreRegion } from "@medusajs/types"
+import { Locale } from "@lib/data/locales"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
@@ -22,12 +23,25 @@ const NAV_CATEGORIES = [
 ]
 
 export default async function Nav() {
-  const [regions, locales, currentLocale, lang] = await Promise.all([
-    listRegions().then((regions: StoreRegion[]) => regions),
-    listLocales(),
-    getLocale(),
-    getLang(),
-  ])
+  let regions: StoreRegion[] = []
+  let locales: Locale[] | null = null
+  let currentLocale: string | null = null
+  let lang: "es" | "en" = "es"
+
+  try {
+    const results = await Promise.all([
+      listRegions().then((r: StoreRegion[]) => r),
+      listLocales(),
+      getLocale(),
+      getLang(),
+    ])
+    regions = results[0] ?? []
+    locales = results[1]
+    currentLocale = results[2]
+    lang = results[3]
+  } catch (err) {
+    console.error("Nav data fetch failed:", err instanceof Error ? err.message : err)
+  }
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 group">

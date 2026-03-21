@@ -498,5 +498,8 @@ export async function listCartOptions() {
     next,
     headers,
     cache: "force-cache",
+  }).catch((err) => {
+    console.error("listCartOptions failed:", err instanceof Error ? err.message : err)
+    return { shipping_options: [] as HttpTypes.StoreCartShippingOption[] }
   })
 }

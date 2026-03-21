@@ -1,5 +1,6 @@
 import { HttpTypes } from "@medusajs/types"
 import { NextRequest, NextResponse } from "next/server"
+import { fetchWithTimeout } from "@lib/util/fetch-safe"
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
@@ -14,36 +15,45 @@ async function getRegionMap(cacheId: string) {
   const { regionMap, regionMapUpdated } = regionMapCache
 
   if (!BACKEND_URL) {
-    throw new Error(
-      "Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named NEXT_PUBLIC_MEDUSA_BACKEND_URL."
-    )
+    console.error("Middleware: MEDUSA_BACKEND_URL not set")
+    return regionMap
   }
 
+  // Return cached if fresh
   if (
-    !regionMap.keys().next().value ||
-    regionMapUpdated < Date.now() - 3600 * 1000
+    regionMap.size > 0 &&
+    regionMapUpdated > Date.now() - 3600 * 1000
   ) {
-    const { regions } = await fetch(`${BACKEND_URL}/store/regions`, {
-      headers: {
-        "x-publishable-api-key": PUBLISHABLE_API_KEY!,
-      },
-      next: {
-        revalidate: 3600,
-        tags: [`regions-${cacheId}`],
-      },
-      cache: "force-cache",
-    }).then(async (response) => {
-      const json = await response.json()
-      if (!response.ok) {
-        throw new Error(json.message)
+    return regionMap
+  }
+
+  try {
+    const response = await fetchWithTimeout(
+      `${BACKEND_URL}/store/regions`,
+      {
+        headers: {
+          "x-publishable-api-key": PUBLISHABLE_API_KEY!,
+        },
+        next: {
+          revalidate: 3600,
+          tags: [`regions-${cacheId}`],
+        },
+        cache: "force-cache",
+        timeout: 5000,
       }
-      return json
-    })
+    )
+
+    const json = await response.json()
+
+    if (!response.ok) {
+      throw new Error(json.message || `HTTP ${response.status}`)
+    }
+
+    const { regions } = json
 
     if (!regions?.length) {
-      throw new Error(
-        "No regions found. Please set up regions in your Medusa Admin."
-      )
+      console.warn("Middleware: No regions returned from Medusa")
+      return regionMap
     }
 
     regions.forEach((region: HttpTypes.StoreRegion) => {
@@ -51,11 +61,13 @@ async function getRegionMap(cacheId: string) {
         regionMapCache.regionMap.set(c.iso_2 ?? "", region)
       })
     })
-
     regionMapCache.regionMapUpdated = Date.now()
-  }
 
-  return regionMapCache.regionMap
+    return regionMapCache.regionMap
+  } catch (err) {
+    console.error("Middleware: Failed to fetch regions:", err instanceof Error ? err.message : err)
+    return regionMap.size > 0 ? regionMap : new Map()
+  }
 }
 
 async function getCountryCode(
@@ -101,6 +113,10 @@ export async function middleware(request: NextRequest) {
   let cacheId = cacheIdCookie?.value || crypto.randomUUID()
 
   const regionMap = await getRegionMap(cacheId)
+
+  if (!regionMap || regionMap.size === 0) {
+    return new NextResponse("Service temporarily unavailable. Please refresh.", { status: 503 })
+  }
 
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 

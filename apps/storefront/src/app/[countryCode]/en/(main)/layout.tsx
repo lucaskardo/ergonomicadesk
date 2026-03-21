@@ -3,6 +3,7 @@ import { Metadata } from "next"
 import { listCartOptions, retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getBaseURL } from "@lib/util/env"
+import { withTimeout } from "@lib/util/fetch-safe"
 import { LangProvider } from "@lib/i18n/context"
 import { StoreCartShippingOption } from "@medusajs/types"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
@@ -15,13 +16,22 @@ export const metadata: Metadata = {
 }
 
 export default async function EnPageLayout(props: { children: React.ReactNode }) {
-  const customer = await retrieveCustomer()
-  const cart = await retrieveCart()
+  const customer = await withTimeout(retrieveCustomer(), {
+    fallback: null,
+    label: "retrieveCustomer",
+  })
+  const cart = await withTimeout(retrieveCart(), {
+    fallback: null,
+    label: "retrieveCart",
+  })
   let shippingOptions: StoreCartShippingOption[] = []
 
   if (cart) {
-    const { shipping_options } = await listCartOptions()
-    shippingOptions = shipping_options
+    const result = await withTimeout(listCartOptions(), {
+      fallback: { shipping_options: [] as StoreCartShippingOption[] },
+      label: "listCartOptions",
+    })
+    shippingOptions = result.shipping_options
   }
 
   return (

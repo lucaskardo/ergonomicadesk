@@ -17,10 +17,13 @@ export const listRegions = async () => {
       cache: "force-cache",
     })
     .then(({ regions }) => regions)
-    .catch(medusaError)
+    .catch((err) => {
+      console.error("listRegions failed:", err instanceof Error ? err.message : err)
+      return [] as HttpTypes.StoreRegion[]
+    })
 }
 
-export const retrieveRegion = async (id: string) => {
+export const retrieveRegion = async (id: string): Promise<HttpTypes.StoreRegion | null> => {
   const next = {
     ...(await getCacheOptions(["regions", id].join("-"))),
   }
@@ -32,7 +35,10 @@ export const retrieveRegion = async (id: string) => {
       cache: "force-cache",
     })
     .then(({ region }) => region)
-    .catch(medusaError)
+    .catch((err) => {
+      console.error("retrieveRegion failed:", err instanceof Error ? err.message : err)
+      return null
+    })
 }
 
 const regionMap = new Map<string, HttpTypes.StoreRegion>()
