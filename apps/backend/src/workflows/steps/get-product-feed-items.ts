@@ -75,12 +75,20 @@ function getOptionValue(variant: any, optionTitle: string): string | undefined {
   return opt?.value
 }
 
+function fixImageUrl(url: string, backendPublicUrl: string): string {
+  if (!url) return url
+  // Replace localhost or 127.0.0.1 with the public backend URL
+  return url.replace(/https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, backendPublicUrl)
+}
+
 export const getProductFeedItemsStep = createStep(
   "get-product-feed-items",
   async (input: Input, { container }) => {
     const query = container.resolve("query")
     const storefrontUrl =
       process.env.STOREFRONT_URL || "https://ergonomicadesk.com"
+    const backendPublicUrl =
+      process.env.BACKEND_PUBLIC_URL || storefrontUrl
 
     const allProducts: any[] = []
     const limit = 100
@@ -105,6 +113,7 @@ export const getProductFeedItemsStep = createStep(
           "variants.options.option.*",
           "variants.calculated_price.*",
           "variants.inventory_items.*",
+          "variants.manage_inventory",
         ],
         filters: {
           status: "published",
@@ -141,16 +150,24 @@ export const getProductFeedItemsStep = createStep(
         const currencyCode =
           variant.calculated_price?.currency_code ?? input.currency_code
 
-        // Determine availability from inventory
+        // Determine availability: published products are "in stock" by default.
+        // Only mark "out of stock" if inventory tracking is enabled AND we have
+        // explicit quantity data (from location_levels) showing 0. This avoids
+        // false "out of stock" when QuickBooks sync hasn't run yet.
         let availability: "in stock" | "out of stock" = "in stock"
-        const inventoryItems = variant.inventory_items || []
-        if (inventoryItems.length > 0) {
-          const totalQty = inventoryItems.reduce(
-            (sum: number, ii: any) =>
-              sum + (ii.stocked_quantity ?? ii.inventory?.stocked_quantity ?? 0),
-            0
-          )
-          if (totalQty <= 0) availability = "out of stock"
+        if (variant.manage_inventory === true) {
+          const inventoryItems = variant.inventory_items || []
+          if (inventoryItems.length > 0) {
+            const totalQty = inventoryItems.reduce(
+              (sum: number, ii: any) => {
+                const qty = ii.stocked_quantity ?? ii.inventory?.stocked_quantity
+                // Only subtract if we have a real numeric value (not null/undefined)
+                return sum + (typeof qty === "number" ? qty : 1)
+              },
+              0
+            )
+            if (totalQty <= 0) availability = "out of stock"
+          }
         }
 
         // Build title
@@ -176,15 +193,15 @@ export const getProductFeedItemsStep = createStep(
             (product.description || product.title).slice(0, 5000)
           ),
           link: `${storefrontUrl}/pa/products/${product.handle}`,
-          image_link: product.thumbnail || extraImages[0] || "",
-          additional_image_links: extraImages.slice(0, 10),
+          image_link: fixImageUrl(product.thumbnail || extraImages[0] || "", backendPublicUrl),
+          additional_image_links: extraImages.slice(0, 10).map((u: string) => fixImageUrl(u, backendPublicUrl)),
           price: formatPrice(calculatedAmount, currencyCode),
           availability,
           item_group_id: product.id,
           condition: "new",
           brand: "Ergonómica",
           google_product_category: googleCategory,
-          product_type: productType,
+          product_type: xmlEscape(productType),
           ...(color && { color: xmlEscape(color) }),
           ...(size && { size: xmlEscape(size) }),
           shipping_price: "0.00 USD",
