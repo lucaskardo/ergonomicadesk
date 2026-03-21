@@ -1,0 +1,9 @@
+#!/bin/bash
+cd apps/backend
+echo "Checking backend TypeScript..."
+npx tsc --noEmit 2>&1 | tail -3
+if [ $? -ne 0 ]; then
+  echo "❌ Backend TypeScript errors — commit blocked"
+  exit 1
+fi
+echo "✅ Backend compiles OK"

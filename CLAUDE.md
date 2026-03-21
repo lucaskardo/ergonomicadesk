@@ -64,7 +64,6 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 - Sobres de Melamina: 1 product, 52 variants (Color × Tamaño)
 - Sobres de Madera Natural: 1 product, multi-variant (Madera × Tamaño)
 - 154 products have metadata specs (warranty, motors, speed, lumbar, etc.)
-- SKU reactive on PDP via useSearchParams
 
 ## Bilingual (ES/EN)
 - URL: /pa/ (Spanish default), /pa/en/ (English)
@@ -74,12 +73,12 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 ## Tracking & Attribution (Built)
 - GTM: GoogleTagManager in root layout, gated by NEXT_PUBLIC_GTM_ID env var
 - dataLayer events: view_item, add_to_cart, begin_checkout, purchase, contact_whatsapp
-- Each event: event_id (deterministic seed), _fbp/_fbc cookies, content_ids, ecommerce object
+- Each event: event_id (deterministic), _fbp/_fbc cookies, content_ids, ecommerce object
 - UTM: _ergo_utm cookie (30 days) captures utm_*, gclid, fbclid, ctwa_clid, device_type, landing_page
 - Session: _ergo_pages cookie (pageview counter), _ergo_viewed cookie (last 10 SKUs)
 - Before cart.complete: placeOrder reads cookies server-side, saves to cart.metadata
 - Medusa copies cart.metadata → order.metadata automatically
-- NO raw PII in dataLayer — Enhanced Conversions in GTM UI only
+- NO raw PII in dataLayer
 
 ## Order Metadata (for Dashboard)
 ```json
@@ -98,9 +97,8 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 ## Product Feed
 - Endpoint: GET /custom/product-feed (Medusa backend, public, no auth)
 - Medusa workflow: generateProductFeedWorkflow with 2 steps
-- Uses query.graph() for direct DB access
 - RSS 2.0 XML with g: namespace (Google Shopping + Meta compatible)
-- Includes g:shipping (PA, $0), g:tax (PA, 7%)
+- 231 products, all "in stock" by default (until QB sync)
 - Cache-Control: 6 hours
 
 ## SEO (Built)
@@ -108,17 +106,14 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 - ProductJsonLd rendered in PDP page.tsx (server-rendered RSC)
 - robots.txt: AI bots allowed (GPTBot, ClaudeBot, PerplexityBot, Googlebot, Amazonbot)
 - Sitemap: next-sitemap.js with ergonomicadesk.com base URL
-- Canonical tags, hreflang per language
 - H1 tags on all pages (bilingual on /store)
-- On-demand revalidation via Medusa subscribers
 
 ## Medusa Patterns (MUST FOLLOW)
 - Workflows: createStep + createWorkflow from @medusajs/framework/workflows-sdk
 - Data in steps: resolve "query" from container → query.graph()
 - API routes: /store/* needs x-publishable-api-key, /admin/* needs auth, /custom/* is public
-- Payment providers fetch: ALWAYS cache: "no-store" (breaks with default cache)
+- Payment providers fetch: ALWAYS cache: "no-store"
 - Cart metadata: set before cart.complete — copies to order.metadata automatically
-- Subscribers for side effects (email, sync, revalidation)
 - RBAC: built-in roles do NOT enforce access — custom middleware required
 - Module names: underscores not hyphens
 - Prices in CENTS — divide by 100 for display
@@ -127,18 +122,47 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 ## Storefront Patterns (MUST FOLLOW)
 - Server components by default — "use client" only when needed
 - Data fetching in src/lib/data/ (server-side, Medusa JS SDK)
-- Region/country from URL params, not client state
 - Tracking functions: client-only (typeof window !== "undefined")
 - JSON-LD: server-rendered (RSC)
-- Images: product.thumbnail for lists, product.images for gallery
 - pnpm: use --filter storefront or --filter backend for installs
+
+## REGLAS ANTI-ROTURA (OBLIGATORIAS)
+
+### Después de instalar cualquier paquete:
+```bash
+rm -rf node_modules apps/backend/node_modules apps/storefront/node_modules apps/backend/.medusa
+pnpm install
+cd apps/backend && npx medusa develop  # Verificar que arranca
+```
+Medusa's hoisted node_modules corruptan con pnpm add parciales.
+
+### Después de cualquier cambio al backend:
+Esperar que el watcher reinicie. Verificar:
+```bash
+curl -s http://localhost:9000/health
+```
+Si no responde, revertir inmediatamente con git checkout -- <archivo>.
+
+### Prompts de múltiples fases:
+- MÁXIMO 3 fases por prompt
+- Backend y storefront NUNCA en el mismo prompt
+- Después de cada fase: verificar que compila/arranca
+- Si una fase falla: arreglar ANTES de la siguiente
+
+### Orden de verificación obligatorio:
+1. Backend compila (curl health)
+2. Storefront compila (curl http://localhost:8000/pa)
+
+### Debugging:
+- NUNCA buscar en node_modules
+- Si error persiste después de revertir: rm -rf node_modules && pnpm install
+- Máximo 2 minutos investigando. Si no hay causa clara: aislar con mv *.bak
 
 ## Known Gotchas
 - Payment providers fetch: cache: "no-store" or checkout breaks silently
 - Region middleware: can 404 if backend slow — has retry + fallback
 - Product feed: /custom/ not /store/ (Google can't send auth headers)
 - Docker Compose: dev only — Railway for production
-- next-sitemap.js exclude: glob patterns, not regex
 
 ## Dev Start
 ```bash
@@ -163,7 +187,6 @@ NEXT_PUBLIC_DEFAULT_REGION=pa
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 
 ## Pending (Priority)
-
 ### Launch blockers:
 - [ ] NMI Payment Provider (replace manual payment)
 - [ ] Product photos (organize, rename to SKU, upload)
@@ -179,8 +202,7 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - [ ] GTM container config
 - [ ] RBAC middleware enforcement
 - [ ] Sentry error tracking
-- [ ] Cloudflare Turnstile on checkout
-- [ ] Sanity CMS (homepage + static pages)
+- [ ] Sanity CMS
 - [ ] Dashboard (ROAS, attribution, funnel)
 
 ## NMI Integration (Reference)
@@ -190,17 +212,14 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Backend POST to transact.php: application/x-www-form-urlencoded (NOT JSON)
 - Response: key=value pairs — parse with URLSearchParams
 - After failed payment: resetFields() on NmiPayments ref
-- Security key backend only, NEVER expose to frontend
 
 ## Meilisearch
 - Plugin: @rokmohar/medusa-plugin-meilisearch (v2 compatible)
 - Registered as plugin in medusa-config.ts (not module)
-- Subscribers included since v1.0 + Medusa v2.4+
 
 ## Prompting Rules
 - Big comprehensive prompts, not small back-and-forth
 - Search official docs (context7 MCP) before implementing
-- Verify with Chrome DevTools MCP after changes
 - Execute immediately, no brainstorming
-- One git commit per task, conventional commit message
+- One git commit per task
 - Use /compact when context grows

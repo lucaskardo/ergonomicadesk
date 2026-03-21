@@ -8,7 +8,8 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "pnpm": {
     "overrides": {
@@ -19,8 +20,9 @@
     }
   },
   "devDependencies": {
-    "turbo": "^2.4.0",
+    "husky": "^9.1.7",
     "prettier": "^3.5.0",
+    "turbo": "^2.4.0",
     "typescript": "^5.7.0"
   }
 }
