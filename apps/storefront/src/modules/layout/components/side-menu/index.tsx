@@ -1,13 +1,10 @@
 "use client"
 
-import { Popover, PopoverPanel, Transition } from "@headlessui/react"
-import { ArrowRightMini, XMark } from "@medusajs/icons"
-import { Text, clx, useToggleState } from "@medusajs/ui"
-import { Fragment } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import { XMark } from "@medusajs/icons"
+import { Fragment, useState } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import CountrySelect from "../country-select"
-import LanguageSelect from "../language-select"
 import LanguageSwitcher from "../language-switcher"
 import { HttpTypes } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
@@ -28,9 +25,11 @@ const CATEGORY_LINKS = [
 ]
 
 const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
-  const countryToggleState = useToggleState()
-  const languageToggleState = useToggleState()
+  const [isOpen, setIsOpen] = useState(false)
   const lang = useLang()
+
+  const open = () => setIsOpen(true)
+  const close = () => setIsOpen(false)
 
   const mainLinks = [
     { label: lang === "en" ? "Home" : "Inicio", href: "/" },
@@ -44,132 +43,138 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
   }))
 
   return (
-    <div className="h-full">
-      <div className="flex items-center h-full">
-        <Popover className="h-full flex">
-          {({ open, close }) => (
-            <>
-              <div className="relative flex h-full">
-                <Popover.Button
-                  data-testid="nav-menu-button"
-                  className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
-                >
+    <div className="h-full flex items-center">
+      {/* Hamburger trigger */}
+      <button
+        data-testid="nav-menu-button"
+        onClick={open}
+        className="h-full flex items-center px-1 transition-colors hover:text-ui-fg-base focus:outline-none"
+        aria-label={lang === "en" ? "Open menu" : "Abrir menú"}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.8}
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          />
+        </svg>
+      </button>
+
+      {/* Slide-in drawer */}
+      <Transition show={isOpen} as={Fragment}>
+        <Dialog onClose={close} className="relative z-[100]">
+          {/* Backdrop */}
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div
+              className="fixed inset-0 bg-black/40"
+              aria-hidden="true"
+              data-testid="side-menu-backdrop"
+            />
+          </Transition.Child>
+
+          {/* Panel slides in from left */}
+          <Transition.Child
+            as={Fragment}
+            enter="transform transition ease-out duration-300"
+            enterFrom="-translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in duration-200"
+            leaveFrom="translate-x-0"
+            leaveTo="-translate-x-full"
+          >
+            <Dialog.Panel
+              className="fixed left-0 top-0 bottom-0 w-[280px] bg-gray-950 text-white flex flex-col shadow-xl"
+              data-testid="nav-menu-popup"
+            >
+              {/* Close button */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                <span className="text-sm font-medium text-white/60 uppercase tracking-widest">
                   {lang === "en" ? "Menu" : "Menú"}
-                </Popover.Button>
+                </span>
+                <button
+                  onClick={close}
+                  data-testid="close-menu-button"
+                  aria-label="Close menu"
+                  className="p-1 rounded hover:bg-white/10 transition-colors"
+                >
+                  <XMark className="w-5 h-5" />
+                </button>
               </div>
 
-              {open && (
-                <div
-                  className="fixed inset-0 z-[50] bg-black/0 pointer-events-auto"
-                  onClick={close}
-                  data-testid="side-menu-backdrop"
-                />
-              )}
-
-              <Transition
-                show={open}
-                as={Fragment}
-                enter="transition ease-out duration-150"
-                enterFrom="opacity-0"
-                enterTo="opacity-100 backdrop-blur-2xl"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 backdrop-blur-2xl"
-                leaveTo="opacity-0"
-              >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100vh-1rem)] z-[51] inset-x-0 text-sm text-ui-fg-on-color m-2 backdrop-blur-2xl">
-                  <div
-                    data-testid="nav-menu-popup"
-                    className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6 overflow-y-auto"
-                  >
-                    <div className="flex justify-end" id="xmark">
-                      <button data-testid="close-menu-button" onClick={close}>
-                        <XMark />
-                      </button>
-                    </div>
-
-                    <ul className="flex flex-col gap-4 items-start justify-start mt-4">
-                      {/* Main links */}
-                      {mainLinks.map(({ label, href }) => (
-                        <li key={href}>
-                          <LocalizedClientLink
-                            href={href}
-                            className="text-3xl leading-10 hover:text-ui-fg-disabled"
-                            onClick={close}
-                          >
-                            {label}
-                          </LocalizedClientLink>
-                        </li>
-                      ))}
-
-                      {/* Divider */}
-                      <li className="w-full border-t border-white/20 my-1" />
-
-                      {/* Category links */}
-                      {categoryLinks.map(({ label, href }) => (
-                        <li key={href}>
-                          <LocalizedClientLink
-                            href={href}
-                            className="text-xl leading-8 hover:text-ui-fg-disabled"
-                            onClick={close}
-                          >
-                            {label}
-                          </LocalizedClientLink>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="flex flex-col gap-y-6 mt-8">
-                      <div className="flex justify-between items-center">
-                        <LanguageSwitcher />
-                      </div>
-                      {!!locales?.length && (
-                        <div
-                          className="flex justify-between"
-                          onMouseEnter={languageToggleState.open}
-                          onMouseLeave={languageToggleState.close}
-                        >
-                          <LanguageSelect
-                            toggleState={languageToggleState}
-                            locales={locales}
-                            currentLocale={currentLocale}
-                          />
-                          <ArrowRightMini
-                            className={clx(
-                              "transition-transform duration-150",
-                              languageToggleState.state ? "-rotate-90" : ""
-                            )}
-                          />
-                        </div>
-                      )}
-                      <div
-                        className="flex justify-between"
-                        onMouseEnter={countryToggleState.open}
-                        onMouseLeave={countryToggleState.close}
+              {/* Navigation links */}
+              <nav className="flex-1 overflow-y-auto px-6 py-8">
+                {/* Main links */}
+                <ul className="flex flex-col gap-1 mb-8">
+                  {mainLinks.map(({ label, href }) => (
+                    <li key={href}>
+                      <LocalizedClientLink
+                        href={href}
+                        className="flex items-center py-2 text-2xl font-medium text-white hover:text-teal-400 transition-colors"
+                        onClick={close}
                       >
-                        {regions && (
-                          <CountrySelect
-                            toggleState={countryToggleState}
-                            regions={regions}
-                          />
-                        )}
-                        <ArrowRightMini
-                          className={clx(
-                            "transition-transform duration-150",
-                            countryToggleState.state ? "-rotate-90" : ""
-                          )}
-                        />
-                      </div>
-                      <Text className="flex justify-between txt-compact-small">
-                        © 2026 Ergonómica. Panamá.
-                      </Text>
-                    </div>
-                  </div>
-                </PopoverPanel>
-              </Transition>
-            </>
-          )}
-        </Popover>
-      </div>
+                        {label}
+                      </LocalizedClientLink>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Divider */}
+                <div className="border-t border-white/10 mb-6" />
+
+                {/* Category links */}
+                <p className="text-xs font-medium text-white/40 uppercase tracking-widest mb-3">
+                  {lang === "en" ? "Categories" : "Categorías"}
+                </p>
+                <ul className="flex flex-col gap-1">
+                  {categoryLinks.map(({ label, href }) => (
+                    <li key={href}>
+                      <LocalizedClientLink
+                        href={href}
+                        className="flex items-center py-2 text-base text-white/80 hover:text-teal-400 transition-colors"
+                        onClick={close}
+                      >
+                        {label}
+                      </LocalizedClientLink>
+                    </li>
+                  ))}
+                  <li>
+                    <LocalizedClientLink
+                      href="/store"
+                      className="flex items-center py-2 text-base text-white/80 hover:text-teal-400 transition-colors"
+                      onClick={close}
+                    >
+                      {lang === "en" ? "All Collections" : "Todas las Colecciones"}
+                    </LocalizedClientLink>
+                  </li>
+                </ul>
+              </nav>
+
+              {/* Footer */}
+              <div className="px-6 py-6 border-t border-white/10 flex flex-col gap-4">
+                <LanguageSwitcher />
+                <p className="text-xs text-white/30">
+                  © 2026 Ergonómica. Panamá.
+                </p>
+              </div>
+            </Dialog.Panel>
+          </Transition.Child>
+        </Dialog>
+      </Transition>
     </div>
   )
 }
