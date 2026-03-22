@@ -39,6 +39,7 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const [quantity, setQuantity] = useState(1)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -141,12 +142,13 @@ export default function ProductActions({
 
     await addToCart({
       variantId: selectedVariant.id,
-      quantity: 1,
+      quantity: quantity,
       countryCode,
     })
 
-    trackAddToCart(product, selectedVariant, 1)
+    trackAddToCart(product, selectedVariant, quantity)
     router.refresh()
+    setQuantity(1)
     setIsAdding(false)
   }
 
@@ -176,6 +178,28 @@ export default function ProductActions({
         </div>
 
         <ProductPrice product={product} variant={selectedVariant} />
+
+        <div className="flex items-center gap-3 py-2">
+          <span className="text-sm text-gray-600">{lang === "en" ? "Quantity" : "Cantidad"}</span>
+          <div className="flex items-center border border-gray-200 rounded-lg">
+            <button
+              type="button"
+              className="px-3 py-1.5 text-gray-500 hover:text-gray-900 disabled:opacity-30"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+            >
+              −
+            </button>
+            <span className="px-3 py-1.5 text-sm font-medium min-w-[2rem] text-center">{quantity}</span>
+            <button
+              type="button"
+              className="px-3 py-1.5 text-gray-500 hover:text-gray-900"
+              onClick={() => setQuantity(quantity + 1)}
+            >
+              +
+            </button>
+          </div>
+        </div>
 
         <Button
           onClick={handleAddToCart}

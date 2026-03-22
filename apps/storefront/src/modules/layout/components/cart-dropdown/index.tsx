@@ -27,7 +27,7 @@ const CartDropdown = ({
   const lang = useLang()
   const t = getTranslations(lang)
 
-  const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
+  const [activeTimer, setActiveTimer] = useState<ReturnType<typeof setTimeout> | undefined>(
     undefined
   )
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)

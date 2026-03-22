@@ -42,23 +42,24 @@ export default async function RelatedProducts({
     )
   })
 
-  if (!products.length) {
+  const related = products.slice(0, 4)
+
+  if (!related.length) {
     return null
   }
 
+  const isEn = countryCode === "en"
+
   return (
     <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
-          Related products
-        </span>
+      <div className="flex flex-col items-center text-center mb-8">
         <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          You might also want to check out these products.
+          {isEn ? "You might also like" : "También te puede interesar"}
         </p>
       </div>
 
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-        {products.map((product) => (
+      <ul className="grid grid-cols-2 small:grid-cols-4 gap-4">
+        {related.map((product) => (
           <li key={product.id}>
             <Product region={region} product={product} />
           </li>

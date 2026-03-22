@@ -426,7 +426,7 @@ export async function placeOrder(cartId?: string) {
       funnel_checkout_started: new Date().toISOString(),
     }
 
-    await sdk.store.cart.update(id, { metadata }, headers)
+    await sdk.store.cart.update(id, { metadata }, {}, headers)
   } catch {
     // Non-critical — proceed with order completion even if metadata fails
   }

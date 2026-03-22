@@ -49,12 +49,21 @@ export default async function Nav() {
       <header className="relative mx-auto border-b duration-200 bg-white border-ui-border-base">
         {/* Main nav row */}
         <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-16 text-small-regular">
-          {/* Left: hamburger (mobile) + category links (desktop) */}
-          <div className="flex items-center gap-x-6 h-full">
-            <div className="h-full">
+          {/* Left: Burger (mobile-only) + Logo + Desktop categories */}
+          <div className="flex items-center gap-x-4 h-full">
+            {/* Burger — hidden on large screens */}
+            <div className="large:hidden h-full">
               <SideMenu regions={regions} locales={locales} currentLocale={currentLocale} />
             </div>
-            {/* Desktop category links */}
+            {/* Logo — always visible */}
+            <LocalizedClientLink
+              href="/"
+              className="txt-compact-xlarge-plus hover:text-ui-fg-base tracking-tight font-semibold whitespace-nowrap"
+              data-testid="nav-store-link"
+            >
+              Ergonómica
+            </LocalizedClientLink>
+            {/* Desktop category links — hidden on mobile */}
             <div className="hidden large:flex items-center gap-x-4 h-full">
               {NAV_CATEGORIES.map((cat) => (
                 <LocalizedClientLink
@@ -74,19 +83,8 @@ export default async function Nav() {
             </div>
           </div>
 
-          {/* Center: Logo */}
-          <div className="flex items-center h-full">
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base tracking-tight font-semibold"
-              data-testid="nav-store-link"
-            >
-              Ergonómica
-            </LocalizedClientLink>
-          </div>
-
           {/* Right: Search + Language + Cart */}
-          <div className="flex items-center gap-x-4 h-full flex-1 basis-0 justify-end">
+          <div className="flex items-center gap-x-4 h-full justify-end">
             <SearchButton />
             <div className="hidden small:flex items-center gap-x-4 h-full">
               <LanguageSwitcher />

@@ -63,40 +63,13 @@ export default function Hero({
             </div>
           </div>
 
-          {/* Showroom card — 40% */}
+          {/* Hero image placeholder — 40% */}
           <div className="w-full md:w-2/5">
-            <a
-              href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block aspect-[4/3] bg-gradient-to-br from-teal-50 to-gray-100 rounded-2xl border border-gray-200 p-8 flex flex-col items-center justify-center text-center hover:shadow-lg transition-shadow"
-            >
-              <svg
-                width="64"
-                height="64"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#0d9488"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mb-4"
-              >
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-              <p className="font-semibold text-gray-900 text-sm">
-                {lang === "en" ? "Visit Our Showroom" : "Visita Nuestro Showroom"}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Coco del Mar, {lang === "en" ? "Panama City" : "Ciudad de Panamá"}
-              </p>
-              <p className="text-xs text-teal-600 font-medium mt-2">
-                {lang === "en"
-                  ? "Mon-Fri 12-6PM, Sat 9-12PM →"
-                  : "Lun-Vie 12-6PM, Sáb 9-12PM →"}
-              </p>
-            </a>
+            <div className="aspect-[4/3] bg-gradient-to-br from-teal-50 via-gray-50 to-white rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="text-center p-8">
+                <p className="text-gray-400 text-sm">{lang === "en" ? "Hero image coming soon" : "Imagen principal próximamente"}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
