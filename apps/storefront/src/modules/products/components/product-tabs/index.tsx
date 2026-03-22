@@ -88,7 +88,7 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
   ]
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-6 border-t border-ergo-200/60">
       <Accordion type="multiple">
         {tabs.map((tab, i) => (
           <Accordion.Item key={i} title={tab.label} headingSize="medium" value={tab.label}>
@@ -104,11 +104,11 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
 
 const DescriptionTab = ({ product }: ProductTabsProps) => {
   return (
-    <div className="py-6 text-sm text-ui-fg-subtle leading-relaxed">
+    <div className="py-4 pb-5 text-[0.85rem] text-ergo-600 leading-[1.7]">
       {product.description ? (
         <p className="whitespace-pre-line">{product.description}</p>
       ) : (
-        <p className="text-ui-fg-muted italic">—</p>
+        <p className="text-ergo-300 italic">—</p>
       )}
     </div>
   )
@@ -124,21 +124,19 @@ const SpecsTab = ({
   lang: "es" | "en"
 }) => {
   return (
-    <div className="py-6">
-      <table className="w-full text-sm">
-        <tbody>
-          {specs.map(([key, value]) => {
-            const labelDef = SPEC_LABELS[key]
-            const label = labelDef ? labelDef[lang] : key.replace(/_/g, " ")
-            return (
-              <tr key={key} className="border-b border-ui-border-base last:border-0">
-                <td className="py-2 pr-4 font-semibold text-ui-fg-base w-1/2">{label}</td>
-                <td className="py-2 text-ui-fg-subtle">{String(value)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+    <div className="py-3 pb-5">
+      <div className="flex flex-col">
+        {specs.map(([key, value]) => {
+          const labelDef = SPEC_LABELS[key]
+          const label = labelDef ? labelDef[lang] : key.replace(/_/g, " ")
+          return (
+            <div key={key} className="flex border-b border-ergo-200/60 last:border-0 py-2.5 text-[0.82rem]">
+              <span className="w-[45%] font-semibold text-ergo-800">{label}</span>
+              <span className="w-[55%] text-ergo-400">{String(value)}</span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -147,7 +145,7 @@ const SpecsTab = ({
 
 const ShippingTab = ({ lang }: { lang: "es" | "en" }) => {
   return (
-    <div className="py-6 text-sm text-ui-fg-subtle leading-relaxed">
+    <div className="py-4 pb-5 text-[0.85rem] text-ergo-600 leading-[1.7]">
       <p>{SHIPPING_TEXT[lang]}</p>
     </div>
   )

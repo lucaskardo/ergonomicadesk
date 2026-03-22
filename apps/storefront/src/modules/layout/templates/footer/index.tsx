@@ -2,6 +2,7 @@
 
 import { useLang } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Logo from "@modules/common/components/logo"
 
 const socialLinks = [
   {
@@ -101,32 +102,29 @@ export default function Footer() {
   }[lang]
 
   return (
-    <footer className="border-t border-ui-border-base w-full bg-white">
-      <div className="content-container">
+    <footer className="w-full bg-ergo-950 text-ergo-300">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Main footer grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-14">
           {/* Column 1: Brand */}
           <div className="flex flex-col gap-4">
             <LocalizedClientLink
               href="/"
-              className="text-xl font-semibold text-ui-fg-base tracking-tight hover:text-ui-fg-subtle"
+              className="flex items-center gap-2.5 text-white hover:text-ergo-sky transition-colors"
             >
-              Ergonómica
+              <Logo size={28} className="text-white" />
+              <span className="font-display font-extrabold text-[0.95rem] uppercase tracking-[0.06em]">
+                Ergonómica
+              </span>
             </LocalizedClientLink>
-            <p className="text-sm text-ui-fg-subtle leading-relaxed">
+            <p className="text-sm text-ergo-400 leading-relaxed">
               {t.tagline}
             </p>
-            <div className="flex flex-col gap-1 text-sm text-ui-fg-subtle">
-              <a
-                href="tel:+50769533776"
-                className="hover:text-ui-fg-base"
-              >
+            <div className="flex flex-col gap-1 text-sm text-ergo-400">
+              <a href="tel:+50769533776" className="hover:text-white transition-colors">
                 +507 6953-3776
               </a>
-              <a
-                href="mailto:ventas@ergonomicadesk.com"
-                className="hover:text-ui-fg-base"
-              >
+              <a href="mailto:ventas@ergonomicadesk.com" className="hover:text-white transition-colors">
                 ventas@ergonomicadesk.com
               </a>
             </div>
@@ -134,30 +132,30 @@ export default function Footer() {
 
           {/* Column 2: Products */}
           <div className="flex flex-col gap-3">
-            <span className="text-sm font-medium text-ui-fg-base">{t.products}</span>
-            <ul className="flex flex-col gap-2 text-sm text-ui-fg-subtle">
+            <span className="text-xs font-semibold uppercase tracking-widest text-ergo-300">{t.products}</span>
+            <ul className="flex flex-col gap-2 text-sm text-ergo-400">
               <li>
-                <LocalizedClientLink href="/categories/desks" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/categories/desks" className="hover:text-white transition-colors">
                   {t.desks}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/categories/chairs" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/categories/chairs" className="hover:text-white transition-colors">
                   {t.chairs}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/categories/supports" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/categories/supports" className="hover:text-white transition-colors">
                   {t.supports}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/categories/accessories" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/categories/accessories" className="hover:text-white transition-colors">
                   {t.accessories}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/store" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/store" className="hover:text-white transition-colors">
                   {lang === "en" ? "All products" : "Ver todo"}
                 </LocalizedClientLink>
               </li>
@@ -166,35 +164,35 @@ export default function Footer() {
 
           {/* Column 3: Support */}
           <div className="flex flex-col gap-3">
-            <span className="text-sm font-medium text-ui-fg-base">{t.support}</span>
-            <ul className="flex flex-col gap-2 text-sm text-ui-fg-subtle">
+            <span className="text-xs font-semibold uppercase tracking-widest text-ergo-300">{t.support}</span>
+            <ul className="flex flex-col gap-2 text-sm text-ergo-400">
               <li>
-                <LocalizedClientLink href="/faq" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/faq" className="hover:text-white transition-colors">
                   {t.faq}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/deliveries" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/deliveries" className="hover:text-white transition-colors">
                   {t.deliveries}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/returns" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/returns" className="hover:text-white transition-colors">
                   {t.returns}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/cancellations" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/cancellations" className="hover:text-white transition-colors">
                   {t.cancellations}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/warranty" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/warranty" className="hover:text-white transition-colors">
                   {t.warranty}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href="/catalog" className="hover:text-ui-fg-base">
+                <LocalizedClientLink href="/catalog" className="hover:text-white transition-colors">
                   {t.catalog}
                 </LocalizedClientLink>
               </li>
@@ -203,19 +201,19 @@ export default function Footer() {
 
           {/* Column 4: Contact */}
           <div className="flex flex-col gap-3">
-            <span className="text-sm font-medium text-ui-fg-base">{t.contact}</span>
-            <div className="flex flex-col gap-2 text-sm text-ui-fg-subtle">
+            <span className="text-xs font-semibold uppercase tracking-widest text-ergo-300">{t.contact}</span>
+            <div className="flex flex-col gap-2 text-sm text-ergo-400">
               <a
                 href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-ui-fg-base"
+                className="hover:text-white transition-colors"
               >
                 Calle 79 Este 14, Coco del Mar<br />Ciudad de Panamá
               </a>
               <p>{t.hours}</p>
             </div>
-            <div className="mt-3 w-full aspect-video max-h-[150px] rounded-lg overflow-hidden border border-gray-200">
+            <div className="mt-1 w-full aspect-video max-h-[140px] overflow-hidden border border-white/10">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.7!2d-79.499793!3d8.9936175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8faca8e2b9272055%3A0x6a9de150083231c9!2sErgonomica%20Home%20Office!5e0!3m2!1ses!2spa!4v1700000000000!5m2!1ses!2spa"
                 width="100%"
@@ -228,7 +226,7 @@ export default function Footer() {
               />
             </div>
             <div className="mt-2">
-              <span className="text-sm font-medium text-ui-fg-base">{t.follow}</span>
+              <span className="text-xs font-semibold uppercase tracking-widest text-ergo-300">{t.follow}</span>
               <div className="flex gap-3 mt-2">
                 {socialLinks.map((social) => (
                   <a
@@ -236,7 +234,7 @@ export default function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-ui-fg-subtle hover:text-ui-fg-base transition-colors"
+                    className="text-ergo-400 hover:text-white transition-colors"
                     aria-label={social.name}
                   >
                     {social.icon}
@@ -248,19 +246,18 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-ui-border-base py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-ui-fg-muted">{t.copyright}</p>
-          <div className="flex items-center gap-4 text-xs text-ui-fg-subtle">
-            <LocalizedClientLink href="/privacy" className="hover:text-ui-fg-base">
+        <div className="border-t border-white/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-ergo-400">{t.copyright}</p>
+          <div className="flex items-center gap-4 text-xs text-ergo-400">
+            <LocalizedClientLink href="/privacy" className="hover:text-white transition-colors">
               {t.privacy}
             </LocalizedClientLink>
-            <LocalizedClientLink href="/terms" className="hover:text-ui-fg-base">
+            <LocalizedClientLink href="/terms" className="hover:text-white transition-colors">
               {t.terms}
             </LocalizedClientLink>
-            {/* Payment icons */}
             <div className="flex items-center gap-2 ml-2">
-              <span className="text-xs font-medium text-ui-fg-muted border border-ui-border-base rounded px-1.5 py-0.5">VISA</span>
-              <span className="text-xs font-medium text-ui-fg-muted border border-ui-border-base rounded px-1.5 py-0.5">MC</span>
+              <span className="text-xs font-medium text-ergo-400 border border-white/20 px-1.5 py-0.5">VISA</span>
+              <span className="text-xs font-medium text-ergo-400 border border-white/20 px-1.5 py-0.5">MC</span>
             </div>
           </div>
         </div>

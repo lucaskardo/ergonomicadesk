@@ -21,6 +21,23 @@ module.exports = {
         padding: "padding-top padding-right padding-bottom padding-left",
       },
       colors: {
+        ergo: {
+          sky: "#5BC0EB",
+          "sky-hover": "#4AB0DB",
+          "sky-dark": "#2A8BBF",
+          "sky-light": "#D6F0FB",
+          "sky-50": "#EBF7FD",
+          char: "#424242",
+          950: "#0C1222",
+          800: "#1B2540",
+          600: "#3D4E6B",
+          400: "#7B8BA5",
+          300: "#A5B1C7",
+          200: "#D0D7E3",
+          100: "#E8ECF2",
+          bg: "#F8FAFB",
+          "bg-warm": "#F0F4F7",
+        },
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -60,13 +77,14 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          "Inter",
+          "General Sans",
           "-apple-system",
           "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Ubuntu",
+          "sans-serif",
+        ],
+        display: [
+          "Cabinet Grotesk",
+          "system-ui",
           "sans-serif",
         ],
       },

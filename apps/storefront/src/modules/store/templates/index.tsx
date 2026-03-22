@@ -43,18 +43,18 @@ const StoreTemplate = async ({
   )
 
   return (
-    <div className="flex flex-col py-6 content-container gap-6" data-testid="category-container">
+    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
       {/* Top row: heading */}
       <StoreHeading />
 
-      {/* Category pills */}
+      {/* Category filter pills — square corners */}
       <div className="flex flex-wrap gap-2">
         <LocalizedClientLink
           href="/store"
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+          className={`px-4 py-2 text-[0.82rem] font-semibold transition-colors border ${
             !categoryId
-              ? "bg-gray-900 text-white border-gray-900"
-              : "border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+              ? "bg-ergo-950 text-white border-ergo-950"
+              : "border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950"
           }`}
         >
           {lang === "en" ? "All" : "Todos"}
@@ -68,10 +68,10 @@ const StoreTemplate = async ({
               <LocalizedClientLink
                 key={cat.id}
                 href={`/store?category_id=${cat.id}`}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                className={`px-4 py-2 text-[0.82rem] font-semibold transition-colors border ${
                   isActive
-                    ? "bg-gray-900 text-white border-gray-900"
-                    : "border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+                    ? "bg-ergo-950 text-white border-ergo-950"
+                    : "border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950"
                 }`}
               >
                 {label}

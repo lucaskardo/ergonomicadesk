@@ -1,116 +1,122 @@
+// Renamed visually to WorkspaceInspiration but kept same filename/export for backward compat
+
+const CONTENT = {
+  es: {
+    heading: "Transforma tu",
+    headingAccent: "espacio de trabajo",
+    subtitle: "Espacios diseñados para la productividad y el confort",
+    cards: [
+      {
+        tag: "Home Office",
+        title: "El espacio que mereces",
+        desc: "Standing desks, sillas mesh y almacenamiento inteligente para tu home office.",
+        bg: "linear-gradient(145deg, #1B2540 0%, #2A3B5C 100%)",
+      },
+      {
+        tag: "Gaming & Creativo",
+        title: "Setup sin límites",
+        desc: "Soportes de monitores, sillas gaming y escritorios que se adaptan a tu flujo.",
+        bg: "linear-gradient(145deg, #0C1222 0%, #1B2540 100%)",
+      },
+    ],
+    benefits: [
+      { title: "Showroom Coco del Mar", desc: "Prueba antes de comprar. Lun–Vie 12–6PM, Sáb 9–12PM." },
+      { title: "Entrega + Ensamblaje", desc: "Gratis en Ciudad de Panamá en pedidos >$99." },
+      { title: "Hasta 5 Años Garantía", desc: "Servicio técnico local. +500 oficinas equipadas." },
+    ],
+  },
+  en: {
+    heading: "Transform your",
+    headingAccent: "workspace",
+    subtitle: "Spaces designed for productivity and comfort",
+    cards: [
+      {
+        tag: "Home Office",
+        title: "The space you deserve",
+        desc: "Standing desks, mesh chairs and smart storage for your home office.",
+        bg: "linear-gradient(145deg, #1B2540 0%, #2A3B5C 100%)",
+      },
+      {
+        tag: "Gaming & Creative",
+        title: "Setup without limits",
+        desc: "Monitor arms, gaming chairs and desks that adapt to your workflow.",
+        bg: "linear-gradient(145deg, #0C1222 0%, #1B2540 100%)",
+      },
+    ],
+    benefits: [
+      { title: "Coco del Mar Showroom", desc: "Try before you buy. Mon–Fri 12–6PM, Sat 9–12PM." },
+      { title: "Delivery + Assembly", desc: "Free in Panama City on orders >$99." },
+      { title: "Up to 5 Years Warranty", desc: "Local tech support. 500+ offices outfitted." },
+    ],
+  },
+}
+
 export default function WhyErgonomica({ lang }: { lang: "es" | "en" }) {
-  const content =
-    lang === "en"
-      ? {
-          title: "Why Ergonómica?",
-          items: [
-            {
-              title: "Showroom in Coco del Mar",
-              description: "Try before you buy. Mon-Fri 12-6PM, Sat 9-12PM.",
-              icon: "showroom",
-            },
-            {
-              title: "Free Delivery + Assembly",
-              description:
-                "In Panama City on orders over $99. Professional setup included.",
-              icon: "delivery",
-            },
-            {
-              title: "Up to 5 Year Warranty",
-              description: "Local tech support included. +500 offices outfitted.",
-              icon: "warranty",
-            },
-          ],
-        }
-      : {
-          title: "¿Por qué Ergonómica?",
-          items: [
-            {
-              title: "Showroom en Coco del Mar",
-              description: "Prueba antes de comprar. Lun-Vie 12-6PM, Sáb 9-12PM.",
-              icon: "showroom",
-            },
-            {
-              title: "Entrega + Ensamblaje Gratis",
-              description:
-                "En Ciudad de Panamá en pedidos >$99. Instalación profesional incluida.",
-              icon: "delivery",
-            },
-            {
-              title: "Hasta 5 Años de Garantía",
-              description: "Servicio técnico local incluido. +500 oficinas equipadas.",
-              icon: "warranty",
-            },
-          ],
-        }
+  const c = CONTENT[lang]
 
   return (
-    <section className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-          {content.title}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {content.items.map((item) => (
-            <div
-              key={item.icon}
-              className="bg-white rounded-xl p-6 border border-gray-100 text-center"
-            >
-              <div className="flex justify-center mb-4">
-                {item.icon === "showroom" && (
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#0d9488"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
+    <section className="bg-ergo-bg-warm py-16">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
+        {/* Header */}
+        <div className="mb-10">
+          <h2
+            className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
+            style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
+          >
+            {c.heading}{" "}
+            <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+          </h2>
+          <p className="text-[0.88rem] text-ergo-400 mt-2">{c.subtitle}</p>
+        </div>
+
+        {/* 2-column grid: workspace cards + benefits */}
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_4fr] gap-3">
+          {/* Workspace cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {c.cards.map((card) => (
+              <div
+                key={card.tag}
+                className="relative overflow-hidden cursor-pointer group"
+                style={{ minHeight: 280, background: card.bg }}
+              >
+                {/* Overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "linear-gradient(to top, rgba(12,18,34,0.7) 0%, rgba(12,18,34,0.1) 60%)",
+                  }}
+                />
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                  <span className="inline-block text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-ergo-sky mb-2">
+                    {card.tag}
+                  </span>
+                  <h3 className="font-display font-bold text-white text-lg leading-tight">{card.title}</h3>
+                  <p className="text-[0.78rem] text-white/70 mt-1.5 leading-relaxed">{card.desc}</p>
+                </div>
+                {/* Hover accent */}
+                <div className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-white/60 group-hover:text-white transition-colors">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M7 17L17 7M17 7H7M17 7v10" />
                   </svg>
-                )}
-                {item.icon === "delivery" && (
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#0d9488"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M1 3h15v13H1z" />
-                    <path d="M16 8h4l3 3v5h-7V8z" />
-                    <circle cx="5.5" cy="18.5" r="2.5" />
-                    <circle cx="18.5" cy="18.5" r="2.5" />
-                  </svg>
-                )}
-                {item.icon === "warranty" && (
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#0d9488"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <polyline points="9 12 11 14 15 10" />
-                  </svg>
-                )}
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-              <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                {item.description}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Benefits column */}
+          <div className="flex flex-col gap-3">
+            {c.benefits.map((b) => (
+              <div
+                key={b.title}
+                className="flex-1 bg-white border border-ergo-200/60 p-6 flex flex-col justify-center"
+              >
+                <div className="w-8 h-0.5 bg-ergo-sky mb-3" />
+                <h3 className="font-semibold text-ergo-950 text-[0.9rem]">{b.title}</h3>
+                <p className="text-[0.78rem] text-ergo-400 mt-1.5 leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

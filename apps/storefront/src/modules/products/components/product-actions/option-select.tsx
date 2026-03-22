@@ -1,7 +1,6 @@
 "use client"
 
 import { HttpTypes } from "@medusajs/types"
-import { clx } from "@medusajs/ui"
 import React from "react"
 import { usePathname } from "next/navigation"
 
@@ -27,32 +26,29 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   const filteredOptions = (option.values ?? []).map((v) => v.value)
 
   return (
-    <div className="flex flex-col gap-y-3">
-      <span className="text-sm">{lang === "en" ? `Select ${title}` : `Selecciona ${title}`}</span>
-      <div
-        className="flex flex-wrap justify-between gap-2"
-        data-testid={dataTestId}
-      >
-        {filteredOptions.map((v) => {
-          return (
-            <button
-              onClick={() => updateOption(option.id, v)}
-              key={v}
-              className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
-                {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
-                }
-              )}
-              disabled={disabled}
-              data-testid="option-button"
-            >
-              {v}
-            </button>
-          )
-        })}
+    <div className="flex flex-col gap-2.5">
+      <span className="text-[0.78rem] font-semibold text-ergo-800">
+        {lang === "en" ? `Select ${title}` : `Selecciona ${title}`}
+        {current && (
+          <span className="font-normal text-ergo-400 ml-1.5">— {current}</span>
+        )}
+      </span>
+      <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
+        {filteredOptions.map((v) => (
+          <button
+            onClick={() => updateOption(option.id, v)}
+            key={v}
+            className={`px-4 py-2.5 border text-[0.82rem] font-semibold transition-all duration-200 ${
+              v === current
+                ? "border-ergo-sky-dark text-ergo-sky-dark bg-ergo-sky-50"
+                : "border-ergo-200/80 text-ergo-600 bg-white hover:border-ergo-600 hover:text-ergo-950"
+            }`}
+            disabled={disabled}
+            data-testid="option-button"
+          >
+            {v}
+          </button>
+        ))}
       </div>
     </div>
   )

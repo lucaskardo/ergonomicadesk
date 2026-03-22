@@ -14,38 +14,82 @@ const CURATED_HANDLES = [
   "stand-arm-single-bl",
 ]
 
+const CONTENT = {
+  es: {
+    heading: "Los Más",
+    headingAccent: "Vendidos",
+    subtitle: "Productos favoritos de nuestros clientes",
+    viewAll: "Ver todos los productos",
+    from: "Desde",
+    badge: "Más vendido",
+  },
+  en: {
+    heading: "Best",
+    headingAccent: "Sellers",
+    subtitle: "Customer favorites",
+    viewAll: "View all products",
+    from: "From",
+    badge: "Best seller",
+  },
+}
+
 function ProductCard({
   product,
   lang,
+  index,
 }: {
   product: HttpTypes.StoreProduct
-  lang: string
+  lang: "es" | "en"
+  index: number
 }) {
   const { cheapestPrice } = getProductPrice({ product })
-
-  const fromLabel = lang === "en" ? "From" : "Desde"
+  const c = CONTENT[lang]
 
   return (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
-      className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow"
+      className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(0,0,0,0.09)]"
     >
-      <div className="aspect-square bg-gray-100 overflow-hidden">
+      {/* Image area */}
+      <div className="relative aspect-square bg-ergo-bg-warm overflow-hidden">
         <Thumbnail
           thumbnail={product.thumbnail}
           images={product.images}
           size="full"
         />
+        {/* Badge */}
+        {index < 2 && (
+          <span className="absolute top-2.5 left-2.5 px-2.5 py-1 text-[0.63rem] font-semibold uppercase tracking-[0.04em] bg-ergo-950 text-white">
+            {c.badge}
+          </span>
+        )}
+        {/* Heart icon on hover */}
+        <button className="absolute top-2.5 right-2.5 w-8 h-8 bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" aria-label="Save">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-ergo-400">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
       </div>
-      <div className="p-4">
-        <p className="font-medium text-gray-900 text-sm line-clamp-2 leading-snug">
+      {/* Body */}
+      <div className="px-4 pt-3 pb-4">
+        <p className="text-[0.66rem] font-semibold uppercase tracking-[0.07em] text-ergo-sky-dark">
+          {product.categories?.[0]?.name ?? ""}
+        </p>
+        <p className="text-[0.88rem] font-semibold mt-0.5 leading-[1.3] text-ergo-950 line-clamp-2">
           {product.title}
         </p>
-        {cheapestPrice && (
-          <p className="mt-1 text-teal-600 font-semibold text-base">
-            {fromLabel} {cheapestPrice.calculated_price}
+        {product.description && (
+          <p className="text-[0.75rem] text-ergo-400 mt-0.5 line-clamp-1">
+            {product.description}
           </p>
         )}
+        <div className="flex items-center justify-between mt-3">
+          {cheapestPrice && (
+            <span className="text-[1.05rem] font-bold text-ergo-950">
+              {c.from} {cheapestPrice.calculated_price}
+            </span>
+          )}
+        </div>
       </div>
     </LocalizedClientLink>
   )
@@ -65,8 +109,8 @@ export default async function FeaturedProductsHome({
       regionId: region.id,
       queryParams: {
         handle: CURATED_HANDLES,
-        limit: 6,
-        fields: "*variants.calculated_price",
+        limit: 8,
+        fields: "*variants.calculated_price,*categories",
       },
     }),
     { fallback: { response: { products: [], count: 0 }, nextPage: null }, label: "featuredProducts-curated" }
@@ -78,8 +122,8 @@ export default async function FeaturedProductsHome({
       listProducts({
         regionId: region.id,
         queryParams: {
-          limit: 6,
-          fields: "*variants.calculated_price",
+          limit: 8,
+          fields: "*variants.calculated_price,*categories",
           order: "-created_at",
         },
       }),
@@ -90,30 +134,48 @@ export default async function FeaturedProductsHome({
 
   if (!products.length) return null
 
-  const title = lang === "en" ? "Bestsellers" : "Los Más Vendidos"
-  const subtitle =
-    lang === "en" ? "Customer favorites" : "Productos favoritos de nuestros clientes"
-  const viewAll = lang === "en" ? "View all products →" : "Ver todos los productos →"
+  const typedLang = (lang === "en" ? "en" : "es") as "es" | "en"
+  const c = CONTENT[typedLang]
 
   return (
-    <section className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-          <p className="mt-2 text-gray-500">{subtitle}</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} lang={lang} />
-          ))}
-        </div>
-        <div className="mt-10 text-center">
+    <section className="bg-ergo-bg py-16">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-9">
+          <div>
+            <h2
+              className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
+              style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
+            >
+              {c.heading}{" "}
+              <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+            </h2>
+            <p className="text-[0.88rem] text-ergo-400 mt-1.5">{c.subtitle}</p>
+          </div>
           <LocalizedClientLink
             href="/store"
-            className="text-teal-600 hover:underline font-medium"
+            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition-all duration-300 flex-shrink-0"
           >
-            {viewAll}
+            {c.viewAll}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </LocalizedClientLink>
+        </div>
+
+        {/* 4-column grid, 3px gaps */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+          style={{ gap: "3px" }}
+        >
+          {products.slice(0, 8).map((product, i) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              lang={typedLang}
+              index={i}
+            />
+          ))}
         </div>
       </div>
     </section>

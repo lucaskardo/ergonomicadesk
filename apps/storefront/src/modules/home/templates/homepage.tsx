@@ -10,6 +10,8 @@ import WhyErgonomica from "@modules/home/components/why-ergonomica"
 import B2BBanner from "@modules/home/components/b2b-banner"
 import SocialProof from "@modules/home/components/social-proof"
 import ShowroomSection from "@modules/home/components/showroom-section"
+import ShowroomCTA from "@modules/home/components/showroom-cta"
+import Newsletter from "@modules/home/components/newsletter"
 
 export default async function Homepage({
   countryCode,
@@ -34,6 +36,8 @@ export default async function Homepage({
       <WhyErgonomica lang={lang} />
       <B2BBanner lang={lang} />
       <SocialProof lang={lang} />
+      <ShowroomCTA lang={lang} />
+      <Newsletter lang={lang} />
       <ShowroomSection lang={lang} />
     </>
   )

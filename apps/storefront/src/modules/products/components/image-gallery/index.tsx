@@ -42,143 +42,143 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
   if (!filteredImages.length) return null
 
-  // For single image, render the original stacked layout
+  // Single image
   if (filteredImages.length === 1) {
     return (
-      <div className="flex items-start relative">
-        <div className="flex flex-col flex-1 small:mx-16 gap-y-4">
-          <div
-            key={filteredImages[0].id}
-            className="relative aspect-[3/4] w-full overflow-hidden bg-ui-bg-subtle rounded-lg"
-          >
-            <Image
-              src={filteredImages[0].url}
-              priority
-              className="object-cover"
-              alt="Product image 1"
-              fill
-              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-            />
-          </div>
-        </div>
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-ergo-100">
+        <Image
+          src={filteredImages[0].url}
+          priority
+          className="object-cover"
+          alt="Product image 1"
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+        />
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-4 small:mx-16">
-      {/* Main carousel */}
-      <div className="relative overflow-hidden rounded-lg" ref={emblaRef}>
-        <div className="flex touch-pan-y">
-          {filteredImages.map((image, index) => (
-            <div
-              key={image.id}
-              className="relative aspect-[3/4] w-full flex-shrink-0"
-            >
-              <Image
-                src={image.url}
-                priority={index <= 1}
-                alt={`Product image ${index + 1}`}
-                fill
-                sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                className="object-cover"
-              />
+    <div className="flex gap-3">
+      {/* Vertical thumbnail strip — desktop left side */}
+      <div className="hidden small:flex flex-col gap-2 w-[72px] flex-shrink-0">
+        {filteredImages.map((image, index) => (
+          <button
+            key={image.id}
+            onClick={() => scrollTo(index)}
+            aria-label={`View image ${index + 1}`}
+            className={`relative w-[72px] h-[72px] overflow-hidden flex-shrink-0 transition-all border-2 ${
+              index === selectedIndex
+                ? "border-ergo-sky-dark opacity-100"
+                : "border-transparent opacity-50 hover:opacity-80"
+            }`}
+          >
+            <Image
+              src={image.url}
+              alt={`Thumbnail ${index + 1}`}
+              fill
+              sizes="72px"
+              className="object-cover"
+            />
+          </button>
+        ))}
+      </div>
+
+      {/* Main image + carousel */}
+      <div className="flex-1">
+        {/* Main carousel */}
+        <div className="relative overflow-hidden" ref={emblaRef}>
+          <div className="flex touch-pan-y">
+            {filteredImages.map((image, index) => (
+              <div
+                key={image.id}
+                className="relative aspect-[3/4] w-full flex-shrink-0 overflow-hidden bg-ergo-100"
+              >
+                <Image
+                  src={image.url}
+                  priority={index <= 1}
+                  alt={`Product image ${index + 1}`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Prev / Next */}
+          {filteredImages.length > 1 && (
+            <>
+              <button
+                onClick={scrollPrev}
+                disabled={prevDisabled}
+                aria-label="Previous image"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition-all disabled:opacity-30"
+                style={{ backdropFilter: "blur(8px)" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                onClick={scrollNext}
+                disabled={nextDisabled}
+                aria-label="Next image"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition-all disabled:opacity-30"
+                style={{ backdropFilter: "blur(8px)" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Mobile dots */}
+          {filteredImages.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 small:hidden">
+              {filteredImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollTo(i)}
+                  aria-label={`Go to image ${i + 1}`}
+                  className={`h-1.5 transition-all ${
+                    i === selectedIndex
+                      ? "bg-white w-4"
+                      : "bg-white/60 w-1.5 hover:bg-white/80"
+                  }`}
+                />
+              ))}
             </div>
-          ))}
+          )}
         </div>
 
-        {/* Prev / Next buttons */}
+        {/* Mobile horizontal thumbnail strip */}
         {filteredImages.length > 1 && (
-          <>
-            <button
-              onClick={scrollPrev}
-              disabled={prevDisabled}
-              aria-label="Previous image"
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center transition-opacity disabled:opacity-30"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 19.5L8.25 12l7.5-7.5"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={scrollNext}
-              disabled={nextDisabled}
-              aria-label="Next image"
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center transition-opacity disabled:opacity-30"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </button>
-          </>
-        )}
-
-        {/* Dot indicator (mobile) */}
-        {filteredImages.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 small:hidden">
-            {filteredImages.map((_, i) => (
+          <div className="flex small:hidden gap-2 mt-3 overflow-x-auto">
+            {filteredImages.map((image, index) => (
               <button
-                key={i}
-                onClick={() => scrollTo(i)}
-                aria-label={`Go to image ${i + 1}`}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${
-                  i === selectedIndex
-                    ? "bg-white w-4"
-                    : "bg-white/60 hover:bg-white/80"
+                key={image.id}
+                onClick={() => scrollTo(index)}
+                aria-label={`View image ${index + 1}`}
+                className={`relative w-14 h-14 flex-shrink-0 overflow-hidden border-2 transition-all ${
+                  index === selectedIndex
+                    ? "border-ergo-sky-dark opacity-100"
+                    : "border-transparent opacity-50 hover:opacity-80"
                 }`}
-              />
+              >
+                <Image
+                  src={image.url}
+                  alt={`Thumbnail ${index + 1}`}
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
+              </button>
             ))}
           </div>
         )}
       </div>
-
-      {/* Thumbnail strip (desktop) */}
-      {filteredImages.length > 1 && (
-        <div className="hidden small:flex gap-2 flex-wrap">
-          {filteredImages.map((image, index) => (
-            <button
-              key={image.id}
-              onClick={() => scrollTo(index)}
-              aria-label={`View image ${index + 1}`}
-              className={`relative w-16 h-20 rounded overflow-hidden flex-shrink-0 transition-all border-2 ${
-                index === selectedIndex
-                  ? "border-teal-600 opacity-100"
-                  : "border-transparent opacity-60 hover:opacity-90"
-              }`}
-            >
-              <Image
-                src={image.url}
-                alt={`Thumbnail ${index + 1}`}
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

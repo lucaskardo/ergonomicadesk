@@ -13,19 +13,19 @@ export default async function ProductPreview({
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
 }) {
-  const { cheapestPrice } = getProductPrice({
-    product,
-  })
+  const { cheapestPrice } = getProductPrice({ product })
+  const category = product.categories?.[0]
 
   return (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
-      className="group block"
+      className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1"
+      style={{ display: "block" }}
     >
       <div data-testid="product-wrapper" className="flex flex-col">
-        {/* Image with scale hover effect */}
-        <div className="overflow-hidden rounded-lg bg-ui-bg-subtle">
-          <div className="transform transition-transform duration-300 ease-out group-hover:scale-105">
+        {/* Image */}
+        <div className="relative aspect-square bg-ergo-bg-warm overflow-hidden">
+          <div className="w-full h-full transition-transform duration-500 group-hover:scale-[1.03]">
             <Thumbnail
               thumbnail={product.thumbnail}
               images={product.images}
@@ -33,27 +33,31 @@ export default async function ProductPreview({
               isFeatured={isFeatured}
             />
           </div>
+          {/* Heart icon on hover */}
+          <button className="absolute top-2.5 right-2.5 w-8 h-8 bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" aria-label="Save">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-ergo-400">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </button>
         </div>
 
-        {/* Product info */}
-        <div className="flex flex-col mt-3 gap-y-1 px-1">
-          <div className="flex items-start justify-between gap-x-2">
-            <p
-              className="text-sm text-ui-fg-base font-medium leading-snug line-clamp-2 group-hover:text-teal-600 transition-colors"
-              data-testid="product-title"
-            >
-              {product.title}
+        {/* Info */}
+        <div className="px-4 pt-3 pb-4">
+          {category && (
+            <p className="text-[0.63rem] font-semibold uppercase tracking-[0.07em] text-ergo-sky-dark mb-0.5">
+              {category.name}
             </p>
-            {cheapestPrice && (
-              <div className="flex items-center gap-x-1 shrink-0 text-sm font-semibold text-ui-fg-base">
-                <PreviewPrice price={cheapestPrice} />
-              </div>
-            )}
-          </div>
-          {product.variants?.[0]?.sku && (
-            <p className="text-[10px] text-gray-400 font-mono">
-              {product.variants[0].sku}
-            </p>
+          )}
+          <p
+            className="text-[0.88rem] font-semibold leading-[1.3] text-ergo-950 line-clamp-2"
+            data-testid="product-title"
+          >
+            {product.title}
+          </p>
+          {cheapestPrice && (
+            <div className="mt-2 text-[1rem] font-bold text-ergo-950">
+              <PreviewPrice price={cheapestPrice} />
+            </div>
           )}
         </div>
       </div>

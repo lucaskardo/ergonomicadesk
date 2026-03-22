@@ -2,6 +2,26 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* ── Global border-radius reset: all corners square ── */
+*, *::before, *::after {
+  border-radius: 0 !important;
+}
+/* Exception: explicit circular elements (color swatches, avatars) */
+.rounded-full-override {
+  border-radius: 9999px !important;
+}
+
+/* ── Base styles ── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #F8FAFB;
+  color: #1B2540;
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {

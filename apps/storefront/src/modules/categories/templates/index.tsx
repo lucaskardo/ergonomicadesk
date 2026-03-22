@@ -48,26 +48,40 @@ export default async function CategoryTemplate({
   const subcategories = category.category_children ?? []
 
   return (
-    <div className="flex flex-col py-6 content-container gap-6" data-testid="category-container">
-      {/* Top row: H1 + breadcrumb */}
-      <div className="flex flex-wrap items-baseline gap-2 text-2xl-semi">
-        {parents.map((parent) => (
-          <span key={parent.id} className="text-ui-fg-subtle">
-            <LocalizedClientLink
-              className="hover:text-black"
-              href={`/categories/${parent.handle}`}
-            >
-              {parent.name}
-            </LocalizedClientLink>
-            {" /"}
-          </span>
-        ))}
-        <h1 data-testid="category-page-title">{category.name}</h1>
-      </div>
-
-      {category.description && (
-        <p className="text-base-regular text-gray-600">{category.description}</p>
+    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
+      {/* Breadcrumb */}
+      {parents.length > 0 && (
+        <div className="flex items-center gap-1.5 text-[0.75rem] text-ergo-400">
+          {parents.reverse().map((parent, i) => (
+            <span key={parent.id} className="flex items-center gap-1.5">
+              <LocalizedClientLink
+                className="hover:text-ergo-sky-dark transition-colors"
+                href={`/categories/${parent.handle}`}
+              >
+                {parent.name}
+              </LocalizedClientLink>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </span>
+          ))}
+          <span className="text-ergo-600 font-medium">{category.name}</span>
+        </div>
       )}
+
+      {/* H1 */}
+      <div>
+        <h1
+          className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
+          style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
+          data-testid="category-page-title"
+        >
+          {category.name}
+        </h1>
+        {category.description && (
+          <p className="text-[0.88rem] text-ergo-400 mt-2">{category.description}</p>
+        )}
+      </div>
 
       {/* Subcategory pills */}
       {subcategories.length > 0 && (
@@ -76,7 +90,7 @@ export default async function CategoryTemplate({
             <LocalizedClientLink
               key={c.id}
               href={`/categories/${c.handle}`}
-              className="px-3 py-1.5 rounded-full text-sm font-medium border border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900 transition-colors"
+              className="px-4 py-2 text-[0.82rem] font-semibold border border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950 transition-colors"
             >
               {c.name}
             </LocalizedClientLink>

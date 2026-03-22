@@ -34,17 +34,40 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   return (
     <>
       <ProductTracker product={product} selectedVariant={selectedVariant} />
+
+      {/* Breadcrumb */}
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 pt-5">
+        <div className="flex items-center gap-1.5 text-[0.75rem] text-ergo-400">
+          <a href="/" className="hover:text-ergo-sky-dark transition-colors">Home</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+          {product.categories?.[0] && (
+            <>
+              <a href={`/categories/${product.categories[0].handle}`} className="hover:text-ergo-sky-dark transition-colors">
+                {product.categories[0].name}
+              </a>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </>
+          )}
+          <span className="text-ergo-600 font-medium">{product.title}</span>
+        </div>
+      </div>
+
+      {/* Main PDP layout: 50/50 */}
       <div
-        className="content-container flex flex-col small:flex-row small:items-start py-6 relative gap-x-8"
+        className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 py-6 grid grid-cols-1 small:grid-cols-2 gap-12 items-start"
         data-testid="product-container"
       >
-        {/* Images — Left side, ~60% on desktop */}
-        <div className="block w-full small:w-[60%] relative">
+        {/* Left: Images */}
+        <div className="w-full">
           <ImageGallery images={images} />
         </div>
 
-        {/* Info + Actions — Right side, ~40% on desktop, sticky */}
-        <div className="flex flex-col small:sticky small:top-48 small:w-[40%] w-full py-8 small:py-0 gap-y-6">
+        {/* Right: Info + Actions, sticky on desktop */}
+        <div className="flex flex-col small:sticky small:top-24 gap-0" data-testid="product-info-container">
           <ProductInfo product={product} />
           <Suspense
             fallback={
@@ -60,8 +83,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <ProductTabs product={product} />
         </div>
       </div>
+
+      {/* Related products */}
       <div
-        className="content-container my-16 small:my-32"
+        className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 py-16"
         data-testid="related-products-container"
       >
         <Suspense fallback={<SkeletonRelatedProducts />}>

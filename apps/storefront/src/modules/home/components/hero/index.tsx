@@ -1,5 +1,24 @@
 import Link from "next/link"
 
+const CONTENT = {
+  es: {
+    label: "Standing Desks & Ergonomía · Panamá",
+    title: "Espacios de trabajo que impulsan tu",
+    titleAccent: "productividad",
+    subtitle: "Standing desks, sillas ergonómicas y accesorios premium. Envío gratis + ensamblaje incluido en Ciudad de Panamá.",
+    ctaPrimary: "Explorar Productos",
+    ctaSecondary: "Visitar Showroom",
+  },
+  en: {
+    label: "Standing Desks & Ergonomics · Panama",
+    title: "Workspaces that boost your",
+    titleAccent: "productivity",
+    subtitle: "Standing desks, ergonomic chairs and premium accessories. Free shipping + assembly included in Panama City.",
+    ctaPrimary: "Browse Products",
+    ctaSecondary: "Visit Showroom",
+  },
+}
+
 export default function Hero({
   lang,
   countryCode,
@@ -9,68 +28,89 @@ export default function Hero({
 }) {
   const langPrefix = lang === "en" ? "/en" : ""
   const base = `/${countryCode}${langPrefix}`
-
-  const content =
-    lang === "en"
-      ? {
-          pretitle: "Home Office Next Level",
-          title: "Standing Desks & Ergonomic\nChairs in Panama",
-          subtitle:
-            "Free delivery, professional assembly included and up to 5 year warranty. Visit our showroom in Coco del Mar.",
-          cta_primary: "Browse Products",
-        }
-      : {
-          pretitle: "Home Office a Otro Nivel",
-          title: "Escritorios Elevables y Sillas\nErgonómicas en Panamá",
-          subtitle:
-            "Envío gratis, ensamblaje profesional incluido y hasta 5 años de garantía. Visítanos en nuestro showroom en Coco del Mar.",
-          cta_primary: "Explorar Productos",
-        }
+  const c = CONTENT[lang]
 
   return (
-    <section className="bg-gradient-to-b from-white to-gray-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          {/* Text — 60% */}
-          <div className="flex-1 md:w-3/5">
-            <span className="inline-flex items-center rounded-full bg-teal-50 text-teal-700 px-3 py-1 text-xs font-medium mb-3">
-              🇵🇦 {lang === "en" ? "#1 in Panama" : "#1 en Panamá"}
-            </span>
-            <p className="text-sm uppercase tracking-widest text-teal-600 font-semibold">
-              {content.pretitle}
-            </p>
-            <h1 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight whitespace-pre-line">
-              {content.title}
-            </h1>
-            <p className="mt-5 text-lg text-gray-600 max-w-lg leading-relaxed">
-              {content.subtitle}
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <Link
-                href={`${base}/store`}
-                className="inline-flex justify-center items-center px-10 py-4 text-base bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg"
-              >
-                {content.cta_primary}
-              </Link>
-              <a
-                href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex justify-center items-center px-8 py-3 border-2 border-gray-300 hover:border-teal-600 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
-              >
-                {lang === "en" ? "Visit Showroom" : "Visitar Showroom"}
-              </a>
-            </div>
-          </div>
+    <section
+      className="relative overflow-hidden"
+      style={{
+        minHeight: "clamp(480px, 80vh, 720px)",
+        background: "linear-gradient(135deg, #E8ECF2 0%, #D5DCE8 40%, #C4CDE0 100%)",
+      }}
+    >
+      {/* Radial gradient accents */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 70% 60%, rgba(91,192,235,0.1) 0%, transparent 55%), radial-gradient(ellipse at 30% 30%, rgba(20,184,166,0.06) 0%, transparent 50%)",
+        }}
+      />
+      {/* Overlay fade to left */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to right, rgba(248,250,251,0.94) 0%, rgba(248,250,251,0.65) 42%, rgba(248,250,251,0.15) 68%, transparent 100%)",
+        }}
+      />
 
-          {/* Hero image placeholder — 40% */}
-          <div className="w-full md:w-2/5">
-            <div className="aspect-[4/3] bg-gradient-to-br from-teal-50 via-gray-50 to-white rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
-              <div className="text-center p-8">
-                <p className="text-gray-400 text-sm">{lang === "en" ? "Hero image coming soon" : "Imagen principal próximamente"}</p>
-              </div>
-            </div>
-          </div>
+      <div
+        className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col justify-center"
+        style={{ minHeight: "clamp(480px, 80vh, 720px)" }}
+      >
+        {/* Label */}
+        <div className="flex items-center gap-2 mb-5">
+          <span className="block w-6 h-[1.5px] bg-ergo-sky-dark" />
+          <span
+            className="text-[0.7rem] font-semibold uppercase tracking-[0.14em]"
+            style={{ color: "#2A8BBF" }}
+          >
+            {c.label}
+          </span>
+        </div>
+
+        {/* H1 */}
+        <h1
+          className="font-display font-extrabold text-ergo-950 leading-[1.06] tracking-tight"
+          style={{
+            fontSize: "clamp(2.4rem, 4.8vw, 3.8rem)",
+            maxWidth: 560,
+            letterSpacing: "-0.03em",
+          }}
+        >
+          {c.title}{" "}
+          <span style={{ color: "#2A8BBF" }}>{c.titleAccent}</span>
+        </h1>
+
+        {/* Subtitle */}
+        <p
+          className="text-ergo-400 leading-relaxed mt-5"
+          style={{ maxWidth: 400, fontSize: "0.98rem" }}
+        >
+          {c.subtitle}
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-wrap gap-3 mt-8">
+          <Link
+            href={`${base}/store`}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] tracking-[0.01em] hover:bg-ergo-sky transition-all duration-300 hover:-translate-y-0.5"
+            style={{ boxShadow: "none" }}
+          >
+            {c.ctaPrimary}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+          <a
+            href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] border-ergo-200 text-ergo-800 font-semibold text-[0.84rem] hover:border-ergo-950 hover:bg-ergo-950/[0.02] transition-all duration-300"
+          >
+            {c.ctaSecondary}
+          </a>
         </div>
       </div>
     </section>

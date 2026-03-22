@@ -12,8 +12,8 @@ import SideMenu from "@modules/layout/components/side-menu"
 import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import SearchButton from "@modules/layout/components/search-button"
 import AnnouncementBar from "@modules/layout/components/announcement-bar"
+import Logo from "@modules/common/components/logo"
 
-// Category nav links (bilingual)
 const NAV_CATEGORIES = [
   { handle: "standing-desks", es: "Standing Desks", en: "Standing Desks" },
   { handle: "office", es: "Oficina", en: "Office" },
@@ -44,59 +44,77 @@ export default async function Nav() {
   }
 
   return (
-    <div className="sticky top-0 inset-x-0 z-50 group">
+    <div className="sticky top-0 inset-x-0 z-50">
       <AnnouncementBar />
-      <header className="relative mx-auto border-b duration-200 bg-white border-ui-border-base">
-        {/* Main nav row */}
-        <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-16 text-small-regular">
-          {/* Left: Burger (mobile-only) + Logo + Desktop categories */}
-          <div className="flex items-center gap-x-4 h-full">
-            {/* Burger — hidden on large screens */}
+      <header
+        className="relative border-b border-ergo-200/60"
+        style={{
+          background: "rgba(248,250,251,0.88)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+        }}
+      >
+        <nav className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between h-16">
+
+          {/* Left: Burger (mobile) + Logo + Desktop links */}
+          <div className="flex items-center gap-x-3 h-full">
+            {/* Mobile burger */}
             <div className="large:hidden h-full">
               <SideMenu regions={regions} locales={locales} currentLocale={currentLocale} />
             </div>
-            {/* Logo — always visible */}
+
+            {/* Logo */}
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base tracking-tight font-semibold whitespace-nowrap"
+              className="flex items-center gap-2.5 text-ergo-950 hover:text-ergo-800 transition-colors"
               data-testid="nav-store-link"
             >
-              Ergonómica
+              <Logo size={28} />
+              <span className="font-display font-extrabold text-[0.95rem] uppercase tracking-[0.06em] text-ergo-950">
+                Ergonómica
+              </span>
             </LocalizedClientLink>
-            {/* Desktop category links — hidden on mobile */}
-            <div className="hidden large:flex items-center gap-x-4 h-full">
+
+            {/* Desktop category links — centered */}
+            <div className="hidden large:flex items-center gap-x-8 h-full ml-8">
               {NAV_CATEGORIES.map((cat) => (
                 <LocalizedClientLink
                   key={cat.handle}
                   href={`/categories/${cat.handle}`}
-                  className="hover:text-ui-fg-base transition-colors whitespace-nowrap text-xs font-medium"
+                  className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
                 >
                   {lang === "en" ? cat.en : cat.es}
+                  <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
                 </LocalizedClientLink>
               ))}
               <LocalizedClientLink
                 href="/store"
-                className="hover:text-ui-fg-base transition-colors whitespace-nowrap text-xs font-medium"
+                className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
               >
                 {lang === "en" ? "Collections" : "Colecciones"}
+                <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
               </LocalizedClientLink>
             </div>
           </div>
 
           {/* Right: Search + Language + Cart */}
-          <div className="flex items-center gap-x-4 h-full justify-end">
+          <div className="flex items-center gap-x-1 h-full">
             <SearchButton />
-            <div className="hidden small:flex items-center gap-x-4 h-full">
+            <div className="hidden small:flex items-center h-full">
               <LanguageSwitcher />
             </div>
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
+                  className="flex items-center justify-center w-9 h-9 text-ergo-600 hover:bg-ergo-bg-warm transition-colors"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
-                  Carrito (0)
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                  </svg>
                 </LocalizedClientLink>
               }
             >

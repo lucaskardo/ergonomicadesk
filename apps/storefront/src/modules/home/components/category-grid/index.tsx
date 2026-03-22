@@ -1,135 +1,58 @@
 import Link from "next/link"
 
-const StandingDeskIcon = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 48 48"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="8" y="22" width="32" height="4" rx="1" />
-    <rect x="12" y="26" width="3" height="16" />
-    <rect x="33" y="26" width="3" height="16" />
-    <path d="M24 22V8" />
-    <path d="M20 12l4-4 4 4" />
-  </svg>
-)
-
-const ChairIcon = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 48 48"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M16 30V14a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v16" />
-    <rect x="12" y="30" width="24" height="4" rx="2" />
-    <path d="M18 34v8M30 34v8" />
-    <path d="M14 42h6M28 42h6" />
-  </svg>
-)
-
-const DeskIcon = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 48 48"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="6" y="16" width="36" height="5" rx="1" />
-    <path d="M10 21v16M38 21v16" />
-    <rect x="10" y="26" width="12" height="8" rx="1" />
-  </svg>
-)
-
-const CabinetIcon = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 48 48"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="10" y="6" width="28" height="36" rx="2" />
-    <line x1="10" y1="24" x2="38" y2="24" />
-    <circle cx="24" cy="16" r="1.5" fill="currentColor" />
-    <circle cx="24" cy="32" r="1.5" fill="currentColor" />
-  </svg>
-)
-
-const AccessoryIcon = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 48 48"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="10" y="14" width="28" height="18" rx="3" />
-    <path d="M18 32v4M30 32v4" />
-    <line x1="15" y1="36" x2="33" y2="36" />
-    <rect x="20" y="20" width="8" height="5" rx="1" />
-  </svg>
-)
+const CONTENT = {
+  es: {
+    heading: "Explora",
+    headingAccent: "nuestras categorías",
+    viewAll: "Ver todo",
+  },
+  en: {
+    heading: "Explore",
+    headingAccent: "our categories",
+    viewAll: "View all",
+  },
+}
 
 const CATEGORIES = [
   {
     handle: "standing-desks",
-    Icon: StandingDeskIcon,
     es: "Standing Desks",
     en: "Standing Desks",
-    descEs: "Motorizados",
-    descEn: "Motorized",
+    descEs: "82 productos",
+    descEn: "82 products",
+    bg: "linear-gradient(145deg, #c8d5e3 0%, #9bb0c9 100%)",
   },
   {
     handle: "chairs",
-    Icon: ChairIcon,
     es: "Sillas",
     en: "Chairs",
-    descEs: "Mesh y Ergonómicas",
-    descEn: "Mesh & Ergonomic",
+    descEs: "35 productos",
+    descEn: "35 products",
+    bg: "linear-gradient(145deg, #b5c5d6 0%, #8ea3bb 100%)",
   },
   {
     handle: "office",
-    Icon: DeskIcon,
     es: "Oficina",
     en: "Office",
-    descEs: "Escritorios Fijos",
-    descEn: "Fixed Desks",
+    descEs: "46 productos",
+    descEn: "46 products",
+    bg: "linear-gradient(145deg, #bcc9d8 0%, #95a8be 100%)",
   },
   {
     handle: "storage",
-    Icon: CabinetIcon,
     es: "Almacenamiento",
     en: "Storage",
-    descEs: "Gabinetes y Archivos",
-    descEn: "Cabinets & Filing",
+    descEs: "19 productos",
+    descEn: "19 products",
+    bg: "linear-gradient(145deg, #c0cdd9 0%, #9aadbe 100%)",
   },
   {
     handle: "accessories",
-    Icon: AccessoryIcon,
     es: "Accesorios",
     en: "Accessories",
-    descEs: "Soportes y Más",
-    descEn: "Mounts & More",
+    descEs: "54 productos",
+    descEn: "54 products",
+    bg: "linear-gradient(145deg, #b8c7d8 0%, #92a5b9 100%)",
   },
 ]
 
@@ -142,26 +65,89 @@ export default function CategoryGrid({
 }) {
   const langPrefix = lang === "en" ? "/en" : ""
   const base = `/${countryCode}${langPrefix}`
+  const c = CONTENT[lang]
 
   return (
-    <section className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {CATEGORIES.map(({ handle, Icon, es, en, descEs, descEn }) => (
-            <Link
-              key={handle}
-              href={`${base}/categories/${handle}`}
-              className="bg-white rounded-xl p-8 text-center hover:shadow-lg hover:border-teal-200 transition-all duration-200 cursor-pointer border border-gray-100 group"
+    <section className="bg-ergo-bg py-16">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-9">
+          <div>
+            <h2
+              className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
+              style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
             >
-              <div className="flex justify-center text-teal-600 group-hover:scale-110 transition-transform duration-200">
-                <Icon />
+              {c.heading}{" "}
+              <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+            </h2>
+          </div>
+          <Link
+            href={`${base}/store`}
+            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition-all duration-300 flex-shrink-0"
+          >
+            {c.viewAll}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+
+        {/* CSS Grid — first item spans 2 rows, 3px gaps */}
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: "1.4fr 1fr 1fr",
+            gridTemplateRows: "1fr 1fr",
+            gap: "3px",
+            height: "clamp(380px, 45vw, 520px)",
+          }}
+        >
+          {CATEGORIES.map((cat, i) => (
+            <Link
+              key={cat.handle}
+              href={`${base}/categories/${cat.handle}`}
+              className="relative overflow-hidden cursor-pointer group"
+              style={i === 0 ? { gridRow: "span 2" } : {}}
+            >
+              {/* Background */}
+              <div
+                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                style={{ background: cat.bg }}
+              />
+              {/* Bottom overlay */}
+              <div
+                className="absolute inset-0 z-10"
+                style={{
+                  background: "linear-gradient(to top, rgba(12,18,34,0.45) 0%, transparent 50%)",
+                }}
+              />
+              {/* Content */}
+              <div
+                className="absolute bottom-0 left-0 right-0 z-20"
+                style={{ padding: i === 0 ? "28px" : "22px" }}
+              >
+                <h3
+                  className="font-display font-bold text-white"
+                  style={{ fontSize: i === 0 ? "1.7rem" : "1.15rem" }}
+                >
+                  {lang === "en" ? cat.en : cat.es}
+                </h3>
+                <p className="text-[0.72rem] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {lang === "en" ? cat.descEn : cat.descEs}
+                </p>
               </div>
-              <p className="font-semibold text-gray-900 mt-3 text-sm">
-                {lang === "en" ? en : es}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {lang === "en" ? descEn : descEs}
-              </p>
+              {/* Arrow on hover */}
+              <div
+                className="absolute top-3.5 right-3.5 z-20 w-[34px] h-[34px] flex items-center justify-center text-white opacity-0 group-hover:opacity-100 translate-x-1.5 -translate-y-1.5 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M7 17L17 7M17 7H7M17 7v10" />
+                </svg>
+              </div>
             </Link>
           ))}
         </div>
