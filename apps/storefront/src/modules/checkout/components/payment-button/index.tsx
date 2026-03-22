@@ -7,6 +7,8 @@ import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
+import { useLang } from "@lib/i18n/context"
+import { getTranslations } from "@lib/i18n"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -17,6 +19,8 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
 }) => {
+  const lang = useLang()
+  const t = getTranslations(lang)
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -40,7 +44,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
     default:
-      return <Button disabled>Select a payment method</Button>
+      return <Button disabled>{lang === "es" ? "Seleccionar método de pago" : "Select a payment method"}</Button>
   }
 }
 
@@ -53,6 +57,8 @@ const StripePaymentButton = ({
   notReady: boolean
   "data-testid"?: string
 }) => {
+  const lang = useLang()
+  const t = getTranslations(lang)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -141,7 +147,7 @@ const StripePaymentButton = ({
         isLoading={submitting}
         data-testid={dataTestId}
       >
-        Place order
+        {t.checkout.place_order}
       </Button>
       <ErrorMessage
         error={errorMessage}
@@ -152,6 +158,8 @@ const StripePaymentButton = ({
 }
 
 const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+  const lang = useLang()
+  const t = getTranslations(lang)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -180,7 +188,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         size="large"
         data-testid="submit-order-button"
       >
-        Place order
+        {t.checkout.place_order}
       </Button>
       <ErrorMessage
         error={errorMessage}

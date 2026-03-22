@@ -22,10 +22,18 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
+    qualities: [50, 75],
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
         protocol: "http",
         hostname: "localhost",
+        port: "9000",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
       },
       {
         protocol: "https",
@@ -38,6 +46,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.r2.cloudflarestorage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pub-*.r2.dev",
       },
       ...(S3_HOSTNAME && S3_PATHNAME
         ? [
