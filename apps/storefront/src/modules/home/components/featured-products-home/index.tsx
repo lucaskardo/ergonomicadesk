@@ -1,4 +1,5 @@
 import { listProducts } from "@lib/data/products"
+import { withTimeout } from "@lib/util/fetch-safe"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -57,33 +58,34 @@ export default async function FeaturedProductsHome({
   region: HttpTypes.StoreRegion
   lang: string
 }) {
-  // Try fetching curated products by handle, fall back to latest 6
   let products: HttpTypes.StoreProduct[] = []
 
-  try {
-    const result = await listProducts({
+  const curatedResult = await withTimeout(
+    listProducts({
       regionId: region.id,
       queryParams: {
         handle: CURATED_HANDLES,
         limit: 6,
         fields: "*variants.calculated_price",
       },
-    })
-    products = result.response.products
-  } catch {
-    // fallback
-  }
+    }),
+    { fallback: { response: { products: [], count: 0 }, nextPage: null }, label: "featuredProducts-curated" }
+  )
+  products = curatedResult.response.products
 
   if (!products.length) {
-    const result = await listProducts({
-      regionId: region.id,
-      queryParams: {
-        limit: 6,
-        fields: "*variants.calculated_price",
-        order: "-created_at",
-      },
-    })
-    products = result.response.products
+    const fallbackResult = await withTimeout(
+      listProducts({
+        regionId: region.id,
+        queryParams: {
+          limit: 6,
+          fields: "*variants.calculated_price",
+          order: "-created_at",
+        },
+      }),
+      { fallback: { response: { products: [], count: 0 }, nextPage: null }, label: "featuredProducts-fallback" }
+    )
+    products = fallbackResult.response.products
   }
 
   if (!products.length) return null

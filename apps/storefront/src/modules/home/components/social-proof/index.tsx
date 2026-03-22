@@ -1,10 +1,4 @@
-"use client"
-
-import { useLang } from "@lib/i18n/context"
-
-const SocialProof = () => {
-  const lang = useLang()
-
+export default function SocialProof({ lang }: { lang: "es" | "en" }) {
   const stats =
     lang === "en"
       ? [
@@ -20,11 +14,13 @@ const SocialProof = () => {
 
   return (
     <section className="bg-white py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-3 divide-x divide-gray-200">
           {stats.map(({ number, label }) => (
             <div key={label} className="text-center px-4">
-              <p className="text-3xl font-bold text-gray-900">{number}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                <span className="border-b-2 border-teal-500 pb-1">{number}</span>
+              </p>
               <p className="mt-1 text-sm text-gray-500">{label}</p>
             </div>
           ))}
@@ -33,5 +29,3 @@ const SocialProof = () => {
     </section>
   )
 }
-
-export default SocialProof
