@@ -117,6 +117,18 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
+  const lang = pathname.includes("/en/") ? "en" : "es"
+
+  const labels = lang === "en" ? {
+    addToCart: "Add to cart",
+    outOfStock: "Out of stock",
+    selectVariant: "Select an option",
+  } : {
+    addToCart: "Agregar al carrito",
+    outOfStock: "Agotado",
+    selectVariant: "Selecciona una opción",
+  }
+
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const inView = useIntersection(actionsRef, "0px")
@@ -180,10 +192,10 @@ export default function ProductActions({
           data-testid="add-product-button"
         >
           {!selectedVariant && !options
-            ? "Select variant"
+            ? labels.selectVariant
             : !inStock || !isValidVariant
-            ? "Out of stock"
-            : "Add to cart"}
+            ? labels.outOfStock
+            : labels.addToCart}
         </Button>
         <MobileActions
           product={product}

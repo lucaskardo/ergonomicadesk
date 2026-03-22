@@ -1,6 +1,9 @@
+"use client"
+
 import { Dialog, Transition } from "@headlessui/react"
 import { Button, clx } from "@medusajs/ui"
 import React, { Fragment, useMemo } from "react"
+import { usePathname } from "next/navigation"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
 import ChevronDown from "@modules/common/icons/chevron-down"
@@ -34,6 +37,20 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
 }) => {
+  const pathname = usePathname()
+  const lang = pathname.includes("/en/") ? "en" : "es"
+  const labels = lang === "en" ? {
+    addToCart: "Add to cart",
+    outOfStock: "Out of stock",
+    selectVariant: "Select variant",
+    selectOptions: "Select Options",
+  } : {
+    addToCart: "Agregar al carrito",
+    outOfStock: "Agotado",
+    selectVariant: "Selecciona una opción",
+    selectOptions: "Seleccionar opciones",
+  }
+
   const { state, open, close } = useToggleState()
 
   const price = getProductPrice({
@@ -111,7 +128,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <span>
                     {variant
                       ? Object.values(options).join(" / ")
-                      : "Select Options"}
+                      : labels.selectOptions}
                   </span>
                   <ChevronDown />
                 </div>
@@ -124,10 +141,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 data-testid="mobile-cart-button"
               >
                 {!variant
-                  ? "Select variant"
+                  ? labels.selectVariant
                   : !inStock
-                  ? "Out of stock"
-                  : "Add to cart"}
+                  ? labels.outOfStock
+                  : labels.addToCart}
               </Button>
             </div>
           </div>

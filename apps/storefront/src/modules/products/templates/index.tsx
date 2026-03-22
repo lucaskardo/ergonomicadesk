@@ -35,17 +35,17 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     <>
       <ProductTracker product={product} selectedVariant={selectedVariant} />
       <div
-        className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
+        className="content-container flex flex-col small:flex-row small:items-start py-6 relative gap-x-8"
         data-testid="product-container"
       >
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
-          <ProductInfo product={product} />
-          <ProductTabs product={product} />
-        </div>
-        <div className="block w-full relative">
+        {/* Images — Left side, ~60% on desktop */}
+        <div className="block w-full small:w-[60%] relative">
           <ImageGallery images={images} />
         </div>
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
+
+        {/* Info + Actions — Right side, ~40% on desktop, sticky */}
+        <div className="flex flex-col small:sticky small:top-48 small:w-[40%] w-full py-8 small:py-0 gap-y-6">
+          <ProductInfo product={product} />
           <Suspense
             fallback={
               <ProductActions
@@ -57,6 +57,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           >
             <ProductActionsWrapper id={product.id} region={region} />
           </Suspense>
+          <ProductTabs product={product} />
         </div>
       </div>
       <div
