@@ -66,6 +66,8 @@ export default function Footer() {
       deliveries: "Entregas",
       returns: "Devoluciones",
       cancellations: "Cancelaciones",
+      warranty: "Garantía",
+      catalog: "Catálogo",
       contact: "Contacto",
       showroom: "Visita nuestro showroom",
       hours: "Lun–Vie 12PM–6PM, Sáb 9AM–12PM",
@@ -86,6 +88,8 @@ export default function Footer() {
       deliveries: "Deliveries",
       returns: "Returns",
       cancellations: "Cancellations",
+      warranty: "Warranty",
+      catalog: "Catalog",
       contact: "Contact",
       showroom: "Visit our showroom",
       hours: "Mon–Fri 12PM–6PM, Sat 9AM–12PM",
@@ -184,6 +188,16 @@ export default function Footer() {
                   {t.cancellations}
                 </LocalizedClientLink>
               </li>
+              <li>
+                <LocalizedClientLink href="/warranty" className="hover:text-ui-fg-base">
+                  {t.warranty}
+                </LocalizedClientLink>
+              </li>
+              <li>
+                <LocalizedClientLink href="/catalog" className="hover:text-ui-fg-base">
+                  {t.catalog}
+                </LocalizedClientLink>
+              </li>
             </ul>
           </div>
 
@@ -200,6 +214,18 @@ export default function Footer() {
                 Calle 79 Este 14, Coco del Mar<br />Ciudad de Panamá
               </a>
               <p>{t.hours}</p>
+            </div>
+            <div className="mt-3 w-full aspect-video max-h-[150px] rounded-lg overflow-hidden border border-gray-200">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.7!2d-79.499793!3d8.9936175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8faca8e2b9272055%3A0x6a9de150083231c9!2sErgonomica%20Home%20Office!5e0!3m2!1ses!2spa!4v1700000000000!5m2!1ses!2spa"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Ergonómica Showroom"
+              />
             </div>
             <div className="mt-2">
               <span className="text-sm font-medium text-ui-fg-base">{t.follow}</span>
