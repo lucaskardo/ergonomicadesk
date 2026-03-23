@@ -13,7 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
@@ -24,7 +24,12 @@ type ItemProps = {
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [localQty, setLocalQty] = useState(item.quantity)
   const router = useRouter()
+
+  useEffect(() => {
+    setLocalQty(item.quantity)
+  }, [item.quantity])
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
@@ -83,10 +88,13 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
               type="number"
               min={1}
               max={maxQuantity}
-              value={item.quantity}
+              value={localQty}
               onChange={(e) => {
                 const val = parseInt(e.target.value)
-                if (!isNaN(val) && val >= 1) changeQuantity(val)
+                if (!isNaN(val) && val >= 1) {
+                  setLocalQty(val)
+                  changeQuantity(val)
+                }
               }}
               className="w-14 h-9 border border-ui-border-base rounded px-2 text-sm text-center focus:outline-none focus:ring-1 focus:ring-ui-border-interactive"
               data-testid="product-select-button"

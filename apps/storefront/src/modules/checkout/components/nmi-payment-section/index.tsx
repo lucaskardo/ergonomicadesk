@@ -17,6 +17,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   // FIX 2: Manual dynamic import via useEffect instead of next/dynamic.
   // next/dynamic ssr:false does not hydrate correctly on first client-side navigation.
   const [NmiPaymentsComponent, setNmiPaymentsComponent] = useState<any>(null)
+  const [renderKey, setRenderKey] = useState(0)
 
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
@@ -31,6 +32,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   useEffect(() => {
     import("@nmipayments/nmi-pay-react").then((mod) => {
       setNmiPaymentsComponent(() => mod.NmiPayments)
+      setRenderKey((k) => k + 1)
     })
   }, [])
 
@@ -186,6 +188,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
         {tokenizationKey && NmiPaymentsComponent ? (
           <NmiPaymentsComponent
+            key={renderKey}
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
