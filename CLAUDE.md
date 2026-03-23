@@ -1,5 +1,13 @@
 # CLAUDE.md
 
+## REGLAS CRÍTICAS
+- NUNCA modificar archivos en node_modules
+- NUNCA correr pnpm install/add sin que el prompt lo indique explícitamente
+- NUNCA patchear dependencias para diagnosticar errores
+- NUNCA buscar en node_modules para resolver errores
+- Si el backend no arranca por un error que NO es de tus archivos, reportar el error y STOP
+- No diagnosticar errores preexistentes — solo tocar los archivos listados en el prompt
+
 ## Project
 E-commerce for ergonomic office furniture. Domain: ergonomicadesk.com. Market: Panama. Currency: USD. Bilingual: Spanish (primary) + English. Guest checkout only (no customer accounts).
 
