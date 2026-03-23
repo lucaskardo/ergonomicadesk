@@ -1,11 +1,12 @@
 "use client"
 
 import { Button } from "@medusajs/ui"
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { placeOrder } from "@lib/data/cart"
+import { NmiPayments, NmiThreeDSecure } from "@nmipayments/nmi-pay-react"
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -14,12 +15,6 @@ type Props = {
 }
 
 export default function NmiPaymentSection({ cart, session, notReady }: Props) {
-  // FIX 2: Manual dynamic import via useEffect instead of next/dynamic.
-  // next/dynamic ssr:false does not hydrate correctly on first client-side navigation.
-  const [NmiPaymentsComponent, setNmiPaymentsComponent] = useState<any>(null)
-  const [NmiThreeDSecureComponent, setNmiThreeDSecureComponent] = useState<any>(null)
-  const [renderKey, setRenderKey] = useState(0)
-
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -28,14 +23,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
   const nmiRef = useRef<any>(null)
   const threeDsRef = useRef<any>(null)
-
-  useEffect(() => {
-    import("@nmipayments/nmi-pay-react").then((mod) => {
-      setNmiPaymentsComponent(() => mod.NmiPayments)
-      setNmiThreeDSecureComponent(() => mod.NmiThreeDSecure)
-      setRenderKey((k) => k + 1)
-    })
-  }, [])
 
   const pathname = usePathname()
   const isEnglish = pathname?.includes("/en")
@@ -192,22 +179,13 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           {isEnglish ? "Card Details" : "Datos de Tarjeta"}
         </p>
 
-        {tokenizationKey && NmiPaymentsComponent ? (
-          <NmiPaymentsComponent
-            key={renderKey}
+        {tokenizationKey ? (
+          <NmiPayments
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
             paymentMethods={["card"]}
           />
-        ) : tokenizationKey && !NmiPaymentsComponent ? (
-          <div className="animate-pulse space-y-3">
-            <div className="h-10 bg-ui-bg-subtle rounded" />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="h-10 bg-ui-bg-subtle rounded" />
-              <div className="h-10 bg-ui-bg-subtle rounded" />
-            </div>
-          </div>
         ) : (
           <p className="text-sm text-ui-fg-subtle">
             {isEnglish
@@ -218,8 +196,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
       </div>
 
       {/* 3DS: mount only after token exists to avoid "Payment Token does not exist" error */}
-      {NmiThreeDSecureComponent && tokenizationKey && paymentToken && (
-        <NmiThreeDSecureComponent
+      {tokenizationKey && paymentToken && (
+        <NmiThreeDSecure
           ref={threeDsRef}
           tokenizationKey={tokenizationKey}
           modal={true}

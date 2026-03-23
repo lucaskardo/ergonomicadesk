@@ -1,19 +1,12 @@
 import { HttpTypes } from "@medusajs/types"
+import ProductSku from "@modules/products/components/product-sku"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
 }
 
-const StarIcon = ({ filled = true }: { filled?: boolean }) => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "#F59E0B" : "none"} stroke="#F59E0B" strokeWidth="1">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-)
-
 const ProductInfo = ({ product }: ProductInfoProps) => {
   const category = product.categories?.[0]
-  const skuVariant = product.variants?.[0]
-  const sku = skuVariant?.sku
 
   return (
     <div id="product-info" className="flex flex-col">
@@ -33,22 +26,8 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         {product.title}
       </h1>
 
-      {/* SKU */}
-      {sku && (
-        <p className="text-[0.72rem] text-ergo-300 mt-1 font-medium">
-          SKU: {sku}
-        </p>
-      )}
-
-      {/* Rating stars (static placeholder) */}
-      <div className="flex items-center gap-1.5 mt-2.5">
-        <div className="flex gap-0.5">
-          {[...Array(5)].map((_, i) => <StarIcon key={i} filled={i < 5} />)}
-        </div>
-        <span className="text-[0.78rem] text-ergo-400 font-medium">
-          (4.8 · 24 reseñas)
-        </span>
-      </div>
+      {/* SKU — client component so it updates when user selects a variant */}
+      <ProductSku product={product} />
     </div>
   )
 }
