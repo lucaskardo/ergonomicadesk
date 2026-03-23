@@ -1,12 +1,14 @@
 "use client"
 
 import { Button } from "@medusajs/ui"
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { placeOrder } from "@lib/data/cart"
-import { NmiPayments, NmiThreeDSecure } from "@nmipayments/nmi-pay-react"
+
+// DO NOT import @nmipayments/nmi-pay-react at file level
+// The SDK uses DOM classes that crash in SSR
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -15,6 +17,12 @@ type Props = {
 }
 
 export default function NmiPaymentSection({ cart, session, notReady }: Props) {
+  // Dynamic SDK components — loaded client-side only
+  const [sdkLoaded, setSdkLoaded] = useState(false)
+  const [sdkError, setSdkError] = useState<string | null>(null)
+  const nmiComponentsRef = useRef<{ NmiPayments: any; NmiThreeDSecure: any } | null>(null)
+  const [, forceRender] = useState(0)
+
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -24,6 +32,28 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   const nmiRef = useRef<any>(null)
   const threeDsRef = useRef<any>(null)
 
+  // Load NMI SDK client-side only
+  useEffect(() => {
+    let cancelled = false
+    import("@nmipayments/nmi-pay-react")
+      .then((mod) => {
+        if (cancelled) return
+        nmiComponentsRef.current = {
+          NmiPayments: mod.NmiPayments,
+          NmiThreeDSecure: mod.NmiThreeDSecure,
+        }
+        setSdkLoaded(true)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        console.error("Failed to load NMI SDK:", err)
+        setSdkError(err.message)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const pathname = usePathname()
   const isEnglish = pathname?.includes("/en")
 
@@ -32,11 +62,12 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY ||
     ""
 
-  // P0-6: cart.total in Medusa v2 may be a BigNumber object { value: "63879" }, not a plain number
+  // cart.total in Medusa v2 may be BigNumber object
   const rawTotal = (cart as any).total
-  const totalCents = typeof rawTotal === "object" && rawTotal !== null
-    ? Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0)
-    : Number(rawTotal || 0)
+  const totalCents =
+    typeof rawTotal === "object" && rawTotal !== null
+      ? Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0)
+      : Number(rawTotal || 0)
 
   const handleNmiChange = useCallback(
     (response: any) => {
@@ -54,11 +85,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
   const handleSubmit = async () => {
     if (!paymentToken) {
-      setError(
-        isEnglish
-          ? "Please enter your card details"
-          : "Ingresa los datos de tu tarjeta"
-      )
+      setError(isEnglish ? "Please enter your card details" : "Ingresa los datos de tu tarjeta")
       return
     }
 
@@ -66,10 +93,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     setError(null)
 
     try {
-      // ── STEP 1: 3DS Authentication ─────────────────────────
-      // NmiThreeDSecure is mounted only after paymentToken exists (avoids "Payment Token does not exist" error)
+      // 3DS
       let threeDsData: Record<string, string> = {}
-
       if (threeDsRef.current?.startThreeDSecure) {
         try {
           const billing = cart.billing_address
@@ -87,38 +112,31 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
             country: billing?.country_code || "PA",
             phone: billing?.phone || "",
           })
-
           if (threeDsResult) {
             if (threeDsResult.cavv) threeDsData.cavv = threeDsResult.cavv
             if (threeDsResult.xid) threeDsData.xid = threeDsResult.xid
             if (threeDsResult.eci) threeDsData.eci = threeDsResult.eci
-            if (threeDsResult.cardHolderAuth)
-              threeDsData.cardholder_auth = threeDsResult.cardHolderAuth
-            if (threeDsResult.threeDsVersion)
-              threeDsData.three_ds_version = threeDsResult.threeDsVersion
-            if (threeDsResult.directoryServerId)
-              threeDsData.directory_server_id = threeDsResult.directoryServerId
+            if (threeDsResult.cardHolderAuth) threeDsData.cardholder_auth = threeDsResult.cardHolderAuth
+            if (threeDsResult.threeDsVersion) threeDsData.three_ds_version = threeDsResult.threeDsVersion
+            if (threeDsResult.directoryServerId) threeDsData.directory_server_id = threeDsResult.directoryServerId
           }
         } catch (threeDsErr: any) {
           console.warn("3DS auth failed or unavailable:", threeDsErr.message)
         }
       }
 
-      // ── STEP 2: Charge via backend ─────────────────────────
-      const backendUrl =
-        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+      // Charge
+      const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
       const chargeRes = await fetch(`${backendUrl}/store/custom/nmi-charge`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-publishable-api-key":
-            process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
+          "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
         },
         body: JSON.stringify({
           cart_id: cart.id,
           payment_token: paymentToken,
-          three_ds:
-            Object.keys(threeDsData).length > 0 ? threeDsData : undefined,
+          three_ds: Object.keys(threeDsData).length > 0 ? threeDsData : undefined,
         }),
       })
 
@@ -140,10 +158,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
         return
       }
 
-      // ── STEP 3: Charge succeeded — mark it ─────────────────
       setChargeSucceeded(true)
 
-      // ── STEP 4: Complete order ─────────────────────────────
       try {
         await placeOrder()
       } catch (orderErr: any) {
@@ -169,18 +185,31 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     }
   }
 
+  // Get components from ref (avoids re-renders from state)
+  const NmiPaymentsComp = nmiComponentsRef.current?.NmiPayments
+  const NmiThreeDSecureComp = nmiComponentsRef.current?.NmiThreeDSecure
+
   return (
     <div className="flex flex-col gap-4">
-      {/* NOTE: postMessage errors in dev are expected (HTTP vs HTTPS). They disappear in production. */}
-
-      {/* Card fields */}
       <div className="border border-ui-border-base rounded-lg p-4">
         <p className="text-sm font-medium text-ui-fg-base mb-3">
           {isEnglish ? "Card Details" : "Datos de Tarjeta"}
         </p>
 
-        {tokenizationKey ? (
-          <NmiPayments
+        {sdkError ? (
+          <p className="text-sm text-red-500">
+            {isEnglish ? "Failed to load payment form" : "Error al cargar el formulario de pago"}
+          </p>
+        ) : !sdkLoaded || !NmiPaymentsComp ? (
+          <div className="animate-pulse space-y-3">
+            <div className="h-10 bg-ui-bg-subtle rounded" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="h-10 bg-ui-bg-subtle rounded" />
+              <div className="h-10 bg-ui-bg-subtle rounded" />
+            </div>
+          </div>
+        ) : tokenizationKey ? (
+          <NmiPaymentsComp
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
@@ -188,26 +217,22 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           />
         ) : (
           <p className="text-sm text-ui-fg-subtle">
-            {isEnglish
-              ? "Payment configuration error"
-              : "Error de configuración de pago"}
+            {isEnglish ? "Payment configuration error" : "Error de configuración de pago"}
           </p>
         )}
       </div>
 
-      {/* 3DS: mount only after token exists to avoid "Payment Token does not exist" error */}
-      {tokenizationKey && paymentToken && (
-        <NmiThreeDSecure
+      {/* 3DS: mount only after token exists */}
+      {NmiThreeDSecureComp && tokenizationKey && paymentToken && (
+        <NmiThreeDSecureComp
           ref={threeDsRef}
           tokenizationKey={tokenizationKey}
           modal={true}
         />
       )}
 
-      {/* Error */}
       <ErrorMessage error={error} data-testid="nmi-payment-error" />
 
-      {/* Submit — disabled after charge succeeds to prevent double payment */}
       <Button
         size="large"
         onClick={handleSubmit}

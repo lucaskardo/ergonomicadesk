@@ -2,7 +2,7 @@
 
 import { isManual, isStripeLike, isNmi } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
-import NmiPaymentWrapper from "../nmi-payment-wrapper"
+import NmiPaymentSection from "../nmi-payment-section"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
@@ -34,7 +34,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   switch (true) {
     case isNmi(paymentSession?.provider_id):
       return (
-        <NmiPaymentWrapper
+        <NmiPaymentSection
           cart={cart}
           session={paymentSession}
           notReady={notReady}
