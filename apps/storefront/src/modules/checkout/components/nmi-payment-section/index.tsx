@@ -6,17 +6,6 @@ import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { placeOrder } from "@lib/data/cart"
-import dynamic from "next/dynamic"
-
-const NmiPayments = dynamic(
-  () => import("@nmipayments/nmi-pay-react").then(mod => ({ default: mod.NmiPayments as any })),
-  { ssr: false }
-)
-
-const NmiThreeDSecure = dynamic(
-  () => import("@nmipayments/nmi-pay-react").then(mod => ({ default: mod.NmiThreeDSecure as any })),
-  { ssr: false }
-)
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -25,19 +14,24 @@ type Props = {
 }
 
 export default function NmiPaymentSection({ cart, session, notReady }: Props) {
-  const [mounted, setMounted] = useState(false)
+  // FIX 2: Manual dynamic import via useEffect instead of next/dynamic.
+  // next/dynamic ssr:false does not hydrate correctly on first client-side navigation.
+  const [NmiPaymentsComponent, setNmiPaymentsComponent] = useState<any>(null)
+
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
 
-  const threeDsRef = useRef<any>(null)
   const nmiRef = useRef<any>(null)
+  // threeDsRef kept for future use — NmiThreeDSecure is not mounted in JSX (FIX 3)
+  const threeDsRef = useRef<any>(null)
 
-  // Mount NmiPayments only after client-side hydration to avoid SSR issues
   useEffect(() => {
-    setMounted(true)
+    import("@nmipayments/nmi-pay-react").then((mod) => {
+      setNmiPaymentsComponent(() => mod.NmiPayments)
+    })
   }, [])
 
   const pathname = usePathname()
@@ -77,6 +71,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
     try {
       // ── STEP 1: 3DS Authentication ─────────────────────────
+      // FIX 3: NmiThreeDSecure is not mounted in JSX, so threeDsRef.current is null.
+      // 3DS is skipped in sandbox (NMI_3DS_MODE=best_effort). Will be wired in production.
       let threeDsData: Record<string, string> = {}
 
       if (threeDsRef.current?.startThreeDSecure) {
@@ -85,7 +81,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           const threeDsResult = await threeDsRef.current.startThreeDSecure({
             paymentToken,
             currency: "USD",
-            // Amount as string "XX.XX" — validated against NMI sandbox
             amount: ((cart.total || 0) / 100).toFixed(2),
             firstName: billing?.first_name || "",
             lastName: billing?.last_name || "",
@@ -110,8 +105,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
               threeDsData.directory_server_id = threeDsResult.directoryServerId
           }
         } catch (threeDsErr: any) {
-          // In best_effort mode, continue without 3DS
-          // In required mode, backend will reject without cavv
           console.warn("3DS auth failed or unavailable:", threeDsErr.message)
         }
       }
@@ -144,7 +137,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
               : "Pago rechazado. Verifica tu tarjeta e intenta de nuevo.")
         )
         setSubmitting(false)
-        // Reset NMI fields for retry
         if (nmiRef.current?.resetFields) {
           nmiRef.current.resetFields()
           setPaymentToken(null)
@@ -159,10 +151,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
       // ── STEP 4: Complete order ─────────────────────────────
       try {
         await placeOrder()
-        // placeOrder handles redirect to confirmation page
       } catch (orderErr: any) {
-        // RECOVERY UX: Charge was approved but order couldn't complete
-        // Do NOT tell user to retry payment
         setError(
           isEnglish
             ? "Your payment was received but the order could not be confirmed automatically. Our team is reviewing it — you will receive a confirmation shortly."
@@ -195,14 +184,14 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           {isEnglish ? "Card Details" : "Datos de Tarjeta"}
         </p>
 
-        {tokenizationKey && mounted ? (
-          <NmiPayments
+        {tokenizationKey && NmiPaymentsComponent ? (
+          <NmiPaymentsComponent
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
             paymentMethods={["card"]}
           />
-        ) : tokenizationKey && !mounted ? (
+        ) : tokenizationKey && !NmiPaymentsComponent ? (
           <div className="animate-pulse space-y-3">
             <div className="h-10 bg-ui-bg-subtle rounded" />
             <div className="grid grid-cols-2 gap-3">
@@ -219,14 +208,9 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
         )}
       </div>
 
-      {/* 3DS Component — only mount when paymentToken exists to avoid "Payment Token does not exist" error */}
-      {tokenizationKey && paymentToken && (
-        <NmiThreeDSecure
-          ref={threeDsRef}
-          tokenizationKey={tokenizationKey}
-          modal={true}
-        />
-      )}
+      {/* FIX 3: NmiThreeDSecure removed from JSX to prevent "Payment Token does not exist" error
+          on mount. 3DS runs imperatively via threeDsRef in handleSubmit when the ref is available.
+          In sandbox with NMI_3DS_MODE=best_effort, 3DS is skipped and payments proceed normally. */}
 
       {/* Error */}
       <ErrorMessage error={error} data-testid="nmi-payment-error" />

@@ -74,6 +74,9 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   }
 
   // 5. Calculate amount server-side — cart.total may be BigNumber object or plain number
+  // amountCents is stored in payment_intent (e.g. 29900 for $299.00)
+  // amountDollars is sent to NMI as a string (e.g. "299.00") — NMI requires dollars, NOT cents
+  // shipping_address first_name/last_name/phone are copied from cart → order by Medusa automatically on cart.complete
   const rawTotal = (cart as any).total
   const amountCents = typeof rawTotal === "object" && rawTotal !== null
     ? Math.round(Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0))
@@ -169,8 +172,8 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   ])
 
   // 11a. Log full NMI response for debugging
-  // NOTE: In NMI sandbox, most test cards are approved regardless of expiration date.
-  // In production with real cards, NMI validates expiration, CVV, and AVS correctly.
+  // SANDBOX BEHAVIOR: NMI sandbox approves test cards regardless of expiry/CVV.
+  // In production, NMI validates expiration, CVV, and AVS on real cards.
   logger.info("[NmiCharge] NMI response", {
     response: nmiResult.response,
     responseText: nmiResult.responseText,
