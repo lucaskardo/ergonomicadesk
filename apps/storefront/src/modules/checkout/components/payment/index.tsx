@@ -95,12 +95,13 @@ const Payment = ({
       }
 
       if (!shouldInputCard) {
-        return router.push(
+        router.push(
           pathname + "?" + createQueryString("step", "review"),
-          {
-            scroll: false,
-          }
+          { scroll: false }
         )
+        // Force server component re-fetch so Review gets fresh cart with payment_sessions
+        router.refresh()
+        return
       }
     } catch (err: any) {
       setError(err.message)
@@ -221,9 +222,11 @@ const Payment = ({
             }
             data-testid="submit-payment-button"
           >
-            {!activeSession && isStripeLike(selectedPaymentMethod)
+            {(!activeSession && isStripeLike(selectedPaymentMethod))
               ? t.checkout.enter_card_details
-              : t.checkout.continue_to_review}
+              : (isNmi(selectedPaymentMethod) && !nmiToken)
+                ? t.checkout.enter_card_details
+                : t.checkout.continue_to_review}
           </Button>
         </div>
 

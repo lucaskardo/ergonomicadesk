@@ -86,10 +86,13 @@ const NmiChargeButton = ({
         },
         body: JSON.stringify({ cart_id: cart.id, payment_token: token }),
       })
-      const data = await res.json()
+      const raw = await res.text()
       if (!res.ok) {
-        setError(data.message || (isEnglish ? "Payment failed" : "Pago fallido"))
+        let msg: string
+        try { msg = JSON.parse(raw).message } catch { msg = raw }
+        setError(msg || (isEnglish ? "Payment declined. Please check your card." : "Pago rechazado. Verifica tu tarjeta."))
         setSubmitting(false)
+        sessionStorage.removeItem("nmi_payment_token")
         return
       }
       sessionStorage.removeItem("nmi_payment_token")
