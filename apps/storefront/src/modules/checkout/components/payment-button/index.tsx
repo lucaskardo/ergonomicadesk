@@ -2,7 +2,6 @@
 
 import { isManual, isStripeLike, isNmi } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
-import NmiPaymentSection from "../nmi-payment-section"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
@@ -10,6 +9,7 @@ import React, { useState } from "react"
 import ErrorMessage from "../error-message"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
+import { usePathname } from "next/navigation"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -21,7 +21,6 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   "data-testid": dataTestId,
 }) => {
   const lang = useLang()
-  const t = getTranslations(lang)
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -33,13 +32,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
 
   switch (true) {
     case isNmi(paymentSession?.provider_id):
-      return (
-        <NmiPaymentSection
-          cart={cart}
-          session={paymentSession}
-          notReady={notReady}
-        />
-      )
+      return <NmiChargeButton cart={cart} notReady={notReady} />
     case isStripeLike(paymentSession?.provider_id):
       return (
         <StripePaymentButton
@@ -55,6 +48,74 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     default:
       return <Button disabled>{lang === "es" ? "Seleccionar método de pago" : "Select a payment method"}</Button>
   }
+}
+
+const NmiChargeButton = ({
+  cart,
+  notReady,
+}: {
+  cart: HttpTypes.StoreCart
+  notReady: boolean
+}) => {
+  const pathname = usePathname()
+  const isEnglish = pathname?.includes("/en")
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleCharge = async () => {
+    const token = sessionStorage.getItem("nmi_payment_token")
+    if (!token) {
+      setError(
+        isEnglish
+          ? "No payment token. Go back to the Payment step."
+          : "No hay token de pago. Regresa al paso de Pago."
+      )
+      return
+    }
+    setSubmitting(true)
+    setError(null)
+    try {
+      const backendUrl =
+        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+      const res = await fetch(`${backendUrl}/store/custom/nmi-charge`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-publishable-api-key":
+            process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
+        },
+        body: JSON.stringify({ cart_id: cart.id, payment_token: token }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.message || (isEnglish ? "Payment failed" : "Pago fallido"))
+        setSubmitting(false)
+        return
+      }
+      sessionStorage.removeItem("nmi_payment_token")
+      await placeOrder()
+    } catch (err: any) {
+      if (err?.digest?.startsWith?.("NEXT_REDIRECT")) {
+        throw err
+      }
+      setError(err.message || (isEnglish ? "Error" : "Error"))
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <>
+      <Button
+        size="large"
+        onClick={handleCharge}
+        isLoading={submitting}
+        disabled={notReady || submitting}
+      >
+        {isEnglish ? "Place Order" : "Realizar Pedido"}
+      </Button>
+      <ErrorMessage error={error} />
+    </>
+  )
 }
 
 const StripePaymentButton = ({

@@ -14,6 +14,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
+import dynamic from "next/dynamic"
+
+const NmiCardFields = dynamic(() => import("../nmi-card-fields"), { ssr: false })
 
 const Payment = ({
   cart,
@@ -35,6 +38,8 @@ const Payment = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? ""
   )
+  const [nmiToken, setNmiToken] = useState<string | null>(null)
+  const [nmiComplete, setNmiComplete] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -168,6 +173,23 @@ const Payment = ({
             </>
           )}
 
+          {isNmi(selectedPaymentMethod) && isOpen && (
+            <div className="border border-ui-border-base rounded-lg p-4 mt-4">
+              <p className="text-sm font-medium text-ui-fg-base mb-3">
+                {lang === "es" ? "Datos de Tarjeta" : "Card Details"}
+              </p>
+              <NmiCardFields
+                tokenizationKey={process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY || ""}
+                onTokenChange={(token, complete) => {
+                  setNmiToken(token)
+                  setNmiComplete(complete)
+                  if (token) sessionStorage.setItem("nmi_payment_token", token)
+                  else sessionStorage.removeItem("nmi_payment_token")
+                }}
+              />
+            </div>
+          )}
+
           {paidByGiftcard && (
             <div className="flex flex-col w-1/3">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
@@ -194,6 +216,7 @@ const Payment = ({
             isLoading={isLoading}
             disabled={
               (isStripeLike(selectedPaymentMethod) && !cardComplete) ||
+              (isNmi(selectedPaymentMethod) && !nmiToken) ||
               (!selectedPaymentMethod && !paidByGiftcard)
             }
             data-testid="submit-payment-button"
