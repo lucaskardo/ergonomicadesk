@@ -117,6 +117,26 @@ module.exports = defineConfig({
 
     // ── Delivery Panama (zonas de entrega) ────────────────────────────────────
     { resolve: "./src/modules/delivery-panama" },
+
+    // ── NMI Payment (data models: intents + attempt logs) ────────────────────
+    { resolve: "./src/modules/nmi-payment" },
+
+    // ── NMI Payment Provider ─────────────────────────────────────────────────
+    {
+      resolve: "@medusajs/medusa/payment",
+      options: {
+        providers: [
+          {
+            resolve: "./src/modules/nmi-provider",
+            id: "nmi",
+            options: {
+              securityKey: process.env.NMI_SECURITY_KEY,
+              tokenizationKey: process.env.NMI_TOKENIZATION_KEY,
+            },
+          },
+        ],
+      },
+    },
   ],
 
   plugins: [
