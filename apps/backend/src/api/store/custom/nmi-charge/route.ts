@@ -73,8 +73,11 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     return res.status(400).json({ message: "No pending NMI payment session found" })
   }
 
-  // 5. Calculate amount server-side — cart.total is in cents
-  const amountCents = cart.total as number
+  // 5. Calculate amount server-side — cart.total may be BigNumber object or plain number
+  const rawTotal = (cart as any).total
+  const amountCents = typeof rawTotal === "object" && rawTotal !== null
+    ? Math.round(Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0))
+    : Number(rawTotal)
   if (!amountCents || amountCents < 100) {
     return res.status(400).json({ message: "Invalid cart total (minimum $1.00)" })
   }
@@ -164,6 +167,16 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
       raw_response: JSON.stringify(nmiResult),
     },
   ])
+
+  // 11a. Log full NMI response for debugging
+  // NOTE: In NMI sandbox, most test cards are approved regardless of expiration date.
+  // In production with real cards, NMI validates expiration, CVV, and AVS correctly.
+  logger.info("[NmiCharge] NMI response", {
+    response: nmiResult.response,
+    responseText: nmiResult.responseText,
+    responseCode: nmiResult.responseCode,
+    approved: nmiResult.approved,
+  })
 
   // 12. Handle declined / error
   if (!nmiResult.approved) {

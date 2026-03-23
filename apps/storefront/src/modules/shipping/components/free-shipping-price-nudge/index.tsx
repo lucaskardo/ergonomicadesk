@@ -21,7 +21,12 @@ const computeTarget = (
     (pr) => pr.attribute === "item_total"
   )!
 
-  const currentAmount = cart.item_total
+  // Safely extract numeric value — Medusa v2 may return BigNumber objects
+  const rawItemTotal = cart.item_total
+  const currentAmount =
+    typeof rawItemTotal === "object" && rawItemTotal !== null
+      ? Number((rawItemTotal as any).numeric ?? (rawItemTotal as any).value ?? 0)
+      : Number(rawItemTotal ?? 0)
   const targetAmount = parseFloat(priceRule.value)
 
   if (priceRule.operator === "gt") {

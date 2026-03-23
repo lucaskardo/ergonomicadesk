@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@medusajs/ui"
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -25,6 +25,7 @@ type Props = {
 }
 
 export default function NmiPaymentSection({ cart, session, notReady }: Props) {
+  const [mounted, setMounted] = useState(false)
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -33,6 +34,11 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
   const threeDsRef = useRef<any>(null)
   const nmiRef = useRef<any>(null)
+
+  // Mount NmiPayments only after client-side hydration to avoid SSR issues
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const pathname = usePathname()
   const isEnglish = pathname?.includes("/en")
@@ -181,19 +187,29 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* NOTE: postMessage errors in dev are expected (HTTP vs HTTPS). They disappear in production. */}
+
       {/* Card fields */}
       <div className="border border-ui-border-base rounded-lg p-4">
         <p className="text-sm font-medium text-ui-fg-base mb-3">
           {isEnglish ? "Card Details" : "Datos de Tarjeta"}
         </p>
 
-        {tokenizationKey ? (
+        {tokenizationKey && mounted ? (
           <NmiPayments
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
             paymentMethods={["card"]}
           />
+        ) : tokenizationKey && !mounted ? (
+          <div className="animate-pulse space-y-3">
+            <div className="h-10 bg-ui-bg-subtle rounded" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="h-10 bg-ui-bg-subtle rounded" />
+              <div className="h-10 bg-ui-bg-subtle rounded" />
+            </div>
+          </div>
         ) : (
           <p className="text-sm text-ui-fg-subtle">
             {isEnglish
@@ -203,8 +219,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
         )}
       </div>
 
-      {/* 3DS Component — hidden, renders modal when needed */}
-      {tokenizationKey && (
+      {/* 3DS Component — only mount when paymentToken exists to avoid "Payment Token does not exist" error */}
+      {tokenizationKey && paymentToken && (
         <NmiThreeDSecure
           ref={threeDsRef}
           tokenizationKey={tokenizationKey}
