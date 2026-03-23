@@ -7,6 +7,7 @@
 - NUNCA buscar en node_modules para resolver errores
 - Si el backend no arranca por un error que NO es de tus archivos, reportar el error y STOP
 - No diagnosticar errores preexistentes — solo tocar los archivos listados en el prompt
+- SIEMPRE reiniciar el storefront (kill + rm -rf .next + npx next dev) después de borrar .next. NUNCA dejar el servidor corriendo con .next borrado.
 
 ## Project
 E-commerce for ergonomic office furniture. Domain: ergonomicadesk.com. Market: Panama. Currency: USD. Bilingual: Spanish (primary) + English. Guest checkout only (no customer accounts).
