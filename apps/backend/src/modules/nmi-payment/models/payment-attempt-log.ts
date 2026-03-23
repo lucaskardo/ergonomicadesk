@@ -11,7 +11,6 @@ const NmiPaymentAttemptLog = model.define("nmi_payment_attempt_log", {
   avs_response: model.text().nullable(),
   cvv_response: model.text().nullable(),
   three_ds_eci: model.text().nullable(),
-  raw_response: model.text(),
 })
 
 export default NmiPaymentAttemptLog

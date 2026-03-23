@@ -22,11 +22,13 @@ class NmiPaymentProviderService extends AbstractPaymentProvider<NmiProviderOptio
 
   protected logger_: SimpleLogger
   protected options_: NmiProviderOptions
+  protected container_: any
   private nmiClient_: NmiClient
 
   constructor(container: InjectedDependencies, options: NmiProviderOptions) {
     // eslint-disable-next-line prefer-rest-params
     super(...(arguments as unknown as [Record<string, unknown>, NmiProviderOptions]))
+    this.container_ = container
     this.logger_ = container.logger as SimpleLogger
     this.options_ = options
 
@@ -60,19 +62,59 @@ class NmiPaymentProviderService extends AbstractPaymentProvider<NmiProviderOptio
     }
   }
 
-  async authorizePayment(paymentSessionData: any): Promise<any> {
-    // Normalize: Medusa v2 may call with (data) or ({ data })
+  async authorizePayment(paymentSessionData: any, context?: any): Promise<any> {
     const data: Record<string, unknown> =
       paymentSessionData?.data !== undefined
         ? (paymentSessionData.data as Record<string, unknown>)
         : paymentSessionData
 
-    // Charge route sets nmi_status="charged" on session data before placeOrder is called
+    // Primary: session data was updated by charge route
     if (data.nmi_status === "charged" || data.nmi_status === "charged_unreconciled") {
       return { status: "captured", data }
     }
 
-    this.logger_.warn("[NmiProvider] authorizePayment called without charged session data", { data })
+    // Fallback: session update failed — check DB for charged intent
+    try {
+      const nmiModule = this.container_?.resolve?.("nmiPayment") as any
+      if (nmiModule) {
+        // Try to find by session_id first
+        const sessionId = data.id || (paymentSessionData as any)?.id
+        let intents: any[] = []
+        if (sessionId) {
+          intents = await nmiModule.listNmiPaymentIntents({ session_id: sessionId })
+        }
+        // Fallback: try cart_id from context
+        if (!intents?.length) {
+          const cartId = (context as any)?.cart_id ?? data.cart_id
+          if (cartId) {
+            intents = await nmiModule.listNmiPaymentIntents({ cart_id: cartId })
+          }
+        }
+        const found = intents?.find(
+          (i: any) => i.status === "charged" || i.status === "charged_unreconciled"
+        )
+        if (found) {
+          this.logger_.info("[NmiProvider] authorizePayment DB fallback — found charged intent", {
+            intentId: found.id,
+          })
+          return {
+            status: "captured",
+            data: {
+              ...data,
+              nmi_status: "charged",
+              nmi_transaction_id: found.nmi_transaction_id,
+              nmi_auth_code: found.nmi_auth_code,
+            },
+          }
+        }
+      }
+    } catch (err) {
+      this.logger_.warn("[NmiProvider] authorizePayment DB fallback error", {
+        error: (err as Error).message,
+      })
+    }
+
+    this.logger_.warn("[NmiProvider] authorizePayment — no charged session or intent found", { data })
     return { status: "error", data }
   }
 
@@ -96,11 +138,47 @@ class NmiPaymentProviderService extends AbstractPaymentProvider<NmiProviderOptio
     }
 
     const transactionId = data.nmi_transaction_id as string
+    if (!transactionId) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        "Cannot refund: no NMI transaction ID on this payment"
+      )
+    }
+
+    if (!amountCents || amountCents <= 0) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        "Cannot refund: invalid amount"
+      )
+    }
+
     const amountDollars = (amountCents / 100).toFixed(2)
 
     this.logger_.info("[NmiProvider] refundPayment", { transactionId, amountDollars })
 
     const result = await this.nmiClient_.refund(transactionId, amountDollars)
+
+    // Log refund attempt
+    try {
+      const nmiModule = this.container_?.resolve?.("nmiPayment") as any
+      if (nmiModule) {
+        const intents = await nmiModule.listNmiPaymentIntents({ nmi_transaction_id: transactionId })
+        const intentId = intents?.[0]?.id || "unknown"
+        await nmiModule.createNmiPaymentAttemptLogs([{
+          intent_id: intentId,
+          action: "refund",
+          request_amount: amountDollars,
+          response_code: result.responseCode,
+          response_text: result.responseText,
+          nmi_transaction_id: result.transactionId || null,
+          avs_response: null,
+          cvv_response: null,
+          three_ds_eci: null,
+        }])
+      }
+    } catch (logErr) {
+      this.logger_.warn("[NmiProvider] Failed to log refund attempt", { error: (logErr as Error).message })
+    }
 
     if (!result.approved) {
       this.logger_.error("[NmiProvider] Refund failed", {
@@ -133,6 +211,28 @@ class NmiPaymentProviderService extends AbstractPaymentProvider<NmiProviderOptio
     this.logger_.info("[NmiProvider] cancelPayment (void)", { transactionId })
 
     const result = await this.nmiClient_.voidTxn(transactionId)
+
+    // Log void attempt
+    try {
+      const nmiModule = this.container_?.resolve?.("nmiPayment") as any
+      if (nmiModule) {
+        const intents = await nmiModule.listNmiPaymentIntents({ nmi_transaction_id: transactionId })
+        const intentId = intents?.[0]?.id || "unknown"
+        await nmiModule.createNmiPaymentAttemptLogs([{
+          intent_id: intentId,
+          action: "void",
+          request_amount: "0",
+          response_code: result.responseCode,
+          response_text: result.responseText,
+          nmi_transaction_id: result.transactionId || null,
+          avs_response: null,
+          cvv_response: null,
+          three_ds_eci: null,
+        }])
+      }
+    } catch (logErr) {
+      this.logger_.warn("[NmiProvider] Failed to log void attempt", { error: (logErr as Error).message })
+    }
 
     if (!result.approved) {
       this.logger_.warn("[NmiProvider] Void failed", {

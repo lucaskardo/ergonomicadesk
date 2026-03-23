@@ -17,6 +17,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   // FIX 2: Manual dynamic import via useEffect instead of next/dynamic.
   // next/dynamic ssr:false does not hydrate correctly on first client-side navigation.
   const [NmiPaymentsComponent, setNmiPaymentsComponent] = useState<any>(null)
+  const [NmiThreeDSecureComponent, setNmiThreeDSecureComponent] = useState<any>(null)
   const [renderKey, setRenderKey] = useState(0)
 
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
@@ -26,12 +27,12 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
 
   const nmiRef = useRef<any>(null)
-  // threeDsRef kept for future use — NmiThreeDSecure is not mounted in JSX (FIX 3)
   const threeDsRef = useRef<any>(null)
 
   useEffect(() => {
     import("@nmipayments/nmi-pay-react").then((mod) => {
       setNmiPaymentsComponent(() => mod.NmiPayments)
+      setNmiThreeDSecureComponent(() => mod.NmiThreeDSecure)
       setRenderKey((k) => k + 1)
     })
   }, [])
@@ -43,6 +44,12 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     (session?.data?.tokenizationKey as string) ||
     process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY ||
     ""
+
+  // P0-6: cart.total in Medusa v2 may be a BigNumber object { value: "63879" }, not a plain number
+  const rawTotal = (cart as any).total
+  const totalCents = typeof rawTotal === "object" && rawTotal !== null
+    ? Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0)
+    : Number(rawTotal || 0)
 
   const handleNmiChange = useCallback(
     (response: any) => {
@@ -73,8 +80,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
     try {
       // ── STEP 1: 3DS Authentication ─────────────────────────
-      // FIX 3: NmiThreeDSecure is not mounted in JSX, so threeDsRef.current is null.
-      // 3DS is skipped in sandbox (NMI_3DS_MODE=best_effort). Will be wired in production.
+      // NmiThreeDSecure is mounted only after paymentToken exists (avoids "Payment Token does not exist" error)
       let threeDsData: Record<string, string> = {}
 
       if (threeDsRef.current?.startThreeDSecure) {
@@ -83,7 +89,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           const threeDsResult = await threeDsRef.current.startThreeDSecure({
             paymentToken,
             currency: "USD",
-            amount: ((cart.total || 0) / 100).toFixed(2),
+            amount: (totalCents / 100).toFixed(2),
             firstName: billing?.first_name || "",
             lastName: billing?.last_name || "",
             email: cart.email || "",
@@ -211,9 +217,14 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
         )}
       </div>
 
-      {/* FIX 3: NmiThreeDSecure removed from JSX to prevent "Payment Token does not exist" error
-          on mount. 3DS runs imperatively via threeDsRef in handleSubmit when the ref is available.
-          In sandbox with NMI_3DS_MODE=best_effort, 3DS is skipped and payments proceed normally. */}
+      {/* 3DS: mount only after token exists to avoid "Payment Token does not exist" error */}
+      {NmiThreeDSecureComponent && tokenizationKey && paymentToken && (
+        <NmiThreeDSecureComponent
+          ref={threeDsRef}
+          tokenizationKey={tokenizationKey}
+          modal={true}
+        />
+      )}
 
       {/* Error */}
       <ErrorMessage error={error} data-testid="nmi-payment-error" />

@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { NmiClient, NmiLane } from "../../../../modules/nmi-payment/nmi-client"
 import { NMI_PAYMENT_MODULE } from "../../../../modules/nmi-payment"
+import { checkRateLimit } from "./rate-limiter"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER) as any
@@ -15,6 +16,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 }
 
 async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: any) {
+  // 0. Environment guard
+  if (!process.env.NMI_SECURITY_KEY) {
+    logger.error("[NmiCharge] NMI_SECURITY_KEY not configured")
+    return res.status(503).json({ message: "Payment service not configured" })
+  }
+
   // 1. Parse + validate input
   const body = req.body as {
     cart_id?: string
@@ -25,6 +32,20 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
 
   if (!cart_id || !payment_token) {
     return res.status(400).json({ message: "cart_id and payment_token are required" })
+  }
+
+  // Input sanitization
+  if (typeof payment_token !== "string" || payment_token.length > 500 || payment_token.length < 10) {
+    return res.status(400).json({ message: "Invalid payment token" })
+  }
+  if (typeof cart_id !== "string" || !cart_id.startsWith("cart_")) {
+    return res.status(400).json({ message: "Invalid cart ID" })
+  }
+
+  // Rate limiting (5 attempts per minute per cart)
+  if (!checkRateLimit(cart_id)) {
+    logger.warn("[NmiCharge] Rate limit exceeded", { cart_id })
+    return res.status(429).json({ message: "Too many payment attempts. Please wait a minute." })
   }
 
   // 2. Resolve cart server-side — NEVER trust amount from frontend
@@ -76,7 +97,6 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   // 5. Calculate amount server-side — cart.total may be BigNumber object or plain number
   // amountCents is stored in payment_intent (e.g. 29900 for $299.00)
   // amountDollars is sent to NMI as a string (e.g. "299.00") — NMI requires dollars, NOT cents
-  // shipping_address first_name/last_name/phone are copied from cart → order by Medusa automatically on cart.complete
   const rawTotal = (cart as any).total
   const amountCents = typeof rawTotal === "object" && rawTotal !== null
     ? Math.round(Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0))
@@ -104,17 +124,36 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     })
   }
 
-  // 7. Create payment intent (pending)
-  const [intent] = await nmiPaymentService.createNmiPaymentIntents([
-    {
-      cart_id,
-      session_id: session.id,
-      amount_cents: amountCents,
-      currency_code: cart.currency_code as string,
-      idempotency_key: idempotencyKey,
-      status: "pending",
-    },
-  ])
+  // TODO: Implement scheduled job to clean up stale "pending" intents older than 1 hour
+  // These occur when users abandon checkout after intent creation but before NMI charge
+
+  // 7. Create payment intent (pending) — unique constraint on idempotency_key prevents races
+  let intent: any
+  try {
+    ;[intent] = await nmiPaymentService.createNmiPaymentIntents([
+      {
+        cart_id,
+        session_id: session.id,
+        amount_cents: amountCents,
+        currency_code: cart.currency_code as string,
+        idempotency_key: idempotencyKey,
+        status: "pending",
+      },
+    ])
+  } catch (err: any) {
+    // Unique constraint violation = concurrent request already created an intent
+    if (err?.code === "23505" || err?.message?.includes("unique") || err?.message?.includes("duplicate")) {
+      // Re-fetch — the other request may have already charged
+      const retryIntents = await nmiPaymentService.listNmiPaymentIntents({ idempotency_key: idempotencyKey })
+      const retryCharged = retryIntents?.find((i: any) => i.status === "charged" || i.status === "charged_unreconciled")
+      if (retryCharged) {
+        return res.json({ success: true, transaction_id: retryCharged.nmi_transaction_id })
+      }
+      // Other request created intent but hasn't charged yet — return conflict
+      return res.status(409).json({ message: "Payment is being processed. Please wait." })
+    }
+    throw err
+  }
 
   // 8. 3DS policy check
   const threeDsMode = process.env.NMI_3DS_MODE || "best_effort"
@@ -155,7 +194,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
       .json({ message: isTimeout ? "Payment gateway timeout. Please try again." : "Payment processing error." })
   }
 
-  // 11. Log attempt (always, even on failure)
+  // 11. Log attempt (always, even on failure) — raw_response intentionally omitted
   await nmiPaymentService.createNmiPaymentAttemptLogs([
     {
       intent_id: intent.id,
@@ -167,7 +206,6 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
       avs_response: nmiResult.avsResponse || null,
       cvv_response: nmiResult.cvvResponse || null,
       three_ds_eci: three_ds?.eci || null,
-      raw_response: JSON.stringify(nmiResult),
     },
   ])
 
@@ -214,13 +252,15 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   ])
 
   // 14. Update payment session data so authorizePayment succeeds
+  // Only persist known safe fields — avoid spreading session.data to prevent injection
   try {
     const paymentModuleService = req.scope.resolve(Modules.PAYMENT) as any
     await paymentModuleService.updatePaymentSessions([
       {
         id: session.id,
         data: {
-          ...(session.data as Record<string, unknown>),
+          id: (session.data as any)?.id,
+          tokenizationKey: (session.data as any)?.tokenizationKey,
           nmi_status: "charged",
           nmi_transaction_id: nmiResult.transactionId,
           nmi_auth_code: nmiResult.authCode,

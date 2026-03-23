@@ -113,11 +113,11 @@ export class NmiClient {
         body: JSON.stringify(body),
         signal,
       })
+      const text = await res.text()
       let raw: Record<string, unknown>
       try {
-        raw = (await res.json()) as Record<string, unknown>
+        raw = JSON.parse(text) as Record<string, unknown>
       } catch (_parseErr) {
-        const text = await res.text().catch(() => "(unreadable)")
         throw new Error(`NMI v5 non-JSON response (HTTP ${res.status}): ${text.slice(0, 200)}`)
       }
       const normalized = this.normalizeV5(raw)
