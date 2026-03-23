@@ -77,7 +77,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
             address1: billing?.address_1 || "",
             city: billing?.city || "",
             state: billing?.province || "",
-            zip: billing?.postal_code || "",
+            postalCode: billing?.postal_code || "",
             country: billing?.country_code || "PA",
             phone: billing?.phone || "",
           })
@@ -182,6 +182,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
+            paymentMethods={["card"]}
           />
         ) : (
           <p className="text-sm text-ui-fg-subtle">
