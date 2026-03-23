@@ -98,7 +98,7 @@ export default function ProductActions({
     selectVariant: "Select an option",
     quantity: "Qty",
     whatsapp: "Ask on WhatsApp",
-    priceTrust: "Includes 7% ITBMS tax",
+    priceTrust: "Price does not include ITBMS",
     freeDelivery: "Free delivery + assembly on orders >$99 in Panama City",
   } : {
     addToCart: "Agregar al carrito",
@@ -106,7 +106,7 @@ export default function ProductActions({
     selectVariant: "Selecciona una opción",
     quantity: "Cant.",
     whatsapp: "Consultar por WhatsApp",
-    priceTrust: "Incluye 7% ITBMS",
+    priceTrust: "Precio no incluye ITBMS",
     freeDelivery: "Envío gratis + ensamblaje en pedidos >$99 en Ciudad de Panamá",
   }
 

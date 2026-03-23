@@ -10,7 +10,7 @@ import {
 } from "@medusajs/types"
 import { Button, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { StoreFreeShippingPrice } from "types/global"
 
 const computeTarget = (
@@ -201,6 +201,11 @@ function FreeShippingPopup({
   price: StoreFreeShippingPrice
 }) {
   const [isClosed, setIsClosed] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsClosed(true), 5000)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div
