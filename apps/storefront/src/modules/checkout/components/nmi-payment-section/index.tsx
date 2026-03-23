@@ -1,14 +1,26 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Button } from "@medusajs/ui"
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { placeOrder } from "@lib/data/cart"
+import type { NmiCardFieldsHandle } from "../nmi-card-fields"
 
-// DO NOT import @nmipayments/nmi-pay-react at file level
-// The SDK uses DOM classes that crash in SSR
+const NmiCardFields = dynamic(() => import("../nmi-card-fields"), {
+  ssr: false,
+  loading: () => (
+    <div className="animate-pulse space-y-3">
+      <div className="h-10 bg-ui-bg-subtle rounded" />
+      <div className="grid grid-cols-2 gap-3">
+        <div className="h-10 bg-ui-bg-subtle rounded" />
+        <div className="h-10 bg-ui-bg-subtle rounded" />
+      </div>
+    </div>
+  ),
+})
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -17,39 +29,13 @@ type Props = {
 }
 
 export default function NmiPaymentSection({ cart, session, notReady }: Props) {
-  // Dynamic SDK components — loaded client-side only
-  const [readyToRender, setReadyToRender] = useState(false)
-  const [sdkError, setSdkError] = useState<string | null>(null)
-  const nmiComponentsRef = useRef<{ NmiPayments: any } | null>(null)
-
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
 
-  const nmiRef = useRef<any>(null)
-
-  // Load NMI SDK client-side only
-  useEffect(() => {
-    let cancelled = false
-    import("@nmipayments/nmi-pay-react")
-      .then((mod) => {
-        if (cancelled) return
-        nmiComponentsRef.current = { NmiPayments: mod.NmiPayments }
-        // Delay rendering to let the DOM stabilize after step transition
-        setTimeout(() => {
-          if (!cancelled) setReadyToRender(true)
-        }, 500)
-      })
-      .catch((err) => {
-        if (cancelled) return
-        setSdkError(err.message)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const cardFieldsRef = useRef<NmiCardFieldsHandle>(null)
 
   const pathname = usePathname()
   const isEnglish = pathname?.includes("/en")
@@ -59,23 +45,13 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY ||
     ""
 
-  const handleNmiChange = useCallback(
-    (response: any) => {
-      if (response?.token) {
-        setPaymentToken(response.token)
-        setFormComplete(true)
-      } else {
-        setPaymentToken(null)
-        setFormComplete(false)
-      }
-      if (error) setError(null)
-    },
-    [error]
-  )
-
   const handleSubmit = async () => {
     if (!paymentToken) {
-      setError(isEnglish ? "Please enter your card details" : "Ingresa los datos de tu tarjeta")
+      setError(
+        isEnglish
+          ? "Please enter your card details"
+          : "Ingresa los datos de tu tarjeta"
+      )
       return
     }
 
@@ -83,16 +59,14 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     setError(null)
 
     try {
-      const threeDsData: Record<string, string> = {}
-      // 3DS disabled in sandbox — will be re-integrated for production with proper mounting
-
-      // Charge
-      const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+      const backendUrl =
+        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
       const chargeRes = await fetch(`${backendUrl}/store/custom/nmi-charge`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
+          "x-publishable-api-key":
+            process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
         },
         body: JSON.stringify({
           cart_id: cart.id,
@@ -110,11 +84,9 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
               : "Pago rechazado. Verifica tu tarjeta e intenta de nuevo.")
         )
         setSubmitting(false)
-        if (nmiRef.current?.resetFields) {
-          nmiRef.current.resetFields()
-          setPaymentToken(null)
-          setFormComplete(false)
-        }
+        cardFieldsRef.current?.resetFields()
+        setPaymentToken(null)
+        setFormComplete(false)
         return
       }
 
@@ -122,14 +94,13 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
       try {
         await placeOrder()
-      } catch (orderErr: any) {
+      } catch {
         setError(
           isEnglish
             ? "Your payment was received but the order could not be confirmed automatically. Our team is reviewing it — you will receive a confirmation shortly."
             : "Tu pago fue recibido pero la orden no pudo confirmarse automáticamente. Nuestro equipo lo está validando — recibirás una confirmación pronto."
         )
         setSubmitting(false)
-        return
       }
     } catch (err: any) {
       if (chargeSucceeded) {
@@ -145,9 +116,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     }
   }
 
-  // Get component from ref (avoids re-renders from state)
-  const NmiPaymentsComp = nmiComponentsRef.current?.NmiPayments
-
   return (
     <div className="flex flex-col gap-4">
       <div className="border border-ui-border-base rounded-lg p-4">
@@ -155,28 +123,21 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           {isEnglish ? "Card Details" : "Datos de Tarjeta"}
         </p>
 
-        {sdkError ? (
-          <p className="text-sm text-red-500">
-            {isEnglish ? "Failed to load payment form" : "Error al cargar el formulario de pago"}
-          </p>
-        ) : !readyToRender || !NmiPaymentsComp ? (
-          <div className="animate-pulse space-y-3">
-            <div className="h-10 bg-ui-bg-subtle rounded" />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="h-10 bg-ui-bg-subtle rounded" />
-              <div className="h-10 bg-ui-bg-subtle rounded" />
-            </div>
-          </div>
-        ) : tokenizationKey ? (
-          <NmiPaymentsComp
-            ref={nmiRef}
+        {tokenizationKey ? (
+          <NmiCardFields
+            ref={cardFieldsRef}
             tokenizationKey={tokenizationKey}
-            onChange={handleNmiChange}
-            paymentMethods={["card"]}
+            onTokenChange={(token, complete) => {
+              setPaymentToken(token)
+              setFormComplete(complete)
+              if (error) setError(null)
+            }}
           />
         ) : (
           <p className="text-sm text-ui-fg-subtle">
-            {isEnglish ? "Payment configuration error" : "Error de configuración de pago"}
+            {isEnglish
+              ? "Payment configuration error"
+              : "Error de configuración de pago"}
           </p>
         )}
       </div>

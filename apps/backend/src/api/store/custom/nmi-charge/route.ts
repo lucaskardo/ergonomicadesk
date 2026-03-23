@@ -142,7 +142,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     ])
   } catch (err: any) {
     // Unique constraint violation = concurrent request already created an intent
-    if (err?.code === "23505" || err?.message?.includes("unique") || err?.message?.includes("duplicate")) {
+    if (err?.code === "23505" || err?.message?.includes("unique") || err?.message?.includes("duplicate") || err?.message?.includes("already exists")) {
       // Re-fetch — the other request may have already charged
       const retryIntents = await nmiPaymentService.listNmiPaymentIntents({ idempotency_key: idempotencyKey })
       const retryCharged = retryIntents?.find((i: any) => i.status === "charged" || i.status === "charged_unreconciled")
