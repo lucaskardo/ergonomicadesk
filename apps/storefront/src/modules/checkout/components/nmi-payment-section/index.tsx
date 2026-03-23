@@ -21,7 +21,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   const [sdkLoaded, setSdkLoaded] = useState(false)
   const [sdkError, setSdkError] = useState<string | null>(null)
   const nmiComponentsRef = useRef<{ NmiPayments: any; NmiThreeDSecure: any } | null>(null)
-  const [, forceRender] = useState(0)
+  const [mountKey, setMountKey] = useState(0)
 
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
@@ -34,6 +34,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
   // Load NMI SDK client-side only
   useEffect(() => {
+    console.log("[NMI] useEffect fired, importing SDK...")
     let cancelled = false
     import("@nmipayments/nmi-pay-react")
       .then((mod) => {
@@ -42,6 +43,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           NmiPayments: mod.NmiPayments,
           NmiThreeDSecure: mod.NmiThreeDSecure,
         }
+        console.log("[NMI] SDK loaded successfully")
         setSdkLoaded(true)
       })
       .catch((err) => {
@@ -53,6 +55,21 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
       cancelled = true
     }
   }, [])
+
+  // Force re-mount of NmiPayments after SDK loads so iframes initialize against a live DOM node
+  useEffect(() => {
+    if (!sdkLoaded) return
+    console.log("[NMI] sdkLoaded=true, scheduling re-mount via requestAnimationFrame")
+    let rafId: number
+    const schedule = () => {
+      rafId = requestAnimationFrame(() => {
+        console.log("[NMI] re-mounting NmiPayments (mountKey bump)")
+        setMountKey((k) => k + 1)
+      })
+    }
+    schedule()
+    return () => cancelAnimationFrame(rafId)
+  }, [sdkLoaded])
 
   const pathname = usePathname()
   const isEnglish = pathname?.includes("/en")
@@ -189,6 +206,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   const NmiPaymentsComp = nmiComponentsRef.current?.NmiPayments
   const NmiThreeDSecureComp = nmiComponentsRef.current?.NmiThreeDSecure
 
+  console.log("[NMI] Rendering NmiPaymentsComp:", !!NmiPaymentsComp, "tokenKey:", !!tokenizationKey, "sdkLoaded:", sdkLoaded, "mountKey:", mountKey)
+
   return (
     <div className="flex flex-col gap-4">
       <div className="border border-ui-border-base rounded-lg p-4">
@@ -210,6 +229,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           </div>
         ) : tokenizationKey ? (
           <NmiPaymentsComp
+            key={mountKey}
             ref={nmiRef}
             tokenizationKey={tokenizationKey}
             onChange={handleNmiChange}
