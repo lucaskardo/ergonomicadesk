@@ -20,7 +20,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   // Dynamic SDK components — loaded client-side only
   const [readyToRender, setReadyToRender] = useState(false)
   const [sdkError, setSdkError] = useState<string | null>(null)
-  const nmiComponentsRef = useRef<{ NmiPayments: any; NmiThreeDSecure: any } | null>(null)
+  const nmiComponentsRef = useRef<{ NmiPayments: any } | null>(null)
 
   const [paymentToken, setPaymentToken] = useState<string | null>(null)
   const [formComplete, setFormComplete] = useState(false)
@@ -29,7 +29,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
 
   const nmiRef = useRef<any>(null)
-  const threeDsRef = useRef<any>(null)
 
   // Load NMI SDK client-side only
   useEffect(() => {
@@ -37,14 +36,11 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     import("@nmipayments/nmi-pay-react")
       .then((mod) => {
         if (cancelled) return
-        nmiComponentsRef.current = {
-          NmiPayments: mod.NmiPayments,
-          NmiThreeDSecure: mod.NmiThreeDSecure,
-        }
+        nmiComponentsRef.current = { NmiPayments: mod.NmiPayments }
         // Delay rendering to let the DOM stabilize after step transition
         setTimeout(() => {
           if (!cancelled) setReadyToRender(true)
-        }, 350)
+        }, 500)
       })
       .catch((err) => {
         if (cancelled) return
@@ -62,13 +58,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     (session?.data?.tokenizationKey as string) ||
     process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY ||
     ""
-
-  // cart.total in Medusa v2 may be BigNumber object
-  const rawTotal = (cart as any).total
-  const totalCents =
-    typeof rawTotal === "object" && rawTotal !== null
-      ? Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0)
-      : Number(rawTotal || 0)
 
   const handleNmiChange = useCallback(
     (response: any) => {
@@ -94,37 +83,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     setError(null)
 
     try {
-      // 3DS
-      let threeDsData: Record<string, string> = {}
-      if (threeDsRef.current?.startThreeDSecure) {
-        try {
-          const billing = cart.billing_address
-          const threeDsResult = await threeDsRef.current.startThreeDSecure({
-            paymentToken,
-            currency: "USD",
-            amount: (totalCents / 100).toFixed(2),
-            firstName: billing?.first_name || "",
-            lastName: billing?.last_name || "",
-            email: cart.email || "",
-            address1: billing?.address_1 || "",
-            city: billing?.city || "",
-            state: billing?.province || "",
-            postalCode: billing?.postal_code || "",
-            country: billing?.country_code || "PA",
-            phone: billing?.phone || "",
-          })
-          if (threeDsResult) {
-            if (threeDsResult.cavv) threeDsData.cavv = threeDsResult.cavv
-            if (threeDsResult.xid) threeDsData.xid = threeDsResult.xid
-            if (threeDsResult.eci) threeDsData.eci = threeDsResult.eci
-            if (threeDsResult.cardHolderAuth) threeDsData.cardholder_auth = threeDsResult.cardHolderAuth
-            if (threeDsResult.threeDsVersion) threeDsData.three_ds_version = threeDsResult.threeDsVersion
-            if (threeDsResult.directoryServerId) threeDsData.directory_server_id = threeDsResult.directoryServerId
-          }
-        } catch (threeDsErr: any) {
-          console.warn("3DS auth failed or unavailable:", threeDsErr.message)
-        }
-      }
+      const threeDsData: Record<string, string> = {}
+      // 3DS disabled in sandbox — will be re-integrated for production with proper mounting
 
       // Charge
       const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
@@ -137,7 +97,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
         body: JSON.stringify({
           cart_id: cart.id,
           payment_token: paymentToken,
-          three_ds: Object.keys(threeDsData).length > 0 ? threeDsData : undefined,
         }),
       })
 
@@ -186,9 +145,8 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
     }
   }
 
-  // Get components from ref (avoids re-renders from state)
+  // Get component from ref (avoids re-renders from state)
   const NmiPaymentsComp = nmiComponentsRef.current?.NmiPayments
-  const NmiThreeDSecureComp = nmiComponentsRef.current?.NmiThreeDSecure
 
   return (
     <div className="flex flex-col gap-4">
@@ -222,15 +180,6 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
           </p>
         )}
       </div>
-
-      {/* 3DS: mount only after token exists */}
-      {NmiThreeDSecureComp && tokenizationKey && paymentToken && (
-        <NmiThreeDSecureComp
-          ref={threeDsRef}
-          tokenizationKey={tokenizationKey}
-          modal={true}
-        />
-      )}
 
       <ErrorMessage error={error} data-testid="nmi-payment-error" />
 
