@@ -6,7 +6,17 @@ import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { placeOrder } from "@lib/data/cart"
-import { NmiPayments, NmiThreeDSecure } from "@nmipayments/nmi-pay-react"
+import dynamic from "next/dynamic"
+
+const NmiPayments = dynamic(
+  () => import("@nmipayments/nmi-pay-react").then(mod => ({ default: mod.NmiPayments as any })),
+  { ssr: false }
+)
+
+const NmiThreeDSecure = dynamic(
+  () => import("@nmipayments/nmi-pay-react").then(mod => ({ default: mod.NmiThreeDSecure as any })),
+  { ssr: false }
+)
 
 type Props = {
   cart: HttpTypes.StoreCart
@@ -194,7 +204,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
       </div>
 
       {/* 3DS Component — hidden, renders modal when needed */}
-      {typeof NmiThreeDSecure !== "undefined" && tokenizationKey && (
+      {tokenizationKey && (
         <NmiThreeDSecure
           ref={threeDsRef}
           tokenizationKey={tokenizationKey}
