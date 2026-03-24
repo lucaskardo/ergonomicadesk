@@ -94,6 +94,13 @@ export default async function Nav() {
                 {lang === "en" ? "Collections" : "Colecciones"}
                 <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
               </LocalizedClientLink>
+              <LocalizedClientLink
+                href="/blog"
+                className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
+              >
+                Blog
+                <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
+              </LocalizedClientLink>
             </div>
           </div>
 

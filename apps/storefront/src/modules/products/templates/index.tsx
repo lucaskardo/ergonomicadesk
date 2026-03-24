@@ -18,6 +18,7 @@ type ProductTemplateProps = {
   countryCode: string
   images: HttpTypes.StoreProductImage[]
   selectedVariant?: HttpTypes.StoreProductVariant
+  initialVariantId?: string
 }
 
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
@@ -26,6 +27,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   countryCode,
   images,
   selectedVariant,
+  initialVariantId,
 }) => {
   if (!product || !product.id) {
     return notFound()
@@ -78,7 +80,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
               />
             }
           >
-            <ProductActionsWrapper id={product.id} region={region} />
+            <ProductActionsWrapper id={product.id} region={region} initialVariantId={initialVariantId} />
           </Suspense>
           <ProductTabs product={product} />
         </div>

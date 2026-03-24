@@ -18,6 +18,7 @@ type ProductActionsProps = {
   product: HttpTypes.StoreProduct
   region: HttpTypes.StoreRegion
   disabled?: boolean
+  initialVariantId?: string
 }
 
 const optionsAsKeymap = (
@@ -32,6 +33,7 @@ const optionsAsKeymap = (
 export default function ProductActions({
   product,
   disabled,
+  initialVariantId,
 }: ProductActionsProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -43,11 +45,19 @@ export default function ProductActions({
   const countryCode = useParams().countryCode as string
 
   useEffect(() => {
+    // Pre-select variant from initialVariantId (SKU URL) or single-variant product
+    if (initialVariantId) {
+      const variant = product.variants?.find((v) => v.id === initialVariantId)
+      if (variant) {
+        setOptions(optionsAsKeymap(variant.options) ?? {})
+        return
+      }
+    }
     if (product.variants?.length === 1) {
       const variantOptions = optionsAsKeymap(product.variants[0].options)
       setOptions(variantOptions ?? {})
     }
-  }, [product.variants])
+  }, [product.variants, initialVariantId])
 
   const selectedVariant = useMemo(() => {
     if (!product.variants || product.variants.length === 0) return
@@ -69,15 +79,11 @@ export default function ProductActions({
   }, [product.variants, options])
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
-    const value = isValidVariant ? selectedVariant?.id : null
-    if (params.get("v_id") === value) return
-    if (value) {
-      params.set("v_id", value)
-    } else {
-      params.delete("v_id")
-    }
-    router.replace(pathname + "?" + params.toString())
+    if (!isValidVariant || !selectedVariant?.sku) return
+    const productPath = pathname.includes("/en/") ? "en/products" : "productos"
+    const targetUrl = `/${countryCode}/${productPath}/${product.handle}/${selectedVariant.sku}`
+    if (pathname === targetUrl) return
+    router.replace(targetUrl, { scroll: false })
   }, [selectedVariant, isValidVariant])
 
   const inStock = useMemo(() => {

@@ -18,10 +18,14 @@ export default async function ProductPreview({
   const category = product.categories?.[0]
   const lang = await getLang()
   const productPath = lang === "en" ? "products" : "productos"
+  const firstSku = product.variants?.[0]?.sku
+  const productHref = firstSku
+    ? `/${productPath}/${product.handle}/${firstSku}`
+    : `/${productPath}/${product.handle}`
 
   return (
     <LocalizedClientLink
-      href={`/${productPath}/${product.handle}`}
+      href={productHref}
       className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1"
       style={{ display: "block" }}
     >
