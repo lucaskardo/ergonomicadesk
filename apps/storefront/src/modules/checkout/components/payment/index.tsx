@@ -10,13 +10,25 @@ import PaymentContainer, {
   StripeCardContainer,
 } from "@modules/checkout/components/payment-container"
 import Divider from "@modules/common/components/divider"
+import { placeOrder } from "@lib/data/cart"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
 import dynamic from "next/dynamic"
 
-const NmiCardFields = dynamic(() => import("../nmi-card-fields"), { ssr: false })
+const NmiCardFields = dynamic(() => import("../nmi-card-fields"), {
+  ssr: false,
+  loading: () => (
+    <div className="animate-pulse space-y-3 mt-4">
+      <div className="h-10 bg-ui-bg-subtle rounded" />
+      <div className="grid grid-cols-2 gap-3">
+        <div className="h-10 bg-ui-bg-subtle rounded" />
+        <div className="h-10 bg-ui-bg-subtle rounded" />
+      </div>
+    </div>
+  ),
+})
 
 const Payment = ({
   cart,
@@ -39,7 +51,8 @@ const Payment = ({
     activeSession?.provider_id ?? ""
   )
   const [nmiToken, setNmiToken] = useState<string | null>(null)
-  const [nmiComplete, setNmiComplete] = useState(false)
+  const [chargeSucceeded, setChargeSucceeded] = useState(false)
+  const cardFieldsRef = useRef<any>(null)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -81,6 +94,8 @@ const Payment = ({
 
   const handleSubmit = async () => {
     setIsLoading(true)
+    setError(null)
+
     try {
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
@@ -91,22 +106,89 @@ const Payment = ({
         })
       }
 
-      // For Stripe, if no active session yet, stay on payment step
+      // For Stripe: if no session yet, stay to collect card details
       if (isStripeLike(selectedPaymentMethod) && !activeSession && !checkActiveSession) {
         setIsLoading(false)
         return
       }
 
-      // Use window.location instead of router.push to force a full page
-      // navigation. This ensures the server component re-fetches the cart
-      // with the newly created payment session.
-      const reviewUrl = pathname + "?" + createQueryString("step", "review")
-      window.location.href = reviewUrl
+      // For NMI: charge immediately, then place order
+      if (isNmi(selectedPaymentMethod)) {
+        if (!nmiToken) {
+          setError(lang === "en" ? "Please enter your card details" : "Ingresa los datos de tu tarjeta")
+          setIsLoading(false)
+          return
+        }
+
+        // Step 1: Charge NMI
+        const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+        const chargeRes = await fetch(`${backendUrl}/store/custom/nmi-charge`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
+          },
+          body: JSON.stringify({
+            cart_id: cart.id,
+            payment_token: nmiToken,
+          }),
+        })
+
+        const raw = await chargeRes.text()
+
+        if (!chargeRes.ok) {
+          let msg: string
+          try { msg = JSON.parse(raw).message } catch { msg = raw }
+          setError(
+            msg || (lang === "en"
+              ? "Payment declined. Please check your card and try again."
+              : "Pago rechazado. Verifica tu tarjeta e intenta de nuevo.")
+          )
+          cardFieldsRef.current?.resetFields?.()
+          setNmiToken(null)
+          setIsLoading(false)
+          return
+        }
+
+        // Step 2: Charge succeeded — complete the order
+        setChargeSucceeded(true)
+
+        try {
+          await placeOrder()
+          // placeOrder redirects to order confirmed page automatically
+        } catch (orderErr: any) {
+          // placeOrder uses redirect() which throws NEXT_REDIRECT — let it propagate
+          if (orderErr?.digest?.startsWith?.("NEXT_REDIRECT")) {
+            throw orderErr
+          }
+          setError(
+            lang === "en"
+              ? "Your payment was received but the order could not be confirmed automatically. Our team is reviewing it — you will receive a confirmation shortly."
+              : "Tu pago fue recibido pero la orden no pudo confirmarse automáticamente. Nuestro equipo lo está validando — recibirás una confirmación pronto."
+          )
+          setIsLoading(false)
+        }
+        return
+      }
+
+      // For Manual/other: just complete (existing Medusa flow handles it)
+      try {
+        await placeOrder()
+      } catch (orderErr: any) {
+        if (orderErr?.digest?.startsWith?.("NEXT_REDIRECT")) {
+          throw orderErr
+        }
+        setError(orderErr.message)
+        setIsLoading(false)
+      }
     } catch (err: any) {
+      // Let NEXT_REDIRECT propagate
+      if (err?.digest?.startsWith?.("NEXT_REDIRECT")) {
+        throw err
+      }
       setError(err.message)
       setIsLoading(false)
     }
-    // Don't setIsLoading(false) on success — page is navigating away
   }
 
   useEffect(() => {
@@ -176,17 +258,17 @@ const Payment = ({
           {isNmi(selectedPaymentMethod) && isOpen && (
             <div className="border border-ui-border-base rounded-lg p-4 mt-4">
               <p className="text-sm font-medium text-ui-fg-base mb-3">
-                {lang === "es" ? "Datos de Tarjeta" : "Card Details"}
+                {lang === "en" ? "Card Details" : "Datos de Tarjeta"}
               </p>
-              <NmiCardFields
-                tokenizationKey={process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY || ""}
-                onTokenChange={(token, complete) => {
-                  setNmiToken(token)
-                  setNmiComplete(complete)
-                  if (token) sessionStorage.setItem("nmi_payment_token", token)
-                  else sessionStorage.removeItem("nmi_payment_token")
-                }}
-              />
+              <div className="min-h-[120px]">
+                <NmiCardFields
+                  ref={cardFieldsRef}
+                  tokenizationKey={process.env.NEXT_PUBLIC_NMI_TOKENIZATION_KEY || ""}
+                  onTokenChange={(token: string | null, complete: boolean) => {
+                    setNmiToken(token)
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -217,15 +299,20 @@ const Payment = ({
             disabled={
               (isStripeLike(selectedPaymentMethod) && !cardComplete) ||
               (isNmi(selectedPaymentMethod) && !nmiToken) ||
-              (!selectedPaymentMethod && !paidByGiftcard)
+              (!selectedPaymentMethod && !paidByGiftcard) ||
+              chargeSucceeded
             }
             data-testid="submit-payment-button"
           >
-            {(!activeSession && isStripeLike(selectedPaymentMethod))
-              ? t.checkout.enter_card_details
-              : (isNmi(selectedPaymentMethod) && !nmiToken)
-                ? t.checkout.enter_card_details
-                : t.checkout.continue_to_review}
+            {isNmi(selectedPaymentMethod)
+              ? (nmiToken
+                ? t.checkout.place_order
+                : t.checkout.enter_card_details)
+              : isStripeLike(selectedPaymentMethod)
+                ? (!activeSession
+                  ? t.checkout.enter_card_details
+                  : t.checkout.place_order)
+                : t.checkout.place_order}
           </Button>
         </div>
 

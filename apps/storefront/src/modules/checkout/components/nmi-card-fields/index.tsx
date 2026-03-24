@@ -34,12 +34,14 @@ const NmiCardFields = forwardRef<NmiCardFieldsHandle, Props>(
     )
 
     return (
-      <NmiPayments
-        ref={nmiRef}
-        tokenizationKey={tokenizationKey}
-        onChange={handleChange}
-        paymentMethods={["card"]}
-      />
+      <div className="min-h-[120px]">
+        <NmiPayments
+          ref={nmiRef}
+          tokenizationKey={tokenizationKey}
+          onChange={handleChange}
+          paymentMethods={["card"]}
+        />
+      </div>
     )
   }
 )
