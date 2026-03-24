@@ -12,13 +12,39 @@ const LineItemOptions = ({
   "data-testid": dataTestid,
   "data-value": dataValue,
 }: LineItemOptionsProps) => {
+  if (!variant) return null
+
+  // Show SKU if available, otherwise show variant options (Color, Size, etc.)
+  const sku = variant.sku
+  const optionValues = variant.options
+    ?.map((o: any) => o.value)
+    .filter(Boolean)
+    .join(" / ")
+
+  // Don't show generic "Default Title" or empty strings
+  const variantTitle = variant.title
+  const isGenericTitle =
+    !variantTitle ||
+    variantTitle.toLowerCase() === "default title" ||
+    variantTitle === "-"
+
+  const displayText = sku
+    ? `SKU: ${sku}`
+    : optionValues
+    ? optionValues
+    : isGenericTitle
+    ? null
+    : variantTitle
+
+  if (!displayText) return null
+
   return (
     <Text
       data-testid={dataTestid}
       data-value={dataValue}
-      className="inline-block txt-medium text-ui-fg-subtle w-full overflow-hidden text-ellipsis"
+      className="inline-block txt-small text-ui-fg-muted w-full overflow-hidden text-ellipsis"
     >
-      Variant: {variant?.title}
+      {displayText}
     </Text>
   )
 }

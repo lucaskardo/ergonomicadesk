@@ -2,7 +2,7 @@ import { deleteLineItem } from "@lib/data/cart"
 import { Spinner, Trash } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 
 const DeleteButton = ({
   id,
@@ -14,18 +14,18 @@ const DeleteButton = ({
   className?: string
 }) => {
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
   const handleDelete = async (id: string) => {
     setIsDeleting(true)
-    await deleteLineItem(id)
-      .catch((err) => {
-        console.error("Failed to delete line item:", err)
-      })
-      .finally(() => {
-        setIsDeleting(false)
-        router.refresh()
-      })
+    await deleteLineItem(id).catch((err) => {
+      console.error("Failed to delete line item:", err)
+    })
+    setIsDeleting(false)
+    startTransition(() => {
+      router.refresh()
+    })
   }
 
   return (
@@ -38,8 +38,9 @@ const DeleteButton = ({
       <button
         className="flex gap-x-1 text-ui-fg-subtle hover:text-ui-fg-base cursor-pointer"
         onClick={() => handleDelete(id)}
+        disabled={isDeleting || isPending}
       >
-        {isDeleting ? <Spinner className="animate-spin" /> : <Trash />}
+        {isDeleting || isPending ? <Spinner className="animate-spin" /> : <Trash />}
         <span>{children}</span>
       </button>
     </div>

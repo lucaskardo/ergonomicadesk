@@ -145,7 +145,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                                   className="text-sm font-medium text-ui-fg-base hover:text-teal-600 transition-colors line-clamp-2"
                                   data-testid="product-link"
                                 >
-                                  {item.title}
+                                  {item.product_title || item.title}
                                 </LocalizedClientLink>
                                 <LineItemOptions
                                   variant={item.variant}

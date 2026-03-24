@@ -13,7 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useTransition } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
@@ -23,6 +23,7 @@ type ItemProps = {
 
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [localQty, setLocalQty] = useState(item.quantity)
   const router = useRouter()
@@ -44,7 +45,9 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       })
       .finally(() => {
         setUpdating(false)
-        router.refresh()
+        startTransition(() => {
+          router.refresh()
+        })
       })
   }
 

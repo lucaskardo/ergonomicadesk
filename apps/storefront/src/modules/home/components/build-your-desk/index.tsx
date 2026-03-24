@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useTransition } from "react"
 import { addToCart } from "@lib/data/cart"
 import { useParams, useRouter } from "next/navigation"
 
@@ -175,6 +175,7 @@ export default function BuildYourDesk({
   const [frameColor, setFrameColor] = useState("bl")
   const [accs, setAccs] = useState<string[]>([])
   const [isAdding, setIsAdding] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [addedFeedback, setAddedFeedback] = useState(false)
 
   const frame = FRAMES[frameIdx]
@@ -295,13 +296,15 @@ export default function BuildYourDesk({
         }
       }
 
-      router.refresh()
       setAddedFeedback(true)
       setTimeout(() => setAddedFeedback(false), 3000)
     } catch (error) {
       console.error("Failed to add desk config to cart:", error)
     } finally {
       setIsAdding(false)
+      startTransition(() => {
+        router.refresh()
+      })
     }
   }
 
