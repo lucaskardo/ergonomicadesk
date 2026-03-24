@@ -43,6 +43,8 @@ ${item.product_type ? `    <g:product_type>${item.product_type}</g:product_type>
       <g:rate>${item.tax_rate}</g:rate>
       <g:tax_ship>no</g:tax_ship>
     </g:tax>
+${item.mpn ? `    <g:mpn>${item.mpn}</g:mpn>\n` : ""}${item.weight ? `    <g:product_weight>${item.weight}</g:product_weight>\n` : ""}${item.material ? `    <g:material>${item.material}</g:material>\n` : ""}    <g:seller_name>${item.seller_name}</g:seller_name>
+    <g:seller_url>${item.seller_url}</g:seller_url>
   </item>`
       })
       .join("\n")

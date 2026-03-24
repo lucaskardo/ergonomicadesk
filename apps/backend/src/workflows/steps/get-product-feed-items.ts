@@ -28,6 +28,12 @@ export type FeedItem = {
   custom_label_0?: string
   shipping_price: string
   tax_rate: string
+  mpn?: string
+  weight?: string
+  material?: string
+  seller_name: string
+  seller_url: string
+  return_policy_url: string
 }
 
 const CATEGORY_MAP: Record<string, string> = {
@@ -114,6 +120,7 @@ export const getProductFeedItemsStep = createStep(
           "variants.calculated_price.*",
           "variants.inventory_items.*",
           "variants.manage_inventory",
+          "metadata",
         ],
         filters: {
           status: "published",
@@ -144,6 +151,7 @@ export const getProductFeedItemsStep = createStep(
         .map((img: any) => img.url)
 
       for (const variant of product.variants || []) {
+        const productMeta = (product as any).metadata || {}
         const sku = variant.sku || `${product.id}-${variant.id}`
         const calculatedAmount =
           variant.calculated_price?.calculated_amount ?? 0
@@ -206,6 +214,12 @@ export const getProductFeedItemsStep = createStep(
           ...(size && { size: xmlEscape(size) }),
           shipping_price: "0.00 USD",
           tax_rate: "7.00",
+          mpn: variant.sku || undefined,
+          weight: productMeta.weight_kg ? `${productMeta.weight_kg} kg` : undefined,
+          material: productMeta.material || undefined,
+          seller_name: "Ergonómica",
+          seller_url: storefrontUrl,
+          return_policy_url: `${storefrontUrl}/pa/returns`,
         })
       }
     }
