@@ -226,6 +226,11 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Plugin: @rokmohar/medusa-plugin-meilisearch (v2 compatible)
 - Registered as plugin in medusa-config.ts (not module)
 
+## TODO — URL Structure v2
+- Cambiar /productos/handle/sku a /productos/categoria/sku
+- Requiere: lookup table SKU → product, middleware de resolución
+- Fase: post-lanzamiento
+
 ## Prompting Rules
 - Big comprehensive prompts, not small back-and-forth
 - Search official docs (context7 MCP) before implementing

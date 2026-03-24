@@ -24,7 +24,7 @@ export default function WhatsAppButton() {
           {tooltip}
         </span>
         {/* Button */}
-        <div className="w-14 h-14 bg-[#25D366] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform duration-200">
+        <div className="w-14 h-14 bg-[#25D366] rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
