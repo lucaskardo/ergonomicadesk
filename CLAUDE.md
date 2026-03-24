@@ -226,6 +226,20 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Plugin: @rokmohar/medusa-plugin-meilisearch (v2 compatible)
 - Registered as plugin in medusa-config.ts (not module)
 
+## Bundles Strategy
+- Bundles son productos normales en Medusa con metadata.bundle_type = "bundle"
+- metadata.bundle_items = ["sku1", "sku2"] lista los componentes
+- El precio del bundle es el precio del producto (no la suma de componentes)
+- En el admin, crear el bundle como producto normal con fotos del setup completo
+- En el PDP, mostrar los componentes del bundle como información
+- Para fulfillment, un workflow custom desglosa los componentes
+- Fase: post-lanzamiento, después de tener el catálogo base
+
+## TODO — Reveal Animations
+- Agregar IntersectionObserver hook que añade clase "visible" a elementos con className "reveal"
+- Requiere: análisis de cada sección del homepage para evitar CLS
+- Fase: post-lanzamiento
+
 ## TODO — URL Structure v2
 - Cambiar /productos/handle/sku a /productos/categoria/sku
 - Requiere: lookup table SKU → product, middleware de resolución

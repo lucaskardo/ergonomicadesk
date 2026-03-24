@@ -42,6 +42,7 @@ export default function ProductActions({
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
   const [quantity, setQuantity] = useState(1)
+  const [extendedWarranty, setExtendedWarranty] = useState(false)
   const countryCode = useParams().countryCode as string
 
   useEffect(() => {
@@ -122,7 +123,12 @@ export default function ProductActions({
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
     setIsAdding(true)
-    await addToCart({ variantId: selectedVariant.id, quantity, countryCode })
+    await addToCart({
+      variantId: selectedVariant.id,
+      quantity,
+      countryCode,
+      metadata: extendedWarranty ? { extended_warranty: true, warranty_surcharge_pct: 33 } : undefined,
+    })
     trackAddToCart(product, selectedVariant, quantity)
     router.refresh()
     setQuantity(1)
@@ -189,6 +195,27 @@ export default function ProductActions({
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
             </button>
           </div>
+        </div>
+
+        {/* Extended Warranty */}
+        <div className="flex items-start gap-3 py-3 px-4 border border-ergo-200/60 bg-ergo-bg mt-4">
+          <input
+            type="checkbox"
+            id="extended-warranty"
+            checked={extendedWarranty}
+            onChange={(e) => setExtendedWarranty(e.target.checked)}
+            className="mt-0.5 w-4 h-4 accent-ergo-sky cursor-pointer"
+          />
+          <label htmlFor="extended-warranty" className="cursor-pointer">
+            <span className="text-[0.84rem] font-semibold text-ergo-950">
+              {lang === "en" ? "Add Extended Warranty" : "Agregar Garantía Extendida"} (+33%)
+            </span>
+            <p className="text-[0.72rem] text-ergo-400 mt-0.5">
+              {lang === "en"
+                ? "Extends your warranty to 5 years. Covers motor, electronics and structure."
+                : "Extiende tu garantía a 5 años. Cubre motor, electrónica y estructura."}
+            </p>
+          </label>
         </div>
 
         {/* Add to cart */}
