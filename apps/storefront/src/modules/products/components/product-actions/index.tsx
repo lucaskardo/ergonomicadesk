@@ -123,12 +123,74 @@ export default function ProductActions({
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
     setIsAdding(true)
+
+    // Add the main product
     await addToCart({
       variantId: selectedVariant.id,
       quantity,
       countryCode,
       metadata: extendedWarranty ? { extended_warranty: true, warranty_surcharge_pct: 33 } : undefined,
     })
+
+    // If extended warranty is checked, add the warranty product too
+    if (extendedWarranty) {
+      try {
+        // Determine warranty category from product categories
+        const categories = (product as any).categories || []
+        const catHandles = categories.map((c: any) => c.handle?.toLowerCase() || "")
+        let warrantySku = "extended-warranty-accessories" // default
+        if (catHandles.some((h: string) => h.includes("standing") || h.includes("desk") || h.includes("frame"))) {
+          warrantySku = "extended-warranty-desks"
+        } else if (catHandles.some((h: string) => h.includes("chair") || h.includes("silla"))) {
+          warrantySku = "extended-warranty-chairs"
+        } else if (catHandles.some((h: string) => h.includes("office") || h.includes("oficina"))) {
+          warrantySku = "extended-warranty-office"
+        }
+
+        // Find the warranty variant by SKU
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"}/store/products?limit=10&fields=variants.id,variants.sku&q=extended-warranty`,
+          {
+            headers: { "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "" },
+            cache: "no-store",
+          }
+        )
+        if (res.ok) {
+          const { products: warrantyProducts } = await res.json()
+          let warrantyVariantId: string | null = null
+          for (const wp of warrantyProducts) {
+            for (const v of wp.variants || []) {
+              if (v.sku === warrantySku) {
+                warrantyVariantId = v.id
+                break
+              }
+            }
+            if (warrantyVariantId) break
+          }
+
+          if (warrantyVariantId) {
+            const surchargeAmount = Math.ceil(
+              ((selectedVariant?.calculated_price?.calculated_amount ?? 0) * 0.33) / 100
+            )
+            await addToCart({
+              variantId: warrantyVariantId,
+              quantity: 1,
+              countryCode,
+              metadata: {
+                warranty_for_sku: selectedVariant.sku || selectedVariant.id,
+                warranty_for_product: product.title,
+                warranty_surcharge_amount: surchargeAmount,
+                warranty_surcharge_pct: 33,
+              },
+            })
+          }
+        }
+      } catch (err) {
+        console.error("Failed to add warranty:", err)
+        // Non-blocking — the main product was already added
+      }
+    }
+
     trackAddToCart(product, selectedVariant, quantity)
     router.refresh()
     setQuantity(1)
