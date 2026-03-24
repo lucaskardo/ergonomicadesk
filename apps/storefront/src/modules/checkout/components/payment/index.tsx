@@ -97,18 +97,16 @@ const Payment = ({
         return
       }
 
-      // Navigate to review — initiatePaymentSession already calls revalidateTag
-      // which invalidates the cart cache. The server component will re-fetch
-      // the cart with payment_sessions on the next render.
-      router.push(
-        pathname + "?" + createQueryString("step", "review"),
-        { scroll: false }
-      )
+      // Use window.location instead of router.push to force a full page
+      // navigation. This ensures the server component re-fetches the cart
+      // with the newly created payment session.
+      const reviewUrl = pathname + "?" + createQueryString("step", "review")
+      window.location.href = reviewUrl
     } catch (err: any) {
       setError(err.message)
-    } finally {
       setIsLoading(false)
     }
+    // Don't setIsLoading(false) on success — page is navigating away
   }
 
   useEffect(() => {

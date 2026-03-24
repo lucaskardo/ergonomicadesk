@@ -3,8 +3,7 @@
 import { Heading, Text, clx } from "@medusajs/ui"
 
 import PaymentButton from "../payment-button"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
 
@@ -12,8 +11,6 @@ const Review = ({ cart }: { cart: any }) => {
   const lang = useLang()
   const t = getTranslations(lang)
   const searchParams = useSearchParams()
-  const router = useRouter()
-  const [hasRefreshed, setHasRefreshed] = useState(false)
 
   const isOpen = searchParams.get("step") === "review"
 
@@ -24,19 +21,6 @@ const Review = ({ cart }: { cart: any }) => {
     cart.shipping_address &&
     cart.shipping_methods.length > 0 &&
     (cart.payment_collection || paidByGiftcard)
-
-  const paymentSession = cart.payment_collection?.payment_sessions?.[0]
-
-  // If review is open but no payment session, refresh once to get fresh cart
-  useEffect(() => {
-    if (isOpen && previousStepsCompleted && !paymentSession && !paidByGiftcard && !hasRefreshed) {
-      const timer = setTimeout(() => {
-        setHasRefreshed(true)
-        router.refresh()
-      }, 500)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen, previousStepsCompleted, paymentSession, paidByGiftcard, hasRefreshed, router])
 
   return (
     <div className="bg-white">
