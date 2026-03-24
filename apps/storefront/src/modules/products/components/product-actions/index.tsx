@@ -197,26 +197,36 @@ export default function ProductActions({
           </div>
         </div>
 
-        {/* Extended Warranty */}
-        <div className="flex items-start gap-3 py-3 px-4 border border-ergo-200/60 bg-ergo-bg mt-4">
-          <input
-            type="checkbox"
-            id="extended-warranty"
-            checked={extendedWarranty}
-            onChange={(e) => setExtendedWarranty(e.target.checked)}
-            className="mt-0.5 w-4 h-4 accent-ergo-sky cursor-pointer"
-          />
-          <label htmlFor="extended-warranty" className="cursor-pointer">
-            <span className="text-[0.84rem] font-semibold text-ergo-950">
-              {lang === "en" ? "Add Extended Warranty" : "Agregar Garantía Extendida"} (+33%)
-            </span>
-            <p className="text-[0.72rem] text-ergo-400 mt-0.5">
-              {lang === "en"
-                ? "Extends your warranty to 5 years. Covers motor, electronics and structure."
-                : "Extiende tu garantía a 5 años. Cubre motor, electrónica y estructura."}
-            </p>
-          </label>
-        </div>
+        {/* Extended Warranty — show price rounded up to nearest dollar */}
+        {(() => {
+          const variantPriceCents = selectedVariant?.calculated_price?.calculated_amount ?? 0
+          const warrantySurcharge = Math.ceil((variantPriceCents * 0.33) / 100) // cents → dollars, rounded up
+          return (
+            <div className="flex items-start gap-3 py-3 px-4 border border-ergo-200/60 bg-ergo-bg mt-4">
+              <input
+                type="checkbox"
+                id="extended-warranty"
+                checked={extendedWarranty}
+                onChange={(e) => setExtendedWarranty(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-ergo-sky cursor-pointer"
+                disabled={!selectedVariant}
+              />
+              <label htmlFor="extended-warranty" className="cursor-pointer">
+                <span className="text-[0.84rem] font-semibold text-ergo-950">
+                  {lang === "en" ? "Add Extended Warranty" : "Agregar Garantía Extendida"}
+                  {selectedVariant && (
+                    <span className="text-ergo-sky-dark ml-1">(+${warrantySurcharge})</span>
+                  )}
+                </span>
+                <p className="text-[0.72rem] text-ergo-400 mt-0.5">
+                  {lang === "en"
+                    ? "Extends your warranty to 5 years. Covers motor, electronics and structure."
+                    : "Extiende tu garantía a 5 años. Cubre motor, electrónica y estructura."}
+                </p>
+              </label>
+            </div>
+          )
+        })()}
 
         {/* Add to cart */}
         <Button

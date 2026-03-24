@@ -151,6 +151,24 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                                   variant={item.variant}
                                   data-testid="cart-item-variant"
                                 />
+                                {/* Bundle discount: show original price strikethrough + discount */}
+                                {(item.metadata as any)?.bundle_discount_pct && (
+                                  <div className="mt-1">
+                                    <span className="text-xs text-ui-fg-muted line-through">
+                                      {convertToLocale({
+                                        amount: (item.metadata as any).original_price_cents ?? 0,
+                                        currency_code: cartState.currency_code,
+                                      })}
+                                    </span>
+                                    <span className="text-xs text-emerald-600 font-medium ml-1.5">
+                                      {(item.metadata as any).bundle_discount_pct}% desc.{" "}
+                                      {convertToLocale({
+                                        amount: item.subtotal ?? 0,
+                                        currency_code: cartState.currency_code,
+                                      })}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                               <LineItemPrice
                                 item={item}

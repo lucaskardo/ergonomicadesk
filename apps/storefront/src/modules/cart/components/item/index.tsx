@@ -78,6 +78,25 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
           {item.product_title}
         </Text>
         <LineItemOptions variant={item.variant} data-testid="product-variant" />
+        {/* Bundle discount: strikethrough original + discount line */}
+        {(item.metadata as any)?.bundle_discount_pct && (
+          <div className="mt-1">
+            <span className="text-xs text-ui-fg-muted line-through">
+              {convertToLocale({
+                amount: (item.metadata as any).original_price_cents ?? 0,
+                currency_code: currencyCode,
+              })}
+            </span>
+            <div className="text-xs text-emerald-600 font-medium">
+              {(item.metadata as any).bundle_discount_pct}%{" "}
+              {(item.metadata as any).bundle_name ? `(${(item.metadata as any).bundle_name})` : "desc."}{" "}
+              {convertToLocale({
+                amount: item.subtotal ?? 0,
+                currency_code: currencyCode,
+              })}
+            </div>
+          </div>
+        )}
       </Table.Cell>
 
       {type === "full" && (

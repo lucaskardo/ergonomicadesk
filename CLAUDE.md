@@ -227,13 +227,19 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Registered as plugin in medusa-config.ts (not module)
 
 ## Bundles Strategy
-- Bundles son productos normales en Medusa con metadata.bundle_type = "bundle"
-- metadata.bundle_items = ["sku1", "sku2"] lista los componentes
-- El precio del bundle es el precio del producto (no la suma de componentes)
-- En el admin, crear el bundle como producto normal con fotos del setup completo
-- En el PDP, mostrar los componentes del bundle como información
-- Para fulfillment, un workflow custom desglosa los componentes
-- Fase: post-lanzamiento, después de tener el catálogo base
+- Bundles are products in Medusa with metadata.bundle_type = "bundle"
+- The bundle product has NO SKU of its own — it exists only for display/PDP purposes
+- metadata.bundle_items = ["sku1", "sku2"] lists the component SKUs
+- metadata.bundle_discount_pct = 20 (or whatever %) — the discount applied to the bundle
+- When a bundle is added to cart, the INDIVIDUAL component SKUs are added as separate line items (for accounting/fulfillment)
+- The bundle discount is applied proportionally to each component SKU's price BEFORE adding to subtotal
+- Cart display: each line item shows original price with strikethrough, then "20% discount $X" underneath
+- This preserves correct per-SKU accounting for QuickBooks and fulfillment
+- Example: Bundle "Desk Black Edition" = frame-single-bl ($300) + top-mela-black-150 ($159)
+  - At 20% discount: frame → $300 strikethrough, shows "20% desc. $240" / top → $159 strikethrough, shows "20% desc. $128"
+  - Non-bundle items in the same cart show normal pricing without discount
+- In the admin, create the bundle as a normal product with photos of the complete setup
+- Phase: post-launch, after base catalog is established
 
 ## TODO — Reveal Animations
 - Agregar IntersectionObserver hook que añade clase "visible" a elementos con className "reveal"
