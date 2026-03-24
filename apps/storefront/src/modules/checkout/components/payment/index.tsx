@@ -82,9 +82,6 @@ const Payment = ({
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      const shouldInputCard =
-        isStripeLike(selectedPaymentMethod) && !activeSession
-
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
 
@@ -94,15 +91,19 @@ const Payment = ({
         })
       }
 
-      if (!shouldInputCard) {
-        router.push(
-          pathname + "?" + createQueryString("step", "review"),
-          { scroll: false }
-        )
-        // Force server component re-fetch so Review gets fresh cart with payment_sessions
-        router.refresh()
+      // For Stripe, if no active session yet, stay on payment step
+      if (isStripeLike(selectedPaymentMethod) && !activeSession && !checkActiveSession) {
+        setIsLoading(false)
         return
       }
+
+      // Navigate to review — initiatePaymentSession already calls revalidateTag
+      // which invalidates the cart cache. The server component will re-fetch
+      // the cart with payment_sessions on the next render.
+      router.push(
+        pathname + "?" + createQueryString("step", "review"),
+        { scroll: false }
+      )
     } catch (err: any) {
       setError(err.message)
     } finally {
