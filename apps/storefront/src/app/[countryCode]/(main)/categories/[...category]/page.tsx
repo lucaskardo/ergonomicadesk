@@ -52,11 +52,23 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
     const description = productCategory.description ?? `${productCategory.name} — Ergonómica.`
 
+    const baseUrl = `https://ergonomicadesk.com/${params.countryCode}`
+    const categoryPath = params.category.join("/")
+
     return {
       title,
       description,
       alternates: {
-        canonical: `${params.category.join("/")}`,
+        canonical: `${baseUrl}/categories/${categoryPath}`,
+        languages: {
+          es: `${baseUrl}/categories/${categoryPath}`,
+          en: `${baseUrl}/en/categories/${categoryPath}`,
+          "x-default": `${baseUrl}/categories/${categoryPath}`,
+        },
+      },
+      openGraph: {
+        title,
+        description,
       },
     }
   } catch (error) {

@@ -25,4 +25,10 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://ergonomicadesk.com/sitemap.xml

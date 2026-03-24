@@ -8,6 +8,10 @@ type ProductJsonLdProps = {
   url: string
   lang?: "es" | "en"
   inStock?: boolean
+  weight?: number | null        // kg
+  material?: string | null
+  mpn?: string | null
+  specs?: Record<string, string> | null  // warranty, max_weight_capacity, speed, etc.
 }
 
 export function ProductJsonLd({
@@ -20,6 +24,10 @@ export function ProductJsonLd({
   url,
   lang = "es",
   inStock = true,
+  weight,
+  material,
+  mpn,
+  specs,
 }: ProductJsonLdProps) {
   const schema = {
     "@context": "https://schema.org",
@@ -33,6 +41,22 @@ export function ProductJsonLd({
       "@type": "Brand",
       name: "Ergonómica",
     },
+    ...(mpn && { mpn }),
+    ...(weight && {
+      weight: {
+        "@type": "QuantitativeValue",
+        value: weight,
+        unitCode: "KGM",
+      },
+    }),
+    ...(material && { material }),
+    ...(specs && Object.keys(specs).length > 0 && {
+      additionalProperty: Object.entries(specs).map(([propName, value]) => ({
+        "@type": "PropertyValue",
+        name: propName,
+        value,
+      })),
+    }),
     offers: {
       "@type": "Offer",
       price: (price / 100).toFixed(2),
@@ -44,6 +68,7 @@ export function ProductJsonLd({
       seller: {
         "@type": "Organization",
         name: "Ergonómica",
+        url: "https://ergonomicadesk.com",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",

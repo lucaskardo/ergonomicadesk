@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
+import { ProductJsonLd } from "@modules/common/components/json-ld/product"
 import { HttpTypes } from "@medusajs/types"
 
 type Props = {
@@ -56,10 +57,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const baseUrl = `https://ergonomicadesk.com/${countryCode}`
   return {
     title: `${product.title} | Ergonómica`,
-    description: `${product.title}`,
+    description: product.description
+      ? product.description.slice(0, 160)
+      : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
     openGraph: {
       title: `${product.title} | Ergonómica`,
-      description: `${product.title}`,
+      description: product.description
+        ? product.description.slice(0, 160)
+        : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
     alternates: {
@@ -90,12 +95,47 @@ export default async function ProductEnPage(props: Props) {
 
   const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
+  const firstVariant = pricedProduct.variants?.[0]
+  const priceAmount =
+    firstVariant?.calculated_price?.calculated_amount ??
+    firstVariant?.calculated_price?.original_amount ??
+    0
+
   return (
-    <ProductTemplate
-      product={pricedProduct}
-      region={region}
-      countryCode={params.countryCode}
-      images={images ?? []}
-    />
+    <>
+      <ProductJsonLd
+        name={pricedProduct.title ?? ""}
+        description={pricedProduct.description ?? null}
+        image={pricedProduct.thumbnail ?? null}
+        sku={firstVariant?.sku ?? null}
+        price={priceAmount}
+        currency="USD"
+        url={`https://ergonomicadesk.com/${params.countryCode}/en/products/${params.handle}`}
+        lang="en"
+        inStock={(firstVariant?.inventory_quantity ?? 1) > 0}
+        weight={(pricedProduct as any).metadata?.weight_kg ? Number((pricedProduct as any).metadata.weight_kg) : null}
+        material={(pricedProduct as any).metadata?.material ?? null}
+        mpn={firstVariant?.sku ?? null}
+        specs={(() => {
+          const m = (pricedProduct as any).metadata
+          if (!m) return null
+          const s: Record<string, string> = {}
+          if (m.warranty) s["Garantía"] = m.warranty
+          if (m.max_weight_capacity) s["Capacidad de peso"] = m.max_weight_capacity
+          if (m.speed) s["Velocidad"] = m.speed
+          if (m.memory_presets) s["Posiciones de memoria"] = m.memory_presets
+          if (m.dimensions) s["Dimensiones"] = m.dimensions
+          if (m.motors) s["Motores"] = m.motors
+          if (m.lumbar) s["Soporte lumbar"] = m.lumbar
+          return Object.keys(s).length > 0 ? s : null
+        })()}
+      />
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+        images={images ?? []}
+      />
+    </>
   )
 }

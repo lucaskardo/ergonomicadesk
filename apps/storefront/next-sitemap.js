@@ -23,6 +23,8 @@ module.exports = {
       { userAgent: "CCBot", allow: "/" },
       { userAgent: "anthropic-ai", allow: "/" },
       { userAgent: "ChatGPT-User", allow: "/" },
+      { userAgent: "OAI-SearchBot", allow: "/" },
+      { userAgent: "Bytespider", allow: "/" },
     ],
   },
 }

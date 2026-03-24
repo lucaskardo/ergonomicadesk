@@ -90,7 +90,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${product.title} | Ergonómica`,
-    description: `${product.title}`,
+    description: product.description
+      ? product.description.slice(0, 160)
+      : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
     alternates: {
       canonical: `https://ergonomicadesk.com/${params.countryCode}/products/${handle}`,
       languages: {
@@ -101,7 +103,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     },
     openGraph: {
       title: `${product.title} | Ergonómica`,
-      description: `${product.title}`,
+      description: product.description
+        ? product.description.slice(0, 160)
+        : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
   }
@@ -151,6 +155,22 @@ export default async function ProductPage(props: Props) {
         url={`https://ergonomicadesk.com/${params.countryCode}/products/${params.handle}`}
         lang="es"
         inStock={(firstVariant?.inventory_quantity ?? 1) > 0}
+        weight={(pricedProduct as any).metadata?.weight_kg ? Number((pricedProduct as any).metadata.weight_kg) : null}
+        material={(pricedProduct as any).metadata?.material ?? null}
+        mpn={firstVariant?.sku ?? null}
+        specs={(() => {
+          const m = (pricedProduct as any).metadata
+          if (!m) return null
+          const s: Record<string, string> = {}
+          if (m.warranty) s["Garantía"] = m.warranty
+          if (m.max_weight_capacity) s["Capacidad de peso"] = m.max_weight_capacity
+          if (m.speed) s["Velocidad"] = m.speed
+          if (m.memory_presets) s["Posiciones de memoria"] = m.memory_presets
+          if (m.dimensions) s["Dimensiones"] = m.dimensions
+          if (m.motors) s["Motores"] = m.motors
+          if (m.lumbar) s["Soporte lumbar"] = m.lumbar
+          return Object.keys(s).length > 0 ? s : null
+        })()}
       />
       <ProductTemplate
         product={pricedProduct}
