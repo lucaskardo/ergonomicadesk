@@ -6,11 +6,10 @@ import TrustBar from "@modules/home/components/trust-bar"
 import CategoryGrid from "@modules/home/components/category-grid"
 import BuildYourDesk from "@modules/home/components/build-your-desk"
 import FeaturedProductsHome from "@modules/home/components/featured-products-home"
-import WhyErgonomica from "@modules/home/components/why-ergonomica"
-import B2BBanner from "@modules/home/components/b2b-banner"
+import WorkspacesSection from "@modules/home/components/workspaces-section"
 import SocialProof from "@modules/home/components/social-proof"
+import BlogPreview from "@modules/home/components/blog-preview"
 import ShowroomSection from "@modules/home/components/showroom-section"
-import ShowroomCTA from "@modules/home/components/showroom-cta"
 import Newsletter from "@modules/home/components/newsletter"
 
 export default async function Homepage({
@@ -31,14 +30,13 @@ export default async function Homepage({
       <Hero lang={lang} countryCode={countryCode} />
       <TrustBar lang={lang} />
       <CategoryGrid lang={lang} countryCode={countryCode} />
-      <BuildYourDesk lang={lang} countryCode={countryCode} />
       {region && <FeaturedProductsHome region={region} lang={lang} />}
-      <WhyErgonomica lang={lang} />
-      <B2BBanner lang={lang} />
+      <BuildYourDesk lang={lang} countryCode={countryCode} />
+      <WorkspacesSection lang={lang} countryCode={countryCode} />
       <SocialProof lang={lang} />
-      <ShowroomCTA lang={lang} />
-      <Newsletter lang={lang} />
+      <BlogPreview lang={lang} />
       <ShowroomSection lang={lang} />
+      <Newsletter lang={lang} />
     </>
   )
 }

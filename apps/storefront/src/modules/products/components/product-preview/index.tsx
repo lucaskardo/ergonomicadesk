@@ -1,3 +1,4 @@
+import { getLang } from "@lib/i18n"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -15,10 +16,12 @@ export default async function ProductPreview({
 }) {
   const { cheapestPrice } = getProductPrice({ product })
   const category = product.categories?.[0]
+  const lang = await getLang()
+  const productPath = lang === "en" ? "products" : "productos"
 
   return (
     <LocalizedClientLink
-      href={`/products/${product.handle}`}
+      href={`/${productPath}/${product.handle}`}
       className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1"
       style={{ display: "block" }}
     >

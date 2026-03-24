@@ -65,6 +65,8 @@ export default function CategoryGrid({
 }) {
   const langPrefix = lang === "en" ? "/en" : ""
   const base = `/${countryCode}${langPrefix}`
+  const catPath = lang === "en" ? "categories" : "categorias"
+  const storePath = lang === "en" ? "store" : "colecciones"
   const c = CONTENT[lang]
 
   return (
@@ -82,7 +84,7 @@ export default function CategoryGrid({
             </h2>
           </div>
           <Link
-            href={`${base}/store`}
+            href={`${base}/${storePath}`}
             className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition-all duration-300 flex-shrink-0"
           >
             {c.viewAll}
@@ -105,7 +107,7 @@ export default function CategoryGrid({
           {CATEGORIES.map((cat, i) => (
             <Link
               key={cat.handle}
-              href={`${base}/categories/${cat.handle}`}
+              href={`${base}/${catPath}/${cat.handle}`}
               className="relative overflow-hidden cursor-pointer group"
               style={i === 0 ? { gridRow: "span 2" } : {}}
             >

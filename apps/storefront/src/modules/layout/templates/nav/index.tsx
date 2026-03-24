@@ -80,7 +80,7 @@ export default async function Nav() {
               {NAV_CATEGORIES.map((cat) => (
                 <LocalizedClientLink
                   key={cat.handle}
-                  href={`/categories/${cat.handle}`}
+                  href={lang === "en" ? `/categories/${cat.handle}` : `/categorias/${cat.handle}`}
                   className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
                 >
                   {lang === "en" ? cat.en : cat.es}
@@ -88,7 +88,7 @@ export default async function Nav() {
                 </LocalizedClientLink>
               ))}
               <LocalizedClientLink
-                href="/store"
+                href={lang === "en" ? "/store" : "/colecciones"}
                 className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
               >
                 {lang === "en" ? "Collections" : "Colecciones"}

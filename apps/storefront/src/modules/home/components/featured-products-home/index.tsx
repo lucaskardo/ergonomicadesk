@@ -45,9 +45,11 @@ function ProductCard({
   const { cheapestPrice } = getProductPrice({ product })
   const c = CONTENT[lang]
 
+  const productPath = lang === "en" ? "products" : "productos"
+
   return (
     <LocalizedClientLink
-      href={`/products/${product.handle}`}
+      href={`/${productPath}/${product.handle}`}
       className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(0,0,0,0.09)]"
     >
       {/* Image area */}

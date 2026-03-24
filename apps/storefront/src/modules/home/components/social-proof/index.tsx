@@ -30,9 +30,10 @@ const CONTENT = {
       },
     ],
     stats: [
-      { number: "15K+", label: "Seguidores en Instagram" },
-      { number: "500+", label: "Oficinas Equipadas" },
-      { number: "5 Años", label: "En el mercado panameño" },
+      { number: "500+", label: "Clientes" },
+      { number: "5.0", label: "Google Rating" },
+      { number: "15K", label: "Seguidores IG" },
+      { number: "5", label: "Años en Panamá" },
     ],
   },
   en: {
@@ -60,9 +61,10 @@ const CONTENT = {
       },
     ],
     stats: [
-      { number: "15K+", label: "Instagram Followers" },
-      { number: "500+", label: "Offices Outfitted" },
-      { number: "5 Years", label: "In the Panamanian market" },
+      { number: "500+", label: "Clients" },
+      { number: "5.0", label: "Google Rating" },
+      { number: "15K", label: "IG Followers" },
+      { number: "5", label: "Years in Panama" },
     ],
   },
 }
@@ -120,16 +122,21 @@ export default function SocialProof({ lang }: { lang: "es" | "en" }) {
         </div>
 
         {/* Stats bar */}
-        <div className="mt-10 grid grid-cols-3 border border-ergo-200/60">
+        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 bg-ergo-950">
           {c.stats.map(({ number, label }, i) => (
             <div
               key={label}
-              className={`text-center py-8 ${i < c.stats.length - 1 ? "border-r border-ergo-200/60" : ""}`}
+              className={`text-center py-7 px-5 ${i < c.stats.length - 1 ? "border-r border-white/[0.06]" : ""}`}
             >
-              <p className="font-display font-bold text-ergo-950" style={{ fontSize: "1.9rem" }}>
-                <span className="border-b-2 pb-0.5" style={{ borderColor: "#5BC0EB" }}>{number}</span>
+              <p
+                className="font-display font-bold"
+                style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: "#5BC0EB" }}
+              >
+                {number}
               </p>
-              <p className="text-[0.8rem] text-ergo-400 mt-1.5">{label}</p>
+              <p className="text-[0.68rem] uppercase tracking-[0.08em] mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                {label}
+              </p>
             </div>
           ))}
         </div>
