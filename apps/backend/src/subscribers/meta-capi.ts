@@ -121,11 +121,7 @@ export default async function metaCapiHandler({
       logger.info(`[meta-capi] Purchase event sent for order ${(order as any).display_id || order.id}`)
     }
   } catch (err: any) {
-    logger.error(`[meta-capi] Unexpected error processing order ${orderId}: ${err?.message ?? err}`, {
-      orderId,
-      errorCode: err?.code,
-      stack: err?.stack,
-    })
+    logger.error(`[meta-capi] Unexpected error processing order ${orderId}: ${err?.message ?? err} (code: ${err?.code ?? "none"})`)
   }
 }
 

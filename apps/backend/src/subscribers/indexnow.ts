@@ -49,11 +49,7 @@ export default async function indexNowHandler({
       logger.info(`[indexnow] Submitted ${urlList.length} URLs for product ${productId} (handle: ${product.handle})`)
     }
   } catch (err: any) {
-    logger.error(`[indexnow] Failed to submit product ${productId} to IndexNow: ${err?.message ?? err}`, {
-      productId,
-      errorCode: err?.code,
-      stack: err?.stack,
-    })
+    logger.error(`[indexnow] Failed to submit product ${productId} to IndexNow: ${err?.message ?? err} (code: ${err?.code ?? "none"})`)
   }
 }
 

@@ -84,10 +84,7 @@ export default async function reconcilePaymentsJob(container: MedusaContainer) {
 
     logger.info(`[reconcile-payments] Check complete — unreconciled: ${unreconciledCount}, stale pending: ${stalePendingCount}`)
   } catch (err: any) {
-    logger.error(`[reconcile-payments] Job failed: ${err?.message ?? err}`, {
-      errorCode: err?.code,
-      stack: err?.stack,
-    })
+    logger.error(`[reconcile-payments] Job failed: ${err?.message ?? err} (code: ${err?.code ?? "none"})`)
   }
 }
 

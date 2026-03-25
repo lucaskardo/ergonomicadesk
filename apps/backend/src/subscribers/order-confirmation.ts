@@ -250,11 +250,7 @@ export default async function orderConfirmationHandler({
     logger.info(`[order-confirmation] Admin email sent to ${ADMIN_EMAIL}`)
 
   } catch (err: any) {
-    logger.error(`[order-confirmation] Failed to process order ${orderId}: ${err?.message ?? err}`, {
-      orderId,
-      errorCode: err?.code,
-      stack: err?.stack,
-    })
+    logger.error(`[order-confirmation] Failed to process order ${orderId}: ${err?.message ?? err} (code: ${err?.code ?? "none"})`)
   }
 }
 
