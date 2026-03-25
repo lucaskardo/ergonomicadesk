@@ -10,6 +10,8 @@ import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
 import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
+import WhatsAppButton from "@modules/common/components/whatsapp-button"
+import UtmCapture from "@modules/layout/components/utm-capture"
 import ScrollProgress from "@modules/layout/components/scroll-progress"
 
 export const metadata: Metadata = {
@@ -51,6 +53,8 @@ export default async function EnPageLayout(props: { children: React.ReactNode })
       )}
       {props.children}
       <Footer />
+      <WhatsAppButton />
+      <UtmCapture />
     </LangProvider>
   )
 }

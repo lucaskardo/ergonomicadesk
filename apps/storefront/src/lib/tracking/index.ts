@@ -103,6 +103,93 @@ export function trackBeginCheckout(cart: any) {
   })
 }
 
+export function trackViewItemList(items: any[], listName: string) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({
+    event: "view_item_list",
+    ecommerce: {
+      item_list_name: listName,
+      items: items.slice(0, 20).map((p, i) => ({
+        item_id: p.id,
+        item_name: p.title,
+        index: i,
+        item_list_name: listName,
+      })),
+    },
+  })
+}
+
+export function trackSelectItem(product: any, listName: string, index: number) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({
+    event: "select_item",
+    ecommerce: {
+      item_list_name: listName,
+      items: [{
+        item_id: product.id,
+        item_name: product.title,
+        index,
+        item_list_name: listName,
+      }],
+    },
+  })
+}
+
+export function trackRemoveFromCart(item: any, currencyCode: string) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({
+    event: "remove_from_cart",
+    ecommerce: {
+      currency: currencyCode.toUpperCase(),
+      value: (item.total || 0) / 100,
+      items: [{
+        item_id: item.variant?.sku || item.variant_id,
+        item_name: item.product_title || item.title,
+        quantity: item.quantity,
+        price: (item.unit_price || 0) / 100,
+      }],
+    },
+  })
+}
+
+export function trackAddShippingInfo(cart: any) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  const currency = (cart.region?.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({
+    event: "add_shipping_info",
+    ecommerce: {
+      currency,
+      value: (cart.total || 0) / 100,
+      shipping_tier: cart.shipping_methods?.[0]?.name || "standard",
+      items: (cart.items || []).map((item: any) => ({
+        item_id: item.variant?.sku || item.variant_id,
+        item_name: item.product_title || item.title,
+        quantity: item.quantity,
+        price: (item.unit_price || 0) / 100,
+      })),
+    },
+  })
+}
+
+export function trackAddPaymentInfo(cart: any, paymentType: string) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  const currency = (cart.region?.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({
+    event: "add_payment_info",
+    ecommerce: {
+      currency,
+      value: (cart.total || 0) / 100,
+      payment_type: paymentType,
+      items: (cart.items || []).map((item: any) => ({
+        item_id: item.variant?.sku || item.variant_id,
+        item_name: item.product_title || item.title,
+        quantity: item.quantity,
+        price: (item.unit_price || 0) / 100,
+      })),
+    },
+  })
+}
+
 export function trackPurchase(order: any) {
   const items = (order.items || []).map((i: any) => ({
     item_id: i.variant?.sku || i.variant_id,

@@ -1,5 +1,6 @@
 import React, { Suspense } from "react"
 
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
@@ -40,15 +41,15 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
       {/* Breadcrumb */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 pt-5">
         <div className="flex items-center gap-1.5 text-[0.75rem] text-ergo-400">
-          <a href="/" className="hover:text-ergo-sky-dark transition-colors">Home</a>
+          <LocalizedClientLink href="/" className="hover:text-ergo-sky-dark transition-colors">Home</LocalizedClientLink>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
             <path d="M9 18l6-6-6-6" />
           </svg>
           {product.categories?.[0] && (
             <>
-              <a href={`/categories/${product.categories[0].handle}`} className="hover:text-ergo-sky-dark transition-colors">
+              <LocalizedClientLink href={`/categorias/${product.categories[0].handle}`} className="hover:text-ergo-sky-dark transition-colors">
                 {product.categories[0].name}
-              </a>
+              </LocalizedClientLink>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
                 <path d="M9 18l6-6-6-6" />
               </svg>

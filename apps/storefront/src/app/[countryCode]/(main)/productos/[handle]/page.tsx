@@ -1,1 +1,196 @@
-export { default, generateMetadata, generateStaticParams } from "../../products/[handle]/page"
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { listProducts } from "@lib/data/products"
+import { getRegion, listRegions } from "@lib/data/regions"
+import ProductTemplate from "@modules/products/templates"
+import { ProductJsonLd } from "@modules/common/components/json-ld/product"
+import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
+import { HttpTypes } from "@medusajs/types"
+
+const SITE_URL = "https://ergonomicadesk.com"
+
+type Props = {
+  params: Promise<{ countryCode: string; handle: string }>
+  searchParams: Promise<{ v_id?: string }>
+}
+
+export async function generateStaticParams() {
+  try {
+    const countryCodes = await listRegions().then((regions) =>
+      regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
+    )
+
+    if (!countryCodes) {
+      return []
+    }
+
+    const promises = countryCodes.map(async (country) => {
+      const { response } = await listProducts({
+        countryCode: country,
+        queryParams: { limit: 100, fields: "handle" },
+      })
+
+      return {
+        country,
+        products: response.products,
+      }
+    })
+
+    const countryProducts = await Promise.all(promises)
+
+    return countryProducts
+      .flatMap((countryData) =>
+        countryData.products.map((product) => ({
+          countryCode: countryData.country,
+          handle: product.handle,
+        }))
+      )
+      .filter((param) => param.handle)
+  } catch (error) {
+    console.error(
+      `Failed to generate static paths for product pages: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }.`
+    )
+    return []
+  }
+}
+
+function getImagesForVariant(
+  product: HttpTypes.StoreProduct,
+  selectedVariantId?: string
+) {
+  if (!selectedVariantId || !product.variants) {
+    return product.images
+  }
+
+  const variant = product.variants!.find((v) => v.id === selectedVariantId)
+  if (!variant || !variant.images || !variant.images.length) {
+    return product.images
+  }
+
+  const imageIdsMap = new Map(variant.images.map((i) => [i.id, true]))
+  return product.images!.filter((i) => imageIdsMap.has(i.id))
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const { handle } = params
+  const region = await getRegion(params.countryCode)
+
+  if (!region) {
+    notFound()
+  }
+
+  const product = await listProducts({
+    countryCode: params.countryCode,
+    queryParams: { handle },
+  }).then(({ response }) => response.products[0])
+
+  if (!product) {
+    notFound()
+  }
+
+  const canonicalUrl = `${SITE_URL}/${params.countryCode}/productos/${handle}`
+
+  return {
+    title: `${product.title} | Ergonómica`,
+    description: product.description
+      ? product.description.slice(0, 160)
+      : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        es: canonicalUrl,
+        en: `${SITE_URL}/${params.countryCode}/en/productos/${handle}`,
+        "x-default": canonicalUrl,
+      },
+    },
+    openGraph: {
+      title: `${product.title} | Ergonómica`,
+      description: product.description
+        ? product.description.slice(0, 160)
+        : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
+      images: product.thumbnail ? [product.thumbnail] : [],
+    },
+  }
+}
+
+export default async function ProductPage(props: Props) {
+  const params = await props.params
+  const region = await getRegion(params.countryCode)
+  const searchParams = await props.searchParams
+
+  const selectedVariantId = searchParams.v_id
+
+  if (!region) {
+    notFound()
+  }
+
+  const pricedProduct = await listProducts({
+    countryCode: params.countryCode,
+    queryParams: { handle: params.handle },
+  }).then(({ response }) => response.products[0])
+
+  const images = getImagesForVariant(pricedProduct, selectedVariantId)
+
+  if (!pricedProduct) {
+    notFound()
+  }
+
+  const selectedVariant = selectedVariantId
+    ? pricedProduct.variants?.find((v) => v.id === selectedVariantId)
+    : undefined
+
+  const firstVariant = pricedProduct.variants?.[0]
+  const priceAmount =
+    firstVariant?.calculated_price?.calculated_amount ??
+    firstVariant?.calculated_price?.original_amount ??
+    0
+
+  const canonicalUrl = `${SITE_URL}/${params.countryCode}/productos/${params.handle}`
+
+  return (
+    <>
+      <ProductJsonLd
+        name={pricedProduct.title ?? ""}
+        description={pricedProduct.description ?? null}
+        image={pricedProduct.thumbnail ?? null}
+        sku={firstVariant?.sku ?? null}
+        price={priceAmount}
+        currency="USD"
+        url={canonicalUrl}
+        lang="es"
+        inStock={(firstVariant?.inventory_quantity ?? 1) > 0}
+        weight={(pricedProduct as any).metadata?.weight_kg ? Number((pricedProduct as any).metadata.weight_kg) : null}
+        material={(pricedProduct as any).metadata?.material ?? null}
+        mpn={firstVariant?.sku ?? null}
+        specs={(() => {
+          const m = (pricedProduct as any).metadata
+          if (!m) return null
+          const s: Record<string, string> = {}
+          if (m.warranty) s["Garantía"] = m.warranty
+          if (m.max_weight_capacity) s["Capacidad de peso"] = m.max_weight_capacity
+          if (m.speed) s["Velocidad"] = m.speed
+          if (m.memory_presets) s["Posiciones de memoria"] = m.memory_presets
+          if (m.dimensions) s["Dimensiones"] = m.dimensions
+          if (m.motors) s["Motores"] = m.motors
+          if (m.lumbar) s["Soporte lumbar"] = m.lumbar
+          return Object.keys(s).length > 0 ? s : null
+        })()}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
+        { name: "Productos", url: `${SITE_URL}/${params.countryCode}/store` },
+        { name: pricedProduct.title ?? "", url: canonicalUrl },
+      ]} />
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+        images={images ?? []}
+        selectedVariant={selectedVariant}
+      />
+    </>
+  )
+}

@@ -10,7 +10,7 @@ export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
     name: "Ergonómica",
     alternateName: "Ergonomica Office",
     url: "https://ergonomicadesk.com",
-    logo: "https://ergonomicadesk.com/logo.png",
+    logo: "https://ergonomicadesk.com/logo.svg",
     description,
     telephone: "+507-6953-3776",
     email: "ventas@ergonomicadesk.com",

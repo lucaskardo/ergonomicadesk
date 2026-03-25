@@ -216,16 +216,6 @@ export default function Footer() {
             </span>
             <ul className="flex flex-col gap-1.5 text-[0.8rem]">
               <li>
-                <a href="#" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.about}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.blog}
-                </a>
-              </li>
-              <li>
                 <a
                   href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
                   target="_blank"
@@ -237,8 +227,14 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.business}
+                <a
+                  href="https://wa.me/50769533776"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-colors hover:text-ergo-sky"
+                  style={{ color: "rgba(255,255,255,0.4)" }}
+                >
+                  {t.contact}
                 </a>
               </li>
             </ul>

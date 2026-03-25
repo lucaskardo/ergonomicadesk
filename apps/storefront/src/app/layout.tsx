@@ -1,15 +1,19 @@
 import { getBaseURL } from "@lib/util/env"
 import { GoogleTagManager } from "@next/third-parties/google"
 import { Metadata } from "next"
+import { headers } from "next/headers"
 import "styles/globals.css"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: { children: React.ReactNode }) {
+  const headersList = await headers()
+  const lang = headersList.get("x-lang") || "es"
+
   return (
-    <html lang="es" data-mode="light">
+    <html lang={lang} data-mode="light">
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link

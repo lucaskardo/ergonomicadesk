@@ -154,6 +154,27 @@ export default async function FAQEnPage({
           ))}
         </div>
 
+        {/* FAQ JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: sections.flatMap((s) =>
+                s.items.map((faq) => ({
+                  "@type": "Question",
+                  name: faq.q,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.a,
+                  },
+                }))
+              ),
+            }),
+          }}
+        />
+
         <div className="mt-12 p-6 bg-ui-bg-subtle rounded-xl text-center">
           <p className="text-ui-fg-base font-medium mb-2">Still have questions?</p>
           <p className="text-ui-fg-subtle text-sm mb-4">
