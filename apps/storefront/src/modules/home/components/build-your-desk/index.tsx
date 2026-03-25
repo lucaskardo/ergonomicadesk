@@ -324,7 +324,7 @@ export default function BuildYourDesk({
           </p>
         </div>
 
-        <div className="grid gap-8 items-start lg:gap-10" style={{ gridTemplateColumns: "1.3fr 1fr" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-8 items-start lg:gap-10">
           {/* LEFT — SVG + summary */}
           <div className="relative">
             <DeskScene topSizeIdx={topSizeIdx} topHex={topHex} frameHex={frameHex} accs={accs} />

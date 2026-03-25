@@ -81,10 +81,7 @@ export default function WorkspacesSection({
         </div>
 
         {/* Workspace grid — 5fr 4fr */}
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: "5fr 4fr", gap: "3px" }}
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_4fr] gap-[3px]">
           {c.workspaces.map((ws, i) => (
             <Link
               key={ws.tag}

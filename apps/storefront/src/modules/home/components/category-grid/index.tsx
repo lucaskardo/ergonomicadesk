@@ -96,11 +96,9 @@ export default function CategoryGrid({
 
         {/* CSS Grid — first item spans 2 rows, 3px gaps */}
         <div
-          className="grid"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-3"
           style={{
-            gridTemplateColumns: "1.4fr 1fr 1fr",
             gridTemplateRows: "1fr 1fr",
-            gap: "3px",
             height: "clamp(380px, 45vw, 520px)",
           }}
         >
@@ -108,8 +106,7 @@ export default function CategoryGrid({
             <Link
               key={cat.handle}
               href={`${base}/${catPath}/${cat.handle}`}
-              className="relative overflow-hidden cursor-pointer group"
-              style={i === 0 ? { gridRow: "span 2" } : {}}
+              className={`relative overflow-hidden cursor-pointer group${i === 0 ? " lg:row-span-2" : ""}`}
             >
               {/* Background */}
               <div

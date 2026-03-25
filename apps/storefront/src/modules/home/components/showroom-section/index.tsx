@@ -47,10 +47,7 @@ export default function ShowroomSection({ lang }: { lang: "es" | "en" }) {
   return (
     <section className="py-14 lg:py-24">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div
-          className="grid gap-11 items-center"
-          style={{ gridTemplateColumns: "1fr 1fr" }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-11 items-center">
           {/* Image side */}
           <div className="relative aspect-[4/3] overflow-hidden">
             <div
