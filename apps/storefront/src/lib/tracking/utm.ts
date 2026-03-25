@@ -5,6 +5,8 @@ const UTM_PARAMS = [
   "utm_term",
   "utm_content",
   "gclid",
+  "gbraid",   // Google Ads cross-device
+  "wbraid",   // Google Ads web-to-app
   "fbclid",
   "ctwa_clid",
 ]

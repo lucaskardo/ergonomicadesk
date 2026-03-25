@@ -1,3 +1,5 @@
+// NOTE: In-memory rate limiter. Works for single-instance deployments.
+// For multi-instance: migrate to Redis-based rate limiting or Cloudflare WAF rules.
 const attempts = new Map<string, { count: number; resetAt: number }>()
 const WINDOW_MS = 60_000 // 1 minute
 const MAX_ATTEMPTS = 5   // 5 attempts per minute per cart

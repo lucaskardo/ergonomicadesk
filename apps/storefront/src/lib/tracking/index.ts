@@ -227,6 +227,10 @@ export function trackGenerateLead(source: string, productTitle?: string, sku?: s
   })
 }
 
+export function getPurchaseEventId(order: any): string {
+  return `purchase_${order.display_id || order.id}`
+}
+
 export function trackPurchase(order: any) {
   const items = (order.items || []).map((i: any) => ({
     item_id: i.variant?.sku || i.variant_id,
@@ -235,7 +239,7 @@ export function trackPurchase(order: any) {
     quantity: i.quantity,
   }))
   trackEvent("purchase", {
-    event_id: `purchase_${order.display_id || order.id?.toString().slice(-8)}`,
+    event_id: getPurchaseEventId(order),
     ecommerce: {
       transaction_id: order.id,
       currency: "USD",

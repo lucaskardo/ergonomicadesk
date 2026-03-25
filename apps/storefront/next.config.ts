@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           {
+            // CSP: unsafe-inline/eval required by Next.js and GTM.
+            // Tighten to nonce-based CSP post-launch if needed.
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",

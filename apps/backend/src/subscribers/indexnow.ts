@@ -17,8 +17,8 @@ export default async function indexNowHandler({
 
     const host = new URL(STOREFRONT_URL).hostname
     const urlList = [
-      `${STOREFRONT_URL}/pa/products/${product.handle}`,
-      `${STOREFRONT_URL}/pa/en/products/${product.handle}`,
+      `${STOREFRONT_URL}/pa/productos/${product.handle}`,
+      `${STOREFRONT_URL}/pa/en/productos/${product.handle}`,
     ]
 
     await fetch("https://api.indexnow.org/indexnow", {

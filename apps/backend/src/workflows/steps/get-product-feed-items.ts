@@ -200,7 +200,7 @@ export const getProductFeedItemsStep = createStep(
           description: xmlEscape(
             (product.description || product.title).slice(0, 5000)
           ),
-          link: `${storefrontUrl}/pa/products/${product.handle}`,
+          link: `${storefrontUrl}/pa/productos/${product.handle}`,
           image_link: fixImageUrl(product.thumbnail || extraImages[0] || "", backendPublicUrl),
           additional_image_links: extraImages.slice(0, 10).map((u: string) => fixImageUrl(u, backendPublicUrl)),
           price: formatPrice(calculatedAmount, currencyCode),

@@ -10,11 +10,8 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
+    // TODO: Install @sentry/nextjs and configure with DSN for production error tracking
     console.error("Unhandled error:", error)
-
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      ;(window as any).Sentry.captureException(error)
-    }
   }, [error])
 
   return (
