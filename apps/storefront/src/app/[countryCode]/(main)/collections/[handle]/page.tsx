@@ -2,11 +2,12 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { getCollectionByHandle, listCollections } from "@lib/data/collections"
-import { collectionCanonical, alternateUrls, collectionPath } from "@lib/util/routes"
+import { collectionCanonical, alternateUrls, collectionPath, SITE_URL } from "@lib/util/routes"
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
 
 type Props = {
   params: Promise<{ handle: string; countryCode: string }>
@@ -94,11 +95,17 @@ export default async function CollectionPage(props: Props) {
   }
 
   return (
-    <CollectionTemplate
-      collection={collection}
-      page={page}
-      sortBy={sortBy}
-      countryCode={params.countryCode}
-    />
+    <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
+        { name: collection.title, url: collectionCanonical(params.countryCode, "es", params.handle) },
+      ]} />
+      <CollectionTemplate
+        collection={collection}
+        page={page}
+        sortBy={sortBy}
+        countryCode={params.countryCode}
+      />
+    </>
   )
 }

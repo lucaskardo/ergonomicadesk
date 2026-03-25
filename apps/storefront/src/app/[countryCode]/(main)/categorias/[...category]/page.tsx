@@ -7,7 +7,7 @@ import { StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
-import { SITE_URL } from "@lib/util/routes"
+import { SITE_URL, categoryCanonical, categoryPath, alternateUrls } from "@lib/util/routes"
 
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
@@ -54,19 +54,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
     const description = productCategory.description ?? `${productCategory.name} — Ergonómica.`
 
-    const baseUrl = `${SITE_URL}/${params.countryCode}`
     const categoryHandle = params.category.join("/")
 
     return {
       title,
       description,
       alternates: {
-        canonical: `${baseUrl}/categorias/${categoryHandle}`,
-        languages: {
-          es: `${baseUrl}/categorias/${categoryHandle}`,
-          en: `${baseUrl}/en/categorias/${categoryHandle}`,
-          "x-default": `${baseUrl}/categorias/${categoryHandle}`,
-        },
+        canonical: categoryCanonical(params.countryCode, "es", categoryHandle),
+        languages: alternateUrls(params.countryCode, categoryPath(categoryHandle)),
       },
       openGraph: {
         title,
@@ -95,7 +90,7 @@ export default async function CategoryPage(props: Props) {
     <>
       <BreadcrumbJsonLd items={[
         { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
-        { name: productCategory.name, url: `${SITE_URL}/${params.countryCode}/categorias/${categoryHandle}` },
+        { name: productCategory.name, url: categoryCanonical(params.countryCode, "es", categoryHandle) },
       ]} />
       <CategoryTemplate
         category={productCategory}

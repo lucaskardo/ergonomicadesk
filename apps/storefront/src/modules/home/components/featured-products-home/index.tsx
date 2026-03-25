@@ -4,6 +4,7 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { getProductPrice } from "@lib/util/get-product-price"
+import { productPath } from "@lib/util/routes"
 import TrackViewList from "@modules/store/components/track-view-list"
 import TrackProductClick from "@modules/products/components/product-preview/track-click"
 
@@ -47,11 +48,9 @@ function ProductCard({
   const { cheapestPrice } = getProductPrice({ product })
   const c = CONTENT[lang]
 
-  const productPath = lang === "en" ? "products" : "productos"
   const firstSku = product.variants?.[0]?.sku
-  const productHref = firstSku
-    ? `/${productPath}/${product.handle}/${firstSku}`
-    : `/${productPath}/${product.handle}`
+  // productPath() returns /productos/[handle] — LocalizedClientLink prepends /pa or /pa/en
+  const productHref = productPath(product.handle || "", firstSku ?? undefined)
 
   return (
     <LocalizedClientLink

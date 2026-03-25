@@ -5,6 +5,8 @@ import { collectionPath } from "@lib/util/routes"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
 import ProductPreview from "@modules/products/components/product-preview"
+import TrackViewList from "@modules/store/components/track-view-list"
+import TrackProductClick from "@modules/products/components/product-preview/track-click"
 
 export default async function ProductRail({
   collection,
@@ -35,11 +37,29 @@ export default async function ProductRail({
           View all
         </InteractiveLink>
       </div>
+      <TrackViewList
+        products={pricedProducts.map((p) => ({
+          id: p.id!,
+          title: p.title!,
+          variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+        }))}
+        listName={`collection_${collection.handle}`}
+      />
       <ul className="grid grid-cols-2 small:grid-cols-3 gap-x-6 gap-y-24 small:gap-y-36">
         {pricedProducts &&
-          pricedProducts.map((product) => (
+          pricedProducts.map((product, idx) => (
             <li key={product.id}>
-              <ProductPreview product={product} region={region} isFeatured />
+              <TrackProductClick
+                product={{
+                  id: product.id!,
+                  title: product.title!,
+                  variants: product.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+                }}
+                listName={`collection_${collection.handle}`}
+                index={idx}
+              >
+                <ProductPreview product={product} region={region} isFeatured />
+              </TrackProductClick>
             </li>
           ))}
       </ul>

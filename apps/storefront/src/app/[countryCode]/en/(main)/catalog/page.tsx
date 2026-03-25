@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { listCategories } from "@lib/data/categories"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { categoryPath } from "@lib/util/routes"
+import { categoryPath, SITE_URL, alternateUrls } from "@lib/util/routes"
 import Image from "next/image"
 
 export async function generateMetadata({
@@ -10,19 +10,14 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
 
   return {
     title: "Catalog | Ergonómica — Ergonomic Furniture Panama",
     description:
       "Browse our full catalog of ergonomic furniture: standing desks, ergonomic chairs, accessories, and more.",
     alternates: {
-      canonical: `${baseUrl}/en/catalog`,
-      languages: {
-        es: `${baseUrl}/catalog`,
-        en: `${baseUrl}/en/catalog`,
-        "x-default": `${baseUrl}/catalog`,
-      },
+      canonical: `${SITE_URL}/${countryCode}/en/catalog`,
+      languages: alternateUrls(countryCode, "/catalog"),
     },
   }
 }

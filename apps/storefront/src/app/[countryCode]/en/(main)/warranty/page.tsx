@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { SITE_URL, alternateUrls } from "@lib/util/routes"
 
 export async function generateMetadata({
   params,
@@ -7,19 +8,14 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
 
   return {
     title: "Warranty Policy | Ergonómica",
     description:
       "3 to 5 year warranty on all Ergonómica products. Learn what is and isn't covered.",
     alternates: {
-      canonical: `${baseUrl}/en/warranty`,
-      languages: {
-        es: `${baseUrl}/warranty`,
-        en: `${baseUrl}/en/warranty`,
-        "x-default": `${baseUrl}/warranty`,
-      },
+      canonical: `${SITE_URL}/${countryCode}/en/warranty`,
+      languages: alternateUrls(countryCode, "/warranty"),
     },
   }
 }

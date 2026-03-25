@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { SITE_URL, alternateUrls } from "@lib/util/routes"
 
 export async function generateMetadata({
   params,
@@ -7,19 +8,14 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
 
   return {
     title: "FAQ | Ergonómica — Ergonomic Furniture Panama",
     description:
       "Frequently asked questions about shipping, products, returns, and payments at Ergonómica.",
     alternates: {
-      canonical: `${baseUrl}/en/faq`,
-      languages: {
-        es: `${baseUrl}/faq`,
-        en: `${baseUrl}/en/faq`,
-        "x-default": `${baseUrl}/faq`,
-      },
+      canonical: `${SITE_URL}/${countryCode}/en/faq`,
+      languages: alternateUrls(countryCode, "/faq"),
     },
   }
 }
