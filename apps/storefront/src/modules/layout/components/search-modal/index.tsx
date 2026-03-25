@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { useLang } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { trackSearch, trackSelectItem, trackEvent, trackViewItemList } from "@lib/tracking"
@@ -28,9 +28,12 @@ const BACKEND_URL =
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const lang = useLang()
   const router = useRouter()
+  const params = useParams()
+  const countryCode = (params?.countryCode as string) || "pa"
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const timeoutRef = useRef<number | undefined>(undefined)
 
@@ -43,6 +46,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     } else {
       setQuery("")
       setResults([])
+      setActiveIndex(-1)
     }
   }, [isOpen])
 
@@ -105,6 +109,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             : undefined,
         }))
         setResults(mapped)
+        setActiveIndex(-1)
         trackSearch(query, products.length)
         if (products.length > 0) {
           trackViewItemList(mapped, "search_results")
@@ -121,13 +126,43 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     return () => window.clearTimeout(timeoutRef.current)
   }, [query])
 
+  const navigateToResult = useCallback(
+    (result: SearchResult, index: number) => {
+      trackSelectItem(
+        { id: result.id, title: result.title, variants: result.variants },
+        "search_results",
+        index
+      )
+      const path = lang === "en"
+        ? `/${countryCode}/en${productPath(result.handle)}`
+        : `/${countryCode}${productPath(result.handle)}`
+      onClose()
+      router.push(path)
+    },
+    [lang, countryCode, router, onClose]
+  )
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === "Escape") {
+        onClose()
+        return
+      }
+      if (results.length === 0) return
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+        setActiveIndex((i) => Math.min(i + 1, results.length - 1))
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        setActiveIndex((i) => Math.max(i - 1, 0))
+      } else if (e.key === "Enter" && activeIndex >= 0) {
+        e.preventDefault()
+        navigateToResult(results[activeIndex], activeIndex)
+      }
     }
     if (isOpen) document.addEventListener("keydown", handleKey)
     return () => document.removeEventListener("keydown", handleKey)
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, results, activeIndex, navigateToResult])
 
   if (!isOpen) return null
 
@@ -190,16 +225,16 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 {noResults}
               </div>
             ) : (
-              <ul>
-                {results.map((result) => (
-                  <li key={result.id} className="border-b border-ui-border-base last:border-0">
+              <ul role="listbox">
+                {results.map((result, index) => (
+                  <li key={result.id} className="border-b border-ui-border-base last:border-0" role="option" aria-selected={index === activeIndex}>
                     <LocalizedClientLink
                       href={productPath(result.handle)}
                       onClick={() => {
-                        trackSelectItem({ id: result.id, title: result.title, variants: result.variants }, "search_results", results.indexOf(result))
+                        trackSelectItem({ id: result.id, title: result.title, variants: result.variants }, "search_results", index)
                         onClose()
                       }}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-ui-bg-subtle transition-colors"
+                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${index === activeIndex ? "bg-ui-bg-subtle" : "hover:bg-ui-bg-subtle"}`}
                     >
                       <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-ui-bg-subtle">
                         {result.thumbnail ? (
