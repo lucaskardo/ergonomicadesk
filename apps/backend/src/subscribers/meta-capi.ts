@@ -1,92 +1,113 @@
-import type { SubscriberConfig, SubscriberArgs } from "@medusajs/framework"
-import { createHash } from "crypto"
+import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import * as crypto from "crypto"
 
-const PIXEL_ID = process.env.META_PIXEL_ID
-const ACCESS_TOKEN = process.env.META_CAPI_ACCESS_TOKEN
+const PIXEL_ID = process.env.META_PIXEL_ID || ""
+const ACCESS_TOKEN = process.env.META_CAPI_ACCESS_TOKEN || ""
+
+interface OrderPlacedData {
+  id: string
+}
 
 function sha256(value: string): string {
-  return createHash("sha256").update(value.trim().toLowerCase()).digest("hex")
+  return crypto.createHash("sha256").update(value.trim().toLowerCase()).digest("hex")
 }
 
 export default async function metaCapiHandler({
   event,
   container,
-}: SubscriberArgs<{ id: string }>) {
-  if (!PIXEL_ID || !ACCESS_TOKEN) return
+}: SubscriberArgs<OrderPlacedData>) {
+  const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
-  const query = container.resolve("query")
+  if (!PIXEL_ID || !ACCESS_TOKEN) {
+    logger.info("[meta-capi] PIXEL_ID or ACCESS_TOKEN not set — skipping")
+    return
+  }
+
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const orderId = event.data.id
 
   try {
-    const { data: [order] } = await (query as any).graph({
+    const { data: [order] } = await query.graph({
       entity: "order",
       fields: [
-        "id",
-        "total",
-        "currency_code",
-        "items.*",
-        "items.variant.*",
+        "id", "display_id", "email", "total", "currency_code", "metadata",
+        "items.*", "items.variant.sku",
         "shipping_address.*",
-        "metadata",
       ],
-      filters: { id: event.data.id },
+      filters: { id: orderId },
     })
 
-    if (!order) return
-
-    const meta = (order as any).metadata || {}
-    const attribution = meta.attribution || {}
-    const shipping = (order as any).shipping_address || {}
-
-    const userData: Record<string, any> = {
-      country: ["pa"],
+    if (!order) {
+      logger.warn(`[meta-capi] Order ${orderId} not found`)
+      return
     }
-    if (shipping.email) userData.em = [sha256(shipping.email)]
-    if (shipping.phone) userData.ph = [sha256(shipping.phone)]
-    if (shipping.city) userData.ct = [sha256(shipping.city)]
-    if (shipping.postal_code) userData.zp = [sha256(shipping.postal_code)]
-    if (attribution._fbc) userData.fbc = attribution._fbc
-    if (attribution._fbp) userData.fbp = attribution._fbp
 
-    const items = (order as any).items || []
-    const contentIds = items.map((i: any) => i.variant?.sku || i.variant_id)
-    const value = ((order as any).total || 0) / 100
+    const meta = (order.metadata || {}) as any
+    const attribution = meta.attribution || {}
+    const email = (order as any).email || ""
+    const phone = (order.shipping_address as any)?.phone || ""
+    const firstName = (order.shipping_address as any)?.first_name || ""
+    const lastName = (order.shipping_address as any)?.last_name || ""
+    const city = (order.shipping_address as any)?.city || ""
+    const countryCode = (order.shipping_address as any)?.country_code || ""
 
-    const eventId = `${order.id}-${Date.now()}`
+    // Use order display_id as event_id for stable dedup (browser sends same ID)
+    const eventId = `purchase_${(order as any).display_id || order.id}`
 
-    const eventData = {
+    const eventData: any = {
       event_name: "Purchase",
       event_time: Math.floor(Date.now() / 1000),
       event_id: eventId,
       event_source_url: `https://ergonomicadesk.com/pa/order/${order.id}/confirmed`,
       action_source: "website",
-      user_data: userData,
+      user_data: {
+        ...(email && { em: [sha256(email)] }),
+        ...(phone && { ph: [sha256(phone.replace(/\D/g, ""))] }),
+        ...(firstName && { fn: [sha256(firstName)] }),
+        ...(lastName && { ln: [sha256(lastName)] }),
+        ...(city && { ct: [sha256(city)] }),
+        ...(countryCode && { country: [sha256(countryCode)] }),
+        ...(attribution._fbp && { fbp: attribution._fbp }),
+        ...(attribution._fbc && { fbc: attribution._fbc }),
+        ...(attribution.lead_id && { external_id: [sha256(attribution.lead_id)] }),
+      },
       custom_data: {
-        currency: "USD",
-        value,
-        content_ids: contentIds,
+        currency: ((order as any).currency_code || "usd").toUpperCase(),
+        value: ((order as any).total || 0) / 100,
         content_type: "product",
-        num_items: items.length,
+        contents: ((order as any).items || []).map((item: any) => ({
+          id: item.variant?.sku || item.variant_id,
+          quantity: item.quantity,
+        })),
+        order_id: (order as any).display_id || order.id,
+        ...(attribution.utm_source && { utm_source: attribution.utm_source }),
+        ...(attribution.utm_campaign && { utm_campaign: attribution.utm_campaign }),
       },
     }
 
     const response = await fetch(
-      `https://graph.facebook.com/v21.0/${PIXEL_ID}/events`,
+      `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           data: [eventData],
-          access_token: ACCESS_TOKEN,
+          ...(process.env.NODE_ENV !== "production" && process.env.META_TEST_EVENT_CODE
+            ? { test_event_code: process.env.META_TEST_EVENT_CODE }
+            : {}),
         }),
       }
     )
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error("Meta CAPI error:", error)
+      const err = await response.text()
+      logger.error(`[meta-capi] Failed: ${err}`)
+    } else {
+      logger.info(`[meta-capi] Purchase event sent for order ${(order as any).display_id || order.id}`)
     }
-  } catch (error) {
-    console.error("Meta CAPI subscriber failed:", error)
+  } catch (err) {
+    logger.error(`[meta-capi] Error: ${err}`)
   }
 }
 

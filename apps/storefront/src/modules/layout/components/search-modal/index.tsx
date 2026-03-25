@@ -52,16 +52,44 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     timeoutRef.current = window.setTimeout(async () => {
       setLoading(true)
       try {
-        const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ?? ""
-        const url = `${BACKEND_URL}/store/products?q=${encodeURIComponent(query)}&limit=8`
-        const res = await fetch(url, {
-          headers: {
-            "x-publishable-api-key": publishableKey,
-          },
-        })
-        if (!res.ok) throw new Error("Search failed")
-        const data = await res.json()
-        const products = data.products ?? []
+        const meiliHost = process.env.NEXT_PUBLIC_MEILISEARCH_HOST
+        const meiliKey = process.env.NEXT_PUBLIC_MEILISEARCH_API_KEY
+
+        let products: any[] = []
+
+        if (meiliHost) {
+          // Use Meilisearch directly for instant search
+          const meiliRes = await fetch(`${meiliHost}/indexes/products/search`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(meiliKey ? { Authorization: `Bearer ${meiliKey}` } : {}),
+            },
+            body: JSON.stringify({
+              q: query,
+              limit: 8,
+              attributesToRetrieve: ["id", "title", "handle", "thumbnail", "variants"],
+            }),
+          })
+          if (meiliRes.ok) {
+            const meiliData = await meiliRes.json()
+            products = meiliData.hits || []
+          }
+        }
+
+        // Fallback to Medusa API if Meilisearch not configured or returned empty
+        if (products.length === 0) {
+          const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ?? ""
+          const url = `${BACKEND_URL}/store/products?q=${encodeURIComponent(query)}&limit=8`
+          const res = await fetch(url, {
+            headers: { "x-publishable-api-key": publishableKey },
+          })
+          if (res.ok) {
+            const data = await res.json()
+            products = data.products ?? []
+          }
+        }
+
         setResults(
           products.map((p: any) => ({
             id: p.id,
@@ -156,7 +184,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 {results.map((result) => (
                   <li key={result.id} className="border-b border-ui-border-base last:border-0">
                     <LocalizedClientLink
-                      href={`/products/${result.handle}`}
+                      href={`/productos/${result.handle}`}
                       onClick={onClose}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-ui-bg-subtle transition-colors"
                     >

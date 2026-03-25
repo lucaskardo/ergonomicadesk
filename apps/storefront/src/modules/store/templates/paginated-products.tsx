@@ -3,6 +3,7 @@ import { getRegion } from "@lib/data/regions"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import TrackViewList from "@modules/store/components/track-view-list"
 
 const PRODUCT_LIMIT = 12
 
@@ -77,6 +78,10 @@ export default async function PaginatedProducts({
 
   return (
     <>
+      <TrackViewList
+        products={products.map((p) => ({ id: p.id!, title: p.title! }))}
+        listName="store"
+      />
       <ul
         className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
         data-testid="products-list"

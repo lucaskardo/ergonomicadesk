@@ -14,6 +14,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
+import { trackAddShippingInfo } from "@lib/tracking"
 
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
@@ -122,6 +123,7 @@ const Shipping: React.FC<ShippingProps> = ({
   }
 
   const handleSubmit = () => {
+    trackAddShippingInfo(cart)
     router.push(pathname + "?step=payment", { scroll: false })
   }
 

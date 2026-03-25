@@ -3,13 +3,18 @@ import { Spinner, Trash } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
+import { trackRemoveFromCart } from "@lib/tracking"
 
 const DeleteButton = ({
   id,
+  item,
+  currencyCode,
   children,
   className,
 }: {
   id: string
+  item?: any
+  currencyCode?: string
   children?: React.ReactNode
   className?: string
 }) => {
@@ -17,9 +22,12 @@ const DeleteButton = ({
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (lineId: string) => {
     setIsDeleting(true)
-    await deleteLineItem(id).catch((err) => {
+    if (item && currencyCode) {
+      trackRemoveFromCart(item, currencyCode)
+    }
+    await deleteLineItem(lineId).catch((err) => {
       console.error("Failed to delete line item:", err)
     })
     setIsDeleting(false)

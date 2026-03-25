@@ -15,6 +15,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState, useRef } from "react"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
+import { trackAddPaymentInfo } from "@lib/tracking"
 import dynamic from "next/dynamic"
 
 const NmiCardFields = dynamic(() => import("../nmi-card-fields"), {
@@ -95,6 +96,7 @@ const Payment = ({
   const handleSubmit = async () => {
     setIsLoading(true)
     setError(null)
+    trackAddPaymentInfo(cart, selectedPaymentMethod || "manual")
 
     try {
       const checkActiveSession =

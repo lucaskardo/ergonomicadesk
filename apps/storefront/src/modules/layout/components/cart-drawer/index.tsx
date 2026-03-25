@@ -122,7 +122,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                         >
                           {/* Thumbnail */}
                           <LocalizedClientLink
-                            href={`/products/${item.product_handle}`}
+                            href={`/productos/${item.product_handle}`}
                             onClick={close}
                             className="shrink-0"
                           >
@@ -140,7 +140,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex flex-col min-w-0">
                                 <LocalizedClientLink
-                                  href={`/products/${item.product_handle}`}
+                                  href={`/productos/${item.product_handle}`}
                                   onClick={close}
                                   className="text-sm font-medium text-ui-fg-base hover:text-teal-600 transition-colors line-clamp-2"
                                   data-testid="product-link"
@@ -185,6 +185,8 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                               </span>
                               <DeleteButton
                                 id={item.id}
+                                item={item}
+                                currencyCode={cartState.currency_code}
                                 className="text-xs text-gray-400 hover:text-red-500 transition-colors"
                                 data-testid="cart-item-remove-button"
                               >

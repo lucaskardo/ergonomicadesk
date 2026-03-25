@@ -420,10 +420,24 @@ export async function placeOrder(cartId?: string) {
       ? JSON.parse(decodeURIComponent(viewedRaw))
       : []
 
+    // First touch and session identifiers
+    const ftRaw = cookieStore.get("_ergo_ft")?.value
+    const sidRaw = cookieStore.get("_ergo_sid")?.value
+    const lidRaw = cookieStore.get("_ergo_lid")?.value
+    const fbpRaw = cookieStore.get("_fbp")?.value
+    const fbcRaw = cookieStore.get("_fbc")?.value
+
+    const firstTouch = ftRaw ? JSON.parse(decodeURIComponent(ftRaw)) : {}
+
     const metadata = {
       attribution: {
         ...utm,
         session_pages: sessionPages,
+        session_id: sidRaw || "",
+        lead_id: lidRaw ? decodeURIComponent(lidRaw) : "",
+        first_touch: firstTouch,
+        _fbp: fbpRaw || "",
+        _fbc: fbcRaw || "",
       },
       products_viewed: productsViewed,
       funnel_checkout_started: new Date().toISOString(),
