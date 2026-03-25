@@ -1,5 +1,8 @@
 "use server"
 
+// Cache policy: catalog data — cacheable with force-cache + tag-based revalidation.
+// Regions change rarely; invalidated via revalidateTag("regions") in updateRegion().
+
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"

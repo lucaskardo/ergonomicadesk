@@ -21,6 +21,9 @@ export const listCartPaymentMethods = async (regionId: string) => {
         query: { region_id: regionId },
         headers,
         next,
+        // cache: no-store — correct. Payment providers list is session-scoped and
+        // must always be fresh to avoid serving stale provider availability at checkout.
+        // See CLAUDE.md: "Payment providers fetch: ALWAYS cache: no-store"
         cache: "no-store",
       }
     )

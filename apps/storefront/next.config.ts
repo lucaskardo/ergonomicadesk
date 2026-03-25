@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           {
+            // HSTS: force HTTPS for 1 year. preload + includeSubDomains once DNS is locked via Cloudflare.
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          {
             // CSP: unsafe-inline/eval required by Next.js and GTM.
             // Tighten to nonce-based CSP post-launch if needed.
             key: "Content-Security-Policy",

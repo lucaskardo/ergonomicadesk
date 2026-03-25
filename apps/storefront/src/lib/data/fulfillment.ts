@@ -1,5 +1,9 @@
 "use server"
 
+// Cache policy: session data — force-cache with per-user tag-based revalidation.
+// Shipping options depend on cart contents; invalidated via revalidateTag("fulfillment")
+// on any cart mutation (add/remove item, update cart).
+
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { getAuthHeaders, getCacheOptions } from "./cookies"

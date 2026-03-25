@@ -1,5 +1,10 @@
 "use server"
 
+// Cache policy: session data — force-cache with per-user tag-based revalidation.
+// Cart reads use force-cache keyed on _medusa_cache_id cookie (user-scoped tag).
+// All mutations call revalidateTag(cartCacheTag) immediately after write.
+// This is NOT a static cache — each user gets their own isolated cache entry.
+
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"

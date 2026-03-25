@@ -1,3 +1,5 @@
+// Cache policy: catalog data — cacheable with force-cache + tag-based revalidation.
+
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions } from "./cookies"

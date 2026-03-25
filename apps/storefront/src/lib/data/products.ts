@@ -1,5 +1,10 @@
 "use server"
 
+// Cache policy: catalog data — cacheable. Uses Next.js tag-based revalidation via
+// getCacheOptions("products"). Tags are invalidated by revalidateTag on mutations.
+// No explicit cache: override needed; Next.js defaults to force-cache for server fetches
+// when tags are provided.
+
 import { sdk } from "@lib/config"
 import { sortProducts } from "@lib/util/sort-products"
 import { HttpTypes } from "@medusajs/types"

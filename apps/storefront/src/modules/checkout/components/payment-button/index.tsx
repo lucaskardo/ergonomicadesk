@@ -5,8 +5,9 @@ import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import ErrorMessage from "../error-message"
+import { TurnstileWidget } from "../turnstile"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
 import { usePathname } from "next/navigation"
@@ -61,8 +62,39 @@ const NmiChargeButton = ({
   const isEnglish = pathname?.includes("/en")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const turnstileTokenRef = useRef<string | null>(null)
 
   const handleCharge = async () => {
+    // Verify Turnstile challenge if site key is configured
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      if (!turnstileTokenRef.current) {
+        setError(
+          isEnglish
+            ? "Please wait for the security check to complete."
+            : "Espera a que termine la verificación de seguridad."
+        )
+        return
+      }
+      try {
+        const verifyRes = await fetch("/api/turnstile-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileTokenRef.current }),
+        })
+        if (!verifyRes.ok) {
+          setError(
+            isEnglish
+              ? "Security check failed. Please refresh and try again."
+              : "Verificación de seguridad fallida. Recarga e inténtalo de nuevo."
+          )
+          turnstileTokenRef.current = null
+          return
+        }
+      } catch {
+        // Network error — fail open so checkout isn't blocked on Turnstile outage
+      }
+    }
+
     const token = sessionStorage.getItem("nmi_payment_token")
     if (!token) {
       setError(
@@ -108,6 +140,10 @@ const NmiChargeButton = ({
 
   return (
     <>
+      <TurnstileWidget
+        onVerify={(t) => { turnstileTokenRef.current = t }}
+        onExpire={() => { turnstileTokenRef.current = null }}
+      />
       <Button
         size="large"
         onClick={handleCharge}

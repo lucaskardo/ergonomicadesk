@@ -2,7 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { NmiClient, NmiLane } from "../../../../modules/nmi-payment/nmi-client"
 import { NMI_PAYMENT_MODULE } from "../../../../modules/nmi-payment"
-import { checkRateLimit } from "./rate-limiter"
+import { checkRateLimit } from "../../../../lib/rate-limiter"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER) as any
