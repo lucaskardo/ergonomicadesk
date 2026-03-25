@@ -10,7 +10,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {
     return await handleNmiCharge(req, res, logger)
   } catch (err: any) {
-    logger.error("[NmiCharge] Unhandled error", { error: err?.message, stack: err?.stack })
+    logger.error("[payment-alert] [NmiCharge] Unhandled error — payment outcome unknown", {
+      error: err?.message,
+      stack: err?.stack,
+      cartId: (req.body as any)?.cart_id,
+    })
     return res.status(500).json({ message: "Internal payment error. Please try again." })
   }
 }
@@ -187,7 +191,23 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
       { id: intent.id, status: "failed" },
     ])
 
-    logger.error("[NmiCharge] NMI call failed", { error: msg })
+    if (isTimeout) {
+      logger.error("[payment-alert] [NmiCharge] NMI gateway timeout — charge outcome unknown", {
+        cartId: cart_id,
+        intentId: intent.id,
+        amountDollars,
+        currency: cart.currency_code,
+        error: msg,
+      })
+    } else {
+      logger.error("[payment-alert] [NmiCharge] NMI call failed — charge did not complete", {
+        cartId: cart_id,
+        intentId: intent.id,
+        amountDollars,
+        currency: cart.currency_code,
+        error: msg,
+      })
+    }
 
     return res
       .status(isTimeout ? 502 : 500)
@@ -272,9 +292,16 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     await nmiPaymentService.updateNmiPaymentIntents([
       { id: intent.id, status: "charged_unreconciled" },
     ])
-    logger.warn(
-      "[NmiCharge] Charge OK but session update failed — intent marked charged_unreconciled",
-      { error: (err as Error).message, intentId: intent.id }
+    logger.error(
+      "[payment-alert] [NmiCharge] Charge OK but session update failed — intent marked charged_unreconciled",
+      {
+        cartId: cart_id,
+        intentId: intent.id,
+        amountDollars,
+        currency: cart.currency_code,
+        nmiTransactionId: nmiResult.transactionId,
+        error: (err as Error).message,
+      }
     )
   }
 

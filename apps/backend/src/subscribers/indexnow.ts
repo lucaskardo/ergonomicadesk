@@ -1,4 +1,5 @@
 import type { SubscriberConfig, SubscriberArgs } from "@medusajs/framework"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
 const INDEXNOW_KEY = process.env.INDEXNOW_API_KEY
 const STOREFRONT_URL = process.env.STOREFRONT_URL || "https://ergonomicadesk.com"
@@ -7,13 +8,23 @@ export default async function indexNowHandler({
   event,
   container,
 }: SubscriberArgs<{ id: string }>) {
-  if (!INDEXNOW_KEY) return
+  const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
+
+  if (!INDEXNOW_KEY) {
+    logger.info("[indexnow] INDEXNOW_API_KEY not set — skipping")
+    return
+  }
+
+  const productId = event.data.id
 
   try {
     const productModule = container.resolve("product")
-    const product = await productModule.retrieveProduct(event.data.id)
+    const product = await productModule.retrieveProduct(productId)
 
-    if (!product?.handle) return
+    if (!product?.handle) {
+      logger.warn(`[indexnow] Product ${productId} has no handle — skipping IndexNow submission`)
+      return
+    }
 
     const host = new URL(STOREFRONT_URL).hostname
     const urlList = [
@@ -21,7 +32,7 @@ export default async function indexNowHandler({
       `${STOREFRONT_URL}/pa/en/productos/${product.handle}`,
     ]
 
-    await fetch("https://api.indexnow.org/indexnow", {
+    const response = await fetch("https://api.indexnow.org/indexnow", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -31,8 +42,18 @@ export default async function indexNowHandler({
         urlList,
       }),
     })
-  } catch (error) {
-    console.error("IndexNow notification failed:", error)
+
+    if (!response.ok) {
+      logger.warn(`[indexnow] IndexNow API returned ${response.status} for product ${productId} (handle: ${product.handle})`)
+    } else {
+      logger.info(`[indexnow] Submitted ${urlList.length} URLs for product ${productId} (handle: ${product.handle})`)
+    }
+  } catch (err: any) {
+    logger.error(`[indexnow] Failed to submit product ${productId} to IndexNow: ${err?.message ?? err}`, {
+      productId,
+      errorCode: err?.code,
+      stack: err?.stack,
+    })
   }
 }
 

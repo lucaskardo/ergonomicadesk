@@ -3,6 +3,7 @@
 # Usage: SITE_URL=https://ergonomicadesk.com ./scripts/smoke-test.sh
 
 SITE=${SITE_URL:-"http://localhost:8000"}
+BACKEND=${BACKEND_URL:-"http://localhost:9000"}
 PASS=0
 FAIL=0
 
@@ -29,10 +30,26 @@ check "Homepage" "$SITE/pa" "200"
 check "Store" "$SITE/pa/store" "200"
 check "FAQ" "$SITE/pa/faq" "200"
 check "Blog" "$SITE/pa/blog" "200"
-check "Health" "$SITE/api/health" "200"
 check "Sitemap" "$SITE/sitemap.xml" "200"
 check "Robots" "$SITE/robots.txt" "200"
 check "llms.txt" "$SITE/llms.txt" "200"
+
+echo ""
+echo "-- PDP --"
+check "Product page (frame-single-bl)" "$SITE/pa/productos/frame-single-bl" "200"
+
+echo ""
+echo "-- Category --"
+check "Category (sillas)" "$SITE/pa/store?category=sillas" "200"
+
+echo ""
+echo "-- Cart --"
+check "Cart page" "$SITE/pa/cart" "200"
+
+echo ""
+echo "-- Health --"
+check "Storefront health" "$SITE/api/health" "200"
+check "Backend health" "$BACKEND/health" "200"
 
 echo ""
 echo "-- Redirects (301) --"

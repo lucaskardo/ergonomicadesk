@@ -1,5 +1,6 @@
 "use client"
 
+import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
 
 export default function Error({
@@ -10,8 +11,7 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // TODO: Install @sentry/nextjs and configure with DSN for production error tracking
-    console.error("Unhandled error:", error)
+    Sentry.captureException(error)
   }, [error])
 
   return (

@@ -39,7 +39,7 @@ export default async function metaCapiHandler({
     })
 
     if (!order) {
-      logger.warn(`[meta-capi] Order ${orderId} not found`)
+      logger.warn(`[meta-capi] Order ${orderId} not found — skipping CAPI event`)
       return
     }
 
@@ -51,6 +51,10 @@ export default async function metaCapiHandler({
     const lastName = (order.shipping_address as any)?.last_name || ""
     const city = (order.shipping_address as any)?.city || ""
     const countryCode = (order.shipping_address as any)?.country_code || ""
+
+    if (!email) {
+      logger.warn(`[meta-capi] Order ${orderId} has no email — CAPI user_data will be sparse`)
+    }
 
     // Use order display_id as event_id for stable dedup (browser sends same ID)
     const eventId = `purchase_${(order as any).display_id || order.id}`
@@ -107,12 +111,21 @@ export default async function metaCapiHandler({
 
     if (!response.ok) {
       const err = await response.text()
-      logger.error(`[meta-capi] Failed: ${err}`)
+      logger.error(`[meta-capi] Failed to send Purchase event for order ${(order as any).display_id || orderId}: ${err}`, {
+        orderId,
+        displayId: (order as any).display_id,
+        pixelId: PIXEL_ID,
+        httpStatus: response.status,
+      })
     } else {
       logger.info(`[meta-capi] Purchase event sent for order ${(order as any).display_id || order.id}`)
     }
-  } catch (err) {
-    logger.error(`[meta-capi] Error: ${err}`)
+  } catch (err: any) {
+    logger.error(`[meta-capi] Unexpected error processing order ${orderId}: ${err?.message ?? err}`, {
+      orderId,
+      errorCode: err?.code,
+      stack: err?.stack,
+    })
   }
 }
 
