@@ -2,6 +2,9 @@
   "name": "ergonomicadesk",
   "private": true,
   "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -9,7 +12,8 @@
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean:storefront": "rm -rf apps/storefront/.next apps/storefront/.turbo"
   },
   "pnpm": {
     "overrides": {
