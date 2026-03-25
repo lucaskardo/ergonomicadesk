@@ -43,7 +43,7 @@ export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
       "@type": "MerchantReturnPolicy",
       applicableCountry: "PA",
       returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-      merchantReturnDays: 30,
+      merchantReturnDays: 7,
       returnMethod: "https://schema.org/ReturnByMail",
       returnFees: "https://schema.org/FreeReturn",
     },

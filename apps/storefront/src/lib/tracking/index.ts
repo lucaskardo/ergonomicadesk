@@ -116,14 +116,17 @@ export function trackBeginCheckout(cart: any) {
   })
 }
 
-export function trackViewItemList(items: any[], listName: string) {
+export function trackViewItemList(
+  items: Array<{ id?: string; title?: string; variants?: Array<{ sku?: string; id?: string }> }>,
+  listName: string
+) {
   if (typeof window === "undefined" || !window.dataLayer) return
   window.dataLayer.push({
     event: "view_item_list",
     ecommerce: {
       item_list_name: listName,
       items: items.slice(0, 20).map((p, i) => ({
-        item_id: p.id,
+        item_id: getItemId({ variant: p.variants?.[0], id: p.id }),
         item_name: p.title,
         index: i,
         item_list_name: listName,
@@ -132,14 +135,18 @@ export function trackViewItemList(items: any[], listName: string) {
   })
 }
 
-export function trackSelectItem(product: any, listName: string, index: number) {
+export function trackSelectItem(
+  product: { id?: string; title?: string; variants?: Array<{ sku?: string; id?: string }> },
+  listName: string,
+  index: number
+) {
   if (typeof window === "undefined" || !window.dataLayer) return
   window.dataLayer.push({
     event: "select_item",
     ecommerce: {
       item_list_name: listName,
       items: [{
-        item_id: product.id,
+        item_id: getItemId({ variant: product.variants?.[0], id: product.id }),
         item_name: product.title,
         index,
         item_list_name: listName,

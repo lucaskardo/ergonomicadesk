@@ -89,7 +89,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  // Blog posts
+  // Blog posts — content lives in src/content/blog/posts.ts (real content, not placeholders)
+  // TODO: migrate to CMS-driven fetch when blog is managed externally
   const blogSlugs = [
     "como-elegir-standing-desk",
     "errores-productividad-home-office",

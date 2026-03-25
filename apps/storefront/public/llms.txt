@@ -6,11 +6,11 @@ Ergonómica vende muebles ergonómicos de oficina para home office y oficinas co
 
 ## Páginas principales
 - [Catálogo completo](https://ergonomicadesk.com/pa/store): 231 productos en todas las categorías
-- [Escritorios Standing](https://ergonomicadesk.com/pa/categories/standing-desks): 82 escritorios eléctricos y manuales con ajuste de altura
-- [Sillas Ergonómicas](https://ergonomicadesk.com/pa/categories/sillas): 35 sillas con soporte lumbar y apoyabrazos ajustable
-- [Oficina](https://ergonomicadesk.com/pa/categories/oficina): 46 escritorios y estaciones de trabajo
-- [Almacenamiento](https://ergonomicadesk.com/pa/categories/almacenamiento): 19 soluciones de almacenamiento
-- [Accesorios](https://ergonomicadesk.com/pa/categories/accesorios): 54 accesorios de oficina
+- [Escritorios Standing](https://ergonomicadesk.com/pa/categorias/standing-desks): 82 escritorios eléctricos y manuales con ajuste de altura
+- [Sillas Ergonómicas](https://ergonomicadesk.com/pa/categorias/sillas): 35 sillas con soporte lumbar y apoyabrazos ajustable
+- [Oficina](https://ergonomicadesk.com/pa/categorias/oficina): 46 escritorios y estaciones de trabajo
+- [Almacenamiento](https://ergonomicadesk.com/pa/categorias/almacenamiento): 19 soluciones de almacenamiento
+- [Accesorios](https://ergonomicadesk.com/pa/categorias/accesorios): 54 accesorios de oficina
 
 ## Políticas
 - [Preguntas frecuentes](https://ergonomicadesk.com/pa/faq): Envío, garantía, ensamblaje, pagos

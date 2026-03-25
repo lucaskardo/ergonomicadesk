@@ -68,7 +68,6 @@ export const listProducts = async ({
         },
         headers,
         next,
-        cache: "no-store",
       }
     )
     .then(({ products, count }) => {
@@ -86,8 +85,12 @@ export const listProducts = async ({
 }
 
 /**
- * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.
- * It will then return the paginated products based on the page and limit parameters.
+ * Fetches products and sorts them client-side before paginating.
+ * TODO: Replace client-side sort with Medusa server-side `order` param once
+ * price/title sorts are confirmed stable across all regions in v2.
+ * Until then, limit:100 caps the sort window — with 231 products this may
+ * miss items on later pages for price/title sorts. For created_at the
+ * `order` param is already passed and this is a non-issue.
  */
 export const listProductsWithSort = async ({
   page = 0,

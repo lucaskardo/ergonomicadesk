@@ -80,7 +80,11 @@ export default async function PaginatedProducts({
   return (
     <>
       <TrackViewList
-        products={products.map((p) => ({ id: p.id!, title: p.title! }))}
+        products={products.map((p) => ({
+          id: p.id!,
+          title: p.title!,
+          variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+        }))}
         listName="store"
       />
       <ul
@@ -90,7 +94,15 @@ export default async function PaginatedProducts({
         {products.map((p, idx) => {
           return (
             <li key={p.id}>
-              <TrackProductClick product={{ id: p.id!, title: p.title! }} listName="store" index={idx}>
+              <TrackProductClick
+                  product={{
+                    id: p.id!,
+                    title: p.title!,
+                    variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+                  }}
+                  listName="store"
+                  index={idx}
+                >
                 <ProductPreview product={p} region={region} />
               </TrackProductClick>
             </li>

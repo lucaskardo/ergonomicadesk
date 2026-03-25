@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
 import { listCategories } from "@lib/data/categories"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { categoryPath } from "@lib/util/routes"
 import Image from "next/image"
 
 export async function generateMetadata({
@@ -89,7 +90,7 @@ export default async function CatalogPage({
             return (
               <LocalizedClientLink
                 key={category.id}
-                href={`/categories/${category.handle}`}
+                href={categoryPath(category.handle)}
                 className="group relative block overflow-hidden rounded-xl bg-gray-100 aspect-[4/3] shadow-sm hover:shadow-md transition-shadow"
               >
                 {thumbnail ? (

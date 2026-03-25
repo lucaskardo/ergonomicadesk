@@ -7,7 +7,7 @@ export default function TrackViewList({
   products,
   listName,
 }: {
-  products: Array<{ id: string; title: string }>
+  products: Array<{ id: string; title: string; variants?: Array<{ sku?: string; id?: string }> }>
   listName: string
 }) {
   const tracked = useRef(false)

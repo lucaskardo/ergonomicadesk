@@ -43,7 +43,10 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
     itemRef.current = totalItems
   }, [totalItems, pathname])
 
-  const open = () => setIsOpen(true)
+  const open = () => {
+    setIsOpen(true)
+    if (cartState) trackViewCart(cartState)
+  }
   const close = () => setIsOpen(false)
 
   return (

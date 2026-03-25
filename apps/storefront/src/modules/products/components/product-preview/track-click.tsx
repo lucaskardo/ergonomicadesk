@@ -9,7 +9,7 @@ export default function TrackProductClick({
   index,
 }: {
   children: React.ReactNode
-  product: { id: string; title: string }
+  product: { id: string; title: string; variants?: Array<{ sku?: string; id?: string }> }
   listName: string
   index: number
 }) {
