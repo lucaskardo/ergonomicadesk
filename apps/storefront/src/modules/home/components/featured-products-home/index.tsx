@@ -4,6 +4,8 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { getProductPrice } from "@lib/util/get-product-price"
+import TrackViewList from "@modules/store/components/track-view-list"
+import TrackProductClick from "@modules/products/components/product-preview/track-click"
 
 const CURATED_HANDLES = [
   "frame-double-bl",
@@ -170,17 +172,35 @@ export default async function FeaturedProductsHome({
         </div>
 
         {/* 4-column grid, 3px gaps */}
+        <TrackViewList
+          products={products.slice(0, 8).map((p) => ({
+            id: p.id!,
+            title: p.title!,
+            variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+          }))}
+          listName="featured_products"
+        />
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
           style={{ gap: "3px" }}
         >
           {products.slice(0, 8).map((product, i) => (
-            <ProductCard
+            <TrackProductClick
               key={product.id}
-              product={product}
-              lang={typedLang}
+              product={{
+                id: product.id!,
+                title: product.title!,
+                variants: product.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+              }}
+              listName="featured_products"
               index={i}
-            />
+            >
+              <ProductCard
+                product={product}
+                lang={typedLang}
+                index={i}
+              />
+            </TrackProductClick>
           ))}
         </div>
       </div>

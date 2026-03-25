@@ -119,6 +119,7 @@ export default async function CategoryTemplate({
           categoryId={allCategoryIds}
           countryCode={countryCode}
           q={q}
+          listName={`category_${category.handle}`}
         />
       </Suspense>
     </div>

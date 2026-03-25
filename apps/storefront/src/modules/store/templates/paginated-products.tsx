@@ -25,6 +25,7 @@ export default async function PaginatedProducts({
   productsIds,
   countryCode,
   q,
+  listName = "store",
 }: {
   sortBy?: SortOptions
   page: number
@@ -33,6 +34,7 @@ export default async function PaginatedProducts({
   productsIds?: string[]
   countryCode: string
   q?: string
+  listName?: string
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
@@ -85,7 +87,7 @@ export default async function PaginatedProducts({
           title: p.title!,
           variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
         }))}
-        listName="store"
+        listName={listName}
       />
       <ul
         className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
@@ -100,7 +102,7 @@ export default async function PaginatedProducts({
                     title: p.title!,
                     variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
                   }}
-                  listName="store"
+                  listName={listName}
                   index={idx}
                 >
                 <ProductPreview product={p} region={region} />

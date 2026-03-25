@@ -1,6 +1,8 @@
 import { listProductsWithSort } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import ProductPreview from "@modules/products/components/product-preview"
+import TrackProductClick from "@modules/products/components/product-preview/track-click"
+import TrackViewList from "@modules/store/components/track-view-list"
 import { Pagination } from "@modules/store/components/pagination"
 import StoreSearch from "@modules/store/components/store-search"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
@@ -81,14 +83,32 @@ export default async function PaginatedProductsCountWrapper({
   return (
     <>
       <StoreSearch initialQuery={initialQuery} totalCount={count} />
+      <TrackViewList
+        products={products.map((p) => ({
+          id: p.id!,
+          title: p.title!,
+          variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+        }))}
+        listName="store"
+      />
       <ul
         className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
         data-testid="products-list"
       >
-        {products.map((p) => {
+        {products.map((p, idx) => {
           return (
             <li key={p.id}>
-              <ProductPreview product={p} region={region} />
+              <TrackProductClick
+                product={{
+                  id: p.id!,
+                  title: p.title!,
+                  variants: p.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+                }}
+                listName="store"
+                index={idx}
+              >
+                <ProductPreview product={p} region={region} />
+              </TrackProductClick>
             </li>
           )
         })}

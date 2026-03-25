@@ -39,6 +39,7 @@ export default function CollectionTemplate({
             page={pageNumber}
             collectionId={collection.id}
             countryCode={countryCode}
+            listName={`collection_${collection.handle}`}
           />
         </Suspense>
       </div>

@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useLang } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { trackSearch, trackSelectItem, trackEvent } from "@lib/tracking"
+import { trackSearch, trackSelectItem, trackEvent, trackViewItemList } from "@lib/tracking"
 import { productPath } from "@lib/util/routes"
 
 interface SearchResult {
@@ -106,7 +106,9 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
         }))
         setResults(mapped)
         trackSearch(query, products.length)
-        if (products.length === 0) {
+        if (products.length > 0) {
+          trackViewItemList(mapped, "search_results")
+        } else {
           trackEvent("search_zero_results", { search_term: query })
         }
       } catch {

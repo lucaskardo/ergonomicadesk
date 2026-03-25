@@ -1,3 +1,23 @@
+/**
+ * Meta Conversions API — Server-side Purchase event subscriber
+ *
+ * EVENT SPLIT (deduplication strategy):
+ * ─────────────────────────────────────
+ * Browser-side (GTM → fbq):  view_item, add_to_cart, begin_checkout, purchase
+ * Server-side (this file):   Purchase only
+ *
+ * DEDUPLICATION:
+ * Both events share the same event_id = `purchase_${order.display_id}`.
+ * Meta deduplicates when event_name + event_id match across browser and server
+ * within a 48-hour window. The browser must send the same event_id via the
+ * dataLayer `event_id` field (see tracking/index.ts → getPurchaseEventId).
+ *
+ * REQUIRED ENV VARS:
+ *   META_PIXEL_ID             — Facebook Pixel numeric ID
+ *   META_CAPI_ACCESS_TOKEN    — System user token with ads_management permission
+ *   META_TEST_EVENT_CODE      — (optional) for Events Manager test mode
+ *   STOREFRONT_URL            — canonical storefront origin, e.g. https://ergonomicadesk.com
+ */
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import * as crypto from "crypto"
@@ -95,25 +115,38 @@ export default async function metaCapiHandler({
       },
     }
 
+    const displayId = (order as any).display_id || orderId
+    const value = ((order as any).total || 0) / 100
+    logger.info(
+      `[meta-capi] Sending Purchase event — order: ${displayId}, event_id: ${eventId}, value: ${value} ${eventData.custom_data.currency}, items: ${eventData.custom_data.contents.length}`
+    )
+
+    const payload = {
+      data: [eventData],
+      ...(process.env.NODE_ENV !== "production" && process.env.META_TEST_EVENT_CODE
+        ? { test_event_code: process.env.META_TEST_EVENT_CODE }
+        : {}),
+    }
+
     const response = await fetch(
       `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data: [eventData],
-          ...(process.env.NODE_ENV !== "production" && process.env.META_TEST_EVENT_CODE
-            ? { test_event_code: process.env.META_TEST_EVENT_CODE }
-            : {}),
-        }),
+        body: JSON.stringify(payload),
       }
     )
 
+    const responseBody = await response.text()
+
     if (!response.ok) {
-      const err = await response.text()
-      logger.error(`[meta-capi] Failed to send Purchase event for order ${(order as any).display_id || orderId} (pixelId: ${PIXEL_ID}, http: ${response.status}): ${err}`)
+      logger.error(
+        `[meta-capi] Purchase event FAILED — order: ${displayId}, http: ${response.status}, pixelId: ${PIXEL_ID}, response: ${responseBody}`
+      )
     } else {
-      logger.info(`[meta-capi] Purchase event sent for order ${(order as any).display_id || order.id}`)
+      logger.info(
+        `[meta-capi] Purchase event OK — order: ${displayId}, response: ${responseBody}`
+      )
     }
   } catch (err: any) {
     logger.error(`[meta-capi] Unexpected error processing order ${orderId}: ${err?.message ?? err} (code: ${err?.code ?? "none"})`)
