@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
+import { productPath } from "@lib/util/routes"
 
 const CartDropdown = ({
   cart: cartState,
@@ -126,7 +127,7 @@ const CartDropdown = ({
                         data-testid="cart-item"
                       >
                         <LocalizedClientLink
-                          href={`/productos/${item.product_handle}`}
+                          href={productPath(item.product_handle || "")}
                           className="w-24"
                         >
                           <Thumbnail
@@ -141,7 +142,7 @@ const CartDropdown = ({
                               <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
                                 <h3 className="text-base-regular overflow-hidden text-ellipsis">
                                   <LocalizedClientLink
-                                    href={`/productos/${item.product_handle}`}
+                                    href={productPath(item.product_handle || "")}
                                     data-testid="product-link"
                                   >
                                     {item.title}

@@ -1,10 +1,12 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useLang } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { trackSearch, trackSelectItem } from "@lib/tracking"
+import { trackSearch, trackSelectItem, trackEvent } from "@lib/tracking"
+import { productPath } from "@lib/util/routes"
 
 interface SearchResult {
   id: string
@@ -102,6 +104,9 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
         }))
         setResults(mapped)
         trackSearch(query, products.length)
+        if (products.length === 0) {
+          trackEvent("search_zero_results", { search_term: query })
+        }
       } catch {
         setResults([])
       } finally {
@@ -185,7 +190,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 {results.map((result) => (
                   <li key={result.id} className="border-b border-ui-border-base last:border-0">
                     <LocalizedClientLink
-                      href={`/productos/${result.handle}`}
+                      href={productPath(result.handle)}
                       onClick={() => {
                         trackSelectItem({ id: result.id, title: result.title }, "search_results", results.indexOf(result))
                         onClose()
@@ -194,9 +199,11 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                     >
                       <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-ui-bg-subtle">
                         {result.thumbnail ? (
-                          <img
+                          <Image
                             src={result.thumbnail}
                             alt={result.title}
+                            width={48}
+                            height={48}
                             className="w-full h-full object-cover"
                           />
                         ) : (

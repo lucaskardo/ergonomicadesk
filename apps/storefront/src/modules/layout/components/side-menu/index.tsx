@@ -9,6 +9,7 @@ import LanguageSwitcher from "../language-switcher"
 import { HttpTypes } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
 import { useLang } from "@lib/i18n/context"
+import { categoryPath } from "@lib/util/routes"
 
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
@@ -39,7 +40,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
 
   const categoryLinks = CATEGORY_LINKS.map((c) => ({
     label: lang === "en" ? c.en : c.es,
-    href: `/categorias/${c.handle}`,
+    href: categoryPath(c.handle),
   }))
 
   return (

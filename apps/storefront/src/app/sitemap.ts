@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next"
+import { SITE_URL, productPath, categoryPath, blogPath, alternateUrls } from "@lib/util/routes"
 
-const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://ergonomicadesk.com"
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
 const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
 
@@ -63,32 +63,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Products
   for (const product of products) {
+    const path = productPath(product.handle)
     entries.push({
-      url: `${SITE_URL}/pa/productos/${product.handle}`,
+      url: `${SITE_URL}/pa${path}`,
       lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
       alternates: {
-        languages: {
-          es: `${SITE_URL}/pa/productos/${product.handle}`,
-          en: `${SITE_URL}/pa/en/productos/${product.handle}`,
-        },
+        languages: alternateUrls("pa", path),
       },
     })
   }
 
   // Categories
   for (const cat of categories) {
+    const path = categoryPath(cat.handle)
     entries.push({
-      url: `${SITE_URL}/pa/categorias/${cat.handle}`,
+      url: `${SITE_URL}/pa${path}`,
       lastModified: cat.updated_at ? new Date(cat.updated_at) : new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
       alternates: {
-        languages: {
-          es: `${SITE_URL}/pa/categorias/${cat.handle}`,
-          en: `${SITE_URL}/pa/en/categorias/${cat.handle}`,
-        },
+        languages: alternateUrls("pa", path),
       },
     })
   }
@@ -99,16 +95,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "errores-productividad-home-office",
   ]
   for (const slug of blogSlugs) {
+    const path = blogPath(slug)
     entries.push({
-      url: `${SITE_URL}/pa/blog/${slug}`,
+      url: `${SITE_URL}/pa${path}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
       alternates: {
-        languages: {
-          es: `${SITE_URL}/pa/blog/${slug}`,
-          en: `${SITE_URL}/pa/en/blog/${slug}`,
-        },
+        languages: alternateUrls("pa", path),
       },
     })
   }

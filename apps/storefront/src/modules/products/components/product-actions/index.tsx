@@ -339,7 +339,7 @@ export default function ProductActions({
           href={`https://wa.me/50769533776?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackGenerateLead("whatsapp_pdp", product.title, selectedVariant?.sku)}
+          onClick={() => trackGenerateLead("whatsapp_pdp", product.title, selectedVariant?.sku ?? undefined)}
           className="w-full h-12 flex items-center justify-center gap-2 font-semibold text-[0.85rem] text-white transition-all duration-300"
           style={{ background: "#25D366" }}
         >

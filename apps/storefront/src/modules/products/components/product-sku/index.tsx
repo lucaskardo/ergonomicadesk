@@ -37,7 +37,7 @@ export default function ProductSku({
         ) : null
       }
     >
-      <SkuContent variants={product.variants} />
+      <SkuContent variants={product.variants ?? undefined} />
     </Suspense>
   )
 }

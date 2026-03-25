@@ -13,6 +13,19 @@ function getMetaCookies(): Record<string, string> {
   return result
 }
 
+/**
+ * Unified item_id extraction — single policy across all events.
+ * Priority: variant.sku → variant_id → product.id
+ */
+export function getItemId(item: {
+  variant?: { sku?: string; id?: string } | null
+  variant_id?: string
+  product_id?: string
+  id?: string
+}): string {
+  return item.variant?.sku || item.variant?.id || item.variant_id || item.product_id || item.id || "unknown"
+}
+
 export function trackEvent(event: string, data: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return
   window.dataLayer = window.dataLayer || []
@@ -25,16 +38,16 @@ export function trackEvent(event: string, data: Record<string, unknown> = {}) {
 }
 
 export function trackViewItem(product: any, variant?: any) {
-  const sku = variant?.sku || product.variants?.[0]?.sku || product.id
+  const itemId = getItemId({ variant })
   const price = (variant?.calculated_price?.calculated_amount || 0) / 100
   trackEvent("view_item", {
-    event_id: generateEventId(sku),
+    event_id: generateEventId(itemId),
     ecommerce: {
       currency: "USD",
       value: price,
       items: [
         {
-          item_id: sku,
+          item_id: itemId,
           item_name: product.title,
           item_category: product.categories?.[0]?.name || "",
           price,
@@ -42,7 +55,7 @@ export function trackViewItem(product: any, variant?: any) {
         },
       ],
     },
-    content_ids: [sku],
+    content_ids: [itemId],
     content_type: "product",
   })
   // Track in _ergo_viewed cookie for dashboard
@@ -51,8 +64,8 @@ export function trackViewItem(product: any, variant?: any) {
     let viewed: string[] = existing
       ? JSON.parse(decodeURIComponent(existing[1]))
       : []
-    if (!viewed.includes(sku)) {
-      viewed.unshift(sku)
+    if (!viewed.includes(itemId)) {
+      viewed.unshift(itemId)
       viewed = viewed.slice(0, 10)
     }
     document.cookie = `_ergo_viewed=${encodeURIComponent(JSON.stringify(viewed))}; path=/; max-age=${7 * 86400}; SameSite=Lax`
@@ -62,23 +75,23 @@ export function trackViewItem(product: any, variant?: any) {
 }
 
 export function trackAddToCart(product: any, variant: any, quantity: number) {
-  const sku = variant?.sku || product.id
+  const itemId = getItemId({ variant })
   const price = (variant?.calculated_price?.calculated_amount || 0) / 100
   trackEvent("add_to_cart", {
-    event_id: generateEventId(sku),
+    event_id: generateEventId(itemId),
     ecommerce: {
       currency: "USD",
       value: price * quantity,
       items: [
         {
-          item_id: sku,
+          item_id: itemId,
           item_name: product.title,
           price,
           quantity,
         },
       ],
     },
-    content_ids: [sku],
+    content_ids: [itemId],
     content_type: "product",
     num_items: quantity,
   })
@@ -86,7 +99,7 @@ export function trackAddToCart(product: any, variant: any, quantity: number) {
 
 export function trackBeginCheckout(cart: any) {
   const items = (cart.items || []).map((i: any) => ({
-    item_id: i.variant?.sku || i.variant_id,
+    item_id: getItemId(i),
     item_name: i.title,
     price: (i.unit_price || 0) / 100,
     quantity: i.quantity,
@@ -143,7 +156,7 @@ export function trackRemoveFromCart(item: any, currencyCode: string) {
       currency: currencyCode.toUpperCase(),
       value: (item.total || 0) / 100,
       items: [{
-        item_id: item.variant?.sku || item.variant_id,
+        item_id: getItemId(item),
         item_name: item.product_title || item.title,
         quantity: item.quantity,
         price: (item.unit_price || 0) / 100,
@@ -162,7 +175,7 @@ export function trackAddShippingInfo(cart: any) {
       value: (cart.total || 0) / 100,
       shipping_tier: cart.shipping_methods?.[0]?.name || "standard",
       items: (cart.items || []).map((item: any) => ({
-        item_id: item.variant?.sku || item.variant_id,
+        item_id: getItemId(item),
         item_name: item.product_title || item.title,
         quantity: item.quantity,
         price: (item.unit_price || 0) / 100,
@@ -181,7 +194,7 @@ export function trackAddPaymentInfo(cart: any, paymentType: string) {
       value: (cart.total || 0) / 100,
       payment_type: paymentType,
       items: (cart.items || []).map((item: any) => ({
-        item_id: item.variant?.sku || item.variant_id,
+        item_id: getItemId(item),
         item_name: item.product_title || item.title,
         quantity: item.quantity,
         price: (item.unit_price || 0) / 100,
@@ -199,7 +212,7 @@ export function trackViewCart(cart: any) {
       currency,
       value: (cart.total || cart.subtotal || 0) / 100,
       items: (cart.items || []).map((item: any) => ({
-        item_id: item.variant?.sku || item.variant_id,
+        item_id: getItemId(item),
         item_name: item.product_title || item.title,
         quantity: item.quantity,
         price: (item.unit_price || 0) / 100,
@@ -233,7 +246,7 @@ export function getPurchaseEventId(order: any): string {
 
 export function trackPurchase(order: any) {
   const items = (order.items || []).map((i: any) => ({
-    item_id: i.variant?.sku || i.variant_id,
+    item_id: getItemId(i),
     item_name: i.title,
     price: (i.unit_price || 0) / 100,
     quantity: i.quantity,

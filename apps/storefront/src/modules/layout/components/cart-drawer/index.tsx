@@ -14,6 +14,7 @@ import { getTranslations } from "@lib/i18n"
 import { Fragment, useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { trackViewCart } from "@lib/tracking"
+import { productPath } from "@lib/util/routes"
 
 type CartDrawerProps = {
   cart?: HttpTypes.StoreCart | null
@@ -124,7 +125,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                         >
                           {/* Thumbnail */}
                           <LocalizedClientLink
-                            href={`/productos/${item.product_handle}`}
+                            href={productPath(item.product_handle || "")}
                             onClick={close}
                             className="shrink-0"
                           >
@@ -142,7 +143,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex flex-col min-w-0">
                                 <LocalizedClientLink
-                                  href={`/productos/${item.product_handle}`}
+                                  href={productPath(item.product_handle || "")}
                                   onClick={close}
                                   className="text-sm font-medium text-ui-fg-base hover:text-teal-600 transition-colors line-clamp-2"
                                   data-testid="product-link"

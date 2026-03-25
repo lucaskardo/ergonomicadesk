@@ -84,6 +84,16 @@ export function captureUtmParams() {
     if (fbp) touchData._fbp = fbp
     if (fbc) touchData._fbc = fbc
 
+    // Auto-detect paid medium from click IDs
+    if (touchData.gclid || touchData.gbraid || touchData.wbraid) {
+      if (!touchData.utm_source) touchData.utm_source = "google"
+      if (!touchData.utm_medium) touchData.utm_medium = "cpc"
+    }
+    if (touchData.fbclid) {
+      if (!touchData.utm_source) touchData.utm_source = "facebook"
+      if (!touchData.utm_medium) touchData.utm_medium = "cpc"
+    }
+
     // ── First touch — set ONCE, never overwrite
     const existingFt = parseCookie<Record<string, string>>(FIRST_TOUCH_COOKIE)
     if (!existingFt) {
@@ -95,6 +105,57 @@ export function captureUtmParams() {
 
     // Legacy cookie for placeOrder() backwards compat
     setCookie(LEGACY_UTM_COOKIE, JSON.stringify(touchData), 30)
+  }
+
+  // After UTM block — detect source for organic/referral/direct (first visit without UTM)
+  if (!hasUtm && !parseCookie<Record<string, string>>(LAST_TOUCH_COOKIE)) {
+    const referrer = document.referrer
+    const noUtmData: Record<string, string> = {
+      landing_page: window.location.pathname,
+      referrer: referrer || "",
+      timestamp: new Date().toISOString(),
+      session_id: sessionId,
+      device_type: window.innerWidth < 768 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop",
+    }
+
+    if (!referrer) {
+      noUtmData.utm_source = "direct"
+      noUtmData.utm_medium = "none"
+    } else {
+      try {
+        const refHost = new URL(referrer).hostname
+        if (refHost.includes("google.")) {
+          noUtmData.utm_source = "google"
+          noUtmData.utm_medium = "organic"
+        } else if (refHost.includes("bing.") || refHost.includes("yahoo.")) {
+          noUtmData.utm_source = refHost.split(".")[0]
+          noUtmData.utm_medium = "organic"
+        } else if (refHost.includes("facebook.") || refHost.includes("instagram.") || refHost.includes("t.co")) {
+          noUtmData.utm_source = refHost.includes("facebook") ? "facebook" : refHost.includes("instagram") ? "instagram" : "twitter"
+          noUtmData.utm_medium = "social"
+        } else {
+          noUtmData.utm_source = refHost
+          noUtmData.utm_medium = "referral"
+        }
+      } catch {
+        noUtmData.utm_source = "referral"
+        noUtmData.utm_medium = "referral"
+      }
+    }
+
+    // Capture Meta cookies even without UTM
+    const fbp = getCookie("_fbp")
+    const fbc = getCookie("_fbc")
+    if (fbp) noUtmData._fbp = fbp
+    if (fbc) noUtmData._fbc = fbc
+
+    // Set as first touch if none exists
+    const existingFt = parseCookie<Record<string, string>>(FIRST_TOUCH_COOKIE)
+    if (!existingFt) {
+      setCookie(FIRST_TOUCH_COOKIE, JSON.stringify(noUtmData), 180)
+    }
+    setCookie(LAST_TOUCH_COOKIE, JSON.stringify(noUtmData), 30)
+    setCookie(LEGACY_UTM_COOKIE, JSON.stringify(noUtmData), 30)
   }
 
   // ── Page count (always increment)

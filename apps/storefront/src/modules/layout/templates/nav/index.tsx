@@ -4,6 +4,7 @@ import { listRegions } from "@lib/data/regions"
 import { listLocales } from "@lib/data/locales"
 import { getLocale } from "@lib/data/locale-actions"
 import { getLang } from "@lib/i18n"
+import { categoryPath } from "@lib/util/routes"
 import { StoreRegion } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -80,7 +81,7 @@ export default async function Nav() {
               {NAV_CATEGORIES.map((cat) => (
                 <LocalizedClientLink
                   key={cat.handle}
-                  href={`/categorias/${cat.handle}`}
+                  href={categoryPath(cat.handle)}
                   className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
                 >
                   {lang === "en" ? cat.en : cat.es}

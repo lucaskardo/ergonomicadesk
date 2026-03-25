@@ -10,6 +10,7 @@ import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { productPath } from "@lib/util/routes"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { useRouter } from "next/navigation"
@@ -59,7 +60,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
     <Table.Row className="w-full" data-testid="product-row">
       <Table.Cell className="!pl-0 p-4 w-24">
         <LocalizedClientLink
-          href={`/productos/${item.product_handle}`}
+          href={productPath(item.product_handle || "")}
           className={clx("flex", {
             "w-16": type === "preview",
             "small:w-24 w-12": type === "full",

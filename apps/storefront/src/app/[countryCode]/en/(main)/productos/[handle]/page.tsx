@@ -5,9 +5,8 @@ import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 import { ProductJsonLd } from "@modules/common/components/json-ld/product"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
+import { productCanonical, alternateUrls, productPath, SITE_URL } from "@lib/util/routes"
 import { HttpTypes } from "@medusajs/types"
-
-const SITE_URL = "https://ergonomicadesk.com"
 
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
@@ -58,7 +57,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   if (!product) notFound()
 
-  const canonicalUrl = `${SITE_URL}/${params.countryCode}/en/productos/${handle}`
+  const canonicalUrl = productCanonical(params.countryCode, "en", handle)
   return {
     title: `${product.title} | Ergonómica`,
     description: product.description
@@ -66,11 +65,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       : `${product.title} — Buy at Ergonómica Panama. Free shipping in Panama City. Warranty included.`,
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        es: `${SITE_URL}/${params.countryCode}/productos/${handle}`,
-        en: canonicalUrl,
-        "x-default": `${SITE_URL}/${params.countryCode}/productos/${handle}`,
-      },
+      languages: alternateUrls(params.countryCode, productPath(handle)),
     },
     openGraph: {
       title: `${product.title} | Ergonómica`,
@@ -100,7 +95,7 @@ export default async function ProductPageEN(props: Props) {
     : undefined
   const firstVariant = pricedProduct.variants?.[0]
   const priceAmount = firstVariant?.calculated_price?.calculated_amount ?? firstVariant?.calculated_price?.original_amount ?? 0
-  const canonicalUrl = `${SITE_URL}/${params.countryCode}/en/productos/${params.handle}`
+  const canonicalUrl = productCanonical(params.countryCode, "en", params.handle)
 
   return (
     <>

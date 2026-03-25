@@ -1,6 +1,7 @@
 "use client"
 
 import { useLang } from "@lib/i18n/context"
+import { categoryPath } from "@lib/util/routes"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Logo from "@modules/common/components/logo"
 
@@ -99,8 +100,6 @@ export default function Footer() {
     },
   }[lang]
 
-  const catPath = "categorias"
-
   return (
     <footer className="w-full bg-ergo-950" style={{ color: "rgba(255,255,255,0.55)" }}>
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
@@ -148,27 +147,27 @@ export default function Footer() {
             </span>
             <ul className="flex flex-col gap-1.5 text-[0.8rem]">
               <li>
-                <LocalizedClientLink href={`/${catPath}/standing-desks`} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <LocalizedClientLink href={categoryPath("standing-desks")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {t.standingDesks}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href={`/${catPath}/chairs`} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <LocalizedClientLink href={categoryPath("chairs")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {t.chairs}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href={`/${catPath}/accessories`} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {t.arms}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href={`/${catPath}/accessories`} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {t.accessories}
                 </LocalizedClientLink>
               </li>
               <li>
-                <LocalizedClientLink href={`/${catPath}/accessories`} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {t.lighting}
                 </LocalizedClientLink>
               </li>

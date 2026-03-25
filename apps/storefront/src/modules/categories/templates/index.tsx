@@ -5,6 +5,7 @@ import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-g
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { categoryPath } from "@lib/util/routes"
 import InlineSortSelect from "@modules/store/components/inline-sort-select"
 import StoreSearch from "@modules/store/components/store-search"
 import { HttpTypes } from "@medusajs/types"
@@ -56,7 +57,7 @@ export default async function CategoryTemplate({
             <span key={parent.id} className="flex items-center gap-1.5">
               <LocalizedClientLink
                 className="hover:text-ergo-sky-dark transition-colors"
-                href={`/categorias/${parent.handle}`}
+                href={categoryPath(parent.handle)}
               >
                 {parent.name}
               </LocalizedClientLink>
@@ -89,7 +90,7 @@ export default async function CategoryTemplate({
           {subcategories.map((c) => (
             <LocalizedClientLink
               key={c.id}
-              href={`/categorias/${c.handle}`}
+              href={categoryPath(c.handle)}
               className="px-4 py-2 text-[0.82rem] font-semibold border border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950 transition-colors"
             >
               {c.name}
