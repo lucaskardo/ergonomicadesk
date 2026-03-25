@@ -72,29 +72,39 @@ export function ProductJsonLd({
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "USD",
+        },
         shippingDestination: {
           "@type": "DefinedRegion",
           addressCountry: "PA",
         },
         deliveryTime: {
           "@type": "ShippingDeliveryTime",
-          businessDays: {
-            "@type": "OpeningHoursSpecification",
+          handlingTime: {
+            "@type": "QuantitativeValue",
             minValue: 1,
             maxValue: 3,
+            unitCode: "d",
           },
-        },
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          value: "0",
-          currency: "USD",
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 5,
+            unitCode: "d",
+          },
         },
       },
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
+        applicableCountry: "PA",
         returnPolicyCategory:
           "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
       },
     },
   }

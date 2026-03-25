@@ -6,7 +6,7 @@ export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
 
   const schema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "LocalBusiness"],
     name: "Ergonómica",
     alternateName: "Ergonomica Office",
     url: "https://ergonomicadesk.com",

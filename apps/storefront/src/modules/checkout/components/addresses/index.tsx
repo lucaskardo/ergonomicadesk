@@ -8,7 +8,7 @@ import { Heading, Text, useToggleState } from "@medusajs/ui"
 import Divider from "@modules/common/components/divider"
 import Spinner from "@modules/common/icons/spinner"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 import BillingAddress from "../billing_address"
 import ErrorMessage from "../error-message"
 import ShippingAddress from "../shipping-address"
@@ -41,6 +41,7 @@ const Addresses = ({
     router.push(pathname + "?step=address")
   }
 
+  const [honeypot, setHoneypot] = useState("")
   const [message, formAction] = useActionState(setAddresses, null)
 
   return (
@@ -66,7 +67,18 @@ const Addresses = ({
         )}
       </div>
       {isOpen ? (
-        <form action={formAction}>
+        <form action={formAction} onSubmit={(e) => { if (honeypot) { e.preventDefault(); console.warn("Honeypot triggered — potential bot submission") } }}>
+          {/* Honeypot — bots fill this, humans don't see it */}
+          <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }} aria-hidden="true">
+            <input
+              type="text"
+              name="company_website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
           <div className="pb-8">
             <ShippingAddress
               customer={customer}
