@@ -4,7 +4,48 @@ import { withSentryConfig } from "@sentry/nextjs"
 const isDev = process.env.NODE_ENV === "development"
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
+  reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  images: {
+    qualities: [50, 75],
+    dangerouslyAllowLocalIP: true,
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+      },
+      {
+        protocol: "https",
+        hostname: "medusa-public-images.s3.eu-west-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "medusa-server-testing.s3.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.r2.cloudflarestorage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pub-*.r2.dev",
+      },
+    ],
+  },
   async headers() {
     return [
       {

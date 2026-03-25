@@ -5,8 +5,6 @@ const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
 const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
 const COUNTRY = "pa"
 
-export const revalidate = 3600
-
 export async function GET() {
   const base = `${SITE_URL}/${COUNTRY}`
 

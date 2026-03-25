@@ -68,6 +68,9 @@ export default async function BlogPostPage(props: Props) {
           <span>{post.publishedAt}</span>
         </div>
       </div>
+      {/* dangerouslySetInnerHTML is safe here: post.content is static HTML
+          authored in src/content/blog/posts.ts (committed to the repo).
+          There is no user-generated content or external CMS involved. */}
       <div
         className="mt-10 prose prose-ergo max-w-none"
         dangerouslySetInnerHTML={{ __html: post.content }}

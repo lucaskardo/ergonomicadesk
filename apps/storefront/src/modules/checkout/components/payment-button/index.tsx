@@ -91,7 +91,15 @@ const NmiChargeButton = ({
           return
         }
       } catch {
-        // Network error — fail open so checkout isn't blocked on Turnstile outage
+        // Network error — fail closed: if Turnstile is configured, a verification
+        // failure (including network errors) must block payment to prevent bot abuse.
+        setError(
+          isEnglish
+            ? "Security check failed. Please refresh and try again."
+            : "Verificación de seguridad fallida. Recarga e inténtalo de nuevo."
+        )
+        turnstileTokenRef.current = null
+        return
       }
     }
 
