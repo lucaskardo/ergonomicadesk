@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLang } from "@lib/i18n/context"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { trackSearch } from "@lib/tracking"
 
 interface SearchResult {
   id: string
@@ -90,17 +91,17 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           }
         }
 
-        setResults(
-          products.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            handle: p.handle,
-            thumbnail: p.thumbnail ?? null,
-            price: p.variants?.[0]?.calculated_price?.calculated_amount
-              ? `$${(p.variants[0].calculated_price.calculated_amount / 100).toFixed(2)}`
-              : undefined,
-          }))
-        )
+        const mapped = products.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          handle: p.handle,
+          thumbnail: p.thumbnail ?? null,
+          price: p.variants?.[0]?.calculated_price?.calculated_amount
+            ? `$${(p.variants[0].calculated_price.calculated_amount / 100).toFixed(2)}`
+            : undefined,
+        }))
+        setResults(mapped)
+        trackSearch(query, products.length)
       } catch {
         setResults([])
       } finally {

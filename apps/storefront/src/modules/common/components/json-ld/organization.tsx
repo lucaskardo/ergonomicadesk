@@ -39,6 +39,14 @@ export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
         closes: "12:00",
       },
     ],
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      applicableCountry: "PA",
+      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+      merchantReturnDays: 30,
+      returnMethod: "https://schema.org/ReturnByMail",
+      returnFees: "https://schema.org/FreeReturn",
+    },
     sameAs: [
       "https://www.instagram.com/ergonomicadesk/",
       "https://www.facebook.com/ergonomicadesks/",

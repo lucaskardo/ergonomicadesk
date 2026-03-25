@@ -56,7 +56,7 @@ export default async function CategoryTemplate({
             <span key={parent.id} className="flex items-center gap-1.5">
               <LocalizedClientLink
                 className="hover:text-ergo-sky-dark transition-colors"
-                href={`/categories/${parent.handle}`}
+                href={`/categorias/${parent.handle}`}
               >
                 {parent.name}
               </LocalizedClientLink>
@@ -89,7 +89,7 @@ export default async function CategoryTemplate({
           {subcategories.map((c) => (
             <LocalizedClientLink
               key={c.id}
-              href={`/categories/${c.handle}`}
+              href={`/categorias/${c.handle}`}
               className="px-4 py-2 text-[0.82rem] font-semibold border border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950 transition-colors"
             >
               {c.name}

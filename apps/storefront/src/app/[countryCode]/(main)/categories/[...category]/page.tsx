@@ -6,6 +6,7 @@ import { listRegions } from "@lib/data/regions"
 import { StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
 
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
@@ -59,11 +60,11 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       title,
       description,
       alternates: {
-        canonical: `${baseUrl}/categories/${categoryPath}`,
+        canonical: `${baseUrl}/categorias/${categoryPath}`,
         languages: {
-          es: `${baseUrl}/categories/${categoryPath}`,
-          en: `${baseUrl}/en/categories/${categoryPath}`,
-          "x-default": `${baseUrl}/categories/${categoryPath}`,
+          es: `${baseUrl}/categorias/${categoryPath}`,
+          en: `${baseUrl}/en/categorias/${categoryPath}`,
+          "x-default": `${baseUrl}/categorias/${categoryPath}`,
         },
       },
       openGraph: {
@@ -87,13 +88,21 @@ export default async function CategoryPage(props: Props) {
     notFound()
   }
 
+  const categoryPath = params.category.join("/")
+
   return (
-    <CategoryTemplate
-      category={productCategory}
-      sortBy={sortBy}
-      page={page}
-      countryCode={params.countryCode}
-      q={q}
-    />
+    <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: `https://ergonomicadesk.com/${params.countryCode}` },
+        { name: productCategory.name, url: `https://ergonomicadesk.com/${params.countryCode}/categorias/${categoryPath}` },
+      ]} />
+      <CategoryTemplate
+        category={productCategory}
+        sortBy={sortBy}
+        page={page}
+        countryCode={params.countryCode}
+        q={q}
+      />
+    </>
   )
 }

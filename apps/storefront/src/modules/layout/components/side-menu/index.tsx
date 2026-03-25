@@ -39,7 +39,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
 
   const categoryLinks = CATEGORY_LINKS.map((c) => ({
     label: lang === "en" ? c.en : c.es,
-    href: `/categories/${c.handle}`,
+    href: `/categorias/${c.handle}`,
   }))
 
   return (

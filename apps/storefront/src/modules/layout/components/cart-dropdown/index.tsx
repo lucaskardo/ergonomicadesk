@@ -126,7 +126,7 @@ const CartDropdown = ({
                         data-testid="cart-item"
                       >
                         <LocalizedClientLink
-                          href={`/products/${item.product_handle}`}
+                          href={`/productos/${item.product_handle}`}
                           className="w-24"
                         >
                           <Thumbnail
@@ -141,7 +141,7 @@ const CartDropdown = ({
                               <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
                                 <h3 className="text-base-regular overflow-hidden text-ellipsis">
                                   <LocalizedClientLink
-                                    href={`/products/${item.product_handle}`}
+                                    href={`/productos/${item.product_handle}`}
                                     data-testid="product-link"
                                   >
                                     {item.title}

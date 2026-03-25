@@ -13,6 +13,7 @@ import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
 import { Fragment, useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
+import { trackViewCart } from "@lib/tracking"
 
 type CartDrawerProps = {
   cart?: HttpTypes.StoreCart | null
@@ -33,6 +34,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
   useEffect(() => {
     if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
       setIsOpen(true)
+      if (cartState) trackViewCart(cartState)
       const timer = setTimeout(() => setIsOpen(false), 5000)
       itemRef.current = totalItems
       return () => clearTimeout(timer)

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPostBySlug, getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
+import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
@@ -30,6 +31,12 @@ export default async function BlogPostPage(props: Props) {
   if (!post) return notFound()
 
   return (
+    <>
+    <BreadcrumbJsonLd items={[
+      { name: "Home", url: `https://ergonomicadesk.com/${countryCode}` },
+      { name: "Blog", url: `https://ergonomicadesk.com/${countryCode}/blog` },
+      { name: post.title, url: `https://ergonomicadesk.com/${countryCode}/blog/${slug}` },
+    ]} />
     <article className="max-w-[720px] mx-auto px-4 sm:px-6 py-14 lg:py-20">
       <Link
         href={`/${countryCode}/blog`}
@@ -61,5 +68,6 @@ export default async function BlogPostPage(props: Props) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>
+    </>
   )
 }

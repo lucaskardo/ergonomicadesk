@@ -99,7 +99,7 @@ export default function Footer() {
     },
   }[lang]
 
-  const catPath = lang === "en" ? "categories" : "categorias"
+  const catPath = "categorias"
 
   return (
     <footer className="w-full bg-ergo-950" style={{ color: "rgba(255,255,255,0.55)" }}>

@@ -93,5 +93,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
+  // Blog posts
+  const blogSlugs = [
+    "como-elegir-standing-desk",
+    "errores-productividad-home-office",
+  ]
+  for (const slug of blogSlugs) {
+    entries.push({
+      url: `${SITE_URL}/pa/blog/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      alternates: {
+        languages: {
+          es: `${SITE_URL}/pa/blog/${slug}`,
+          en: `${SITE_URL}/pa/en/blog/${slug}`,
+        },
+      },
+    })
+  }
+
   return entries
 }

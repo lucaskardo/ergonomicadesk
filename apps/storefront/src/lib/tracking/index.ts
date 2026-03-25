@@ -190,6 +190,43 @@ export function trackAddPaymentInfo(cart: any, paymentType: string) {
   })
 }
 
+export function trackViewCart(cart: any) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  const currency = (cart.region?.currency_code || cart.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({
+    event: "view_cart",
+    ecommerce: {
+      currency,
+      value: (cart.total || cart.subtotal || 0) / 100,
+      items: (cart.items || []).map((item: any) => ({
+        item_id: item.variant?.sku || item.variant_id,
+        item_name: item.product_title || item.title,
+        quantity: item.quantity,
+        price: (item.unit_price || 0) / 100,
+      })),
+    },
+  })
+}
+
+export function trackSearch(query: string, resultCount: number) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({
+    event: "search",
+    search_term: query,
+    search_result_count: resultCount,
+  })
+}
+
+export function trackGenerateLead(source: string, productTitle?: string, sku?: string) {
+  if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({
+    event: "generate_lead",
+    lead_source: source,
+    ...(productTitle && { product_name: productTitle }),
+    ...(sku && { product_sku: sku }),
+  })
+}
+
 export function trackPurchase(order: any) {
   const items = (order.items || []).map((i: any) => ({
     item_id: i.variant?.sku || i.variant_id,
@@ -198,7 +235,7 @@ export function trackPurchase(order: any) {
     quantity: i.quantity,
   }))
   trackEvent("purchase", {
-    event_id: generateEventId(order.id),
+    event_id: `purchase_${order.display_id || order.id?.toString().slice(-8)}`,
     ecommerce: {
       transaction_id: order.id,
       currency: "USD",

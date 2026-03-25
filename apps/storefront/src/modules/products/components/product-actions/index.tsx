@@ -1,7 +1,7 @@
 "use client"
 
 import { addToCart } from "@lib/data/cart"
-import { trackAddToCart } from "@lib/tracking"
+import { trackAddToCart, trackGenerateLead } from "@lib/tracking"
 import { useIntersection } from "@lib/hooks/use-in-view"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
@@ -82,7 +82,7 @@ export default function ProductActions({
 
   useEffect(() => {
     if (!isValidVariant || !selectedVariant?.sku) return
-    const productPath = pathname.includes("/en/") ? "en/products" : "productos"
+    const productPath = pathname.includes("/en/") ? "en/productos" : "productos"
     const targetUrl = `/${countryCode}/${productPath}/${product.handle}/${selectedVariant.sku}`
     if (pathname === targetUrl) return
     router.replace(targetUrl, { scroll: false })
@@ -339,6 +339,7 @@ export default function ProductActions({
           href={`https://wa.me/50769533776?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackGenerateLead("whatsapp_pdp", product.title, selectedVariant?.sku)}
           className="w-full h-12 flex items-center justify-center gap-2 font-semibold text-[0.85rem] text-white transition-all duration-300"
           style={{ background: "#25D366" }}
         >
