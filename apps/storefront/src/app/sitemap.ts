@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-import { SITE_URL, productPath, categoryPath, blogPath, alternateUrls } from "@lib/util/routes"
+import { SITE_URL, productPath, categoryPath, collectionPath, blogPath, alternateUrls } from "@lib/util/routes"
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
 const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
@@ -28,9 +28,22 @@ async function getCategories(): Promise<Array<{ handle: string; updated_at: stri
   } catch { return [] }
 }
 
+async function getCollections(): Promise<Array<{ handle: string; updated_at: string }>> {
+  try {
+    const res = await fetch(`${BACKEND_URL}/store/collections?limit=100&fields=handle,updated_at`, {
+      headers: { "x-publishable-api-key": API_KEY },
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) return []
+    const { collections } = await res.json()
+    return collections || []
+  } catch { return [] }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getProducts()
   const categories = await getCategories()
+  const collections = await getCollections()
 
   const staticPages = [
     { path: "", priority: 1.0 },
@@ -81,6 +94,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entries.push({
       url: `${SITE_URL}/pa${path}`,
       lastModified: cat.updated_at ? new Date(cat.updated_at) : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+      alternates: {
+        languages: alternateUrls("pa", path),
+      },
+    })
+  }
+
+  // Collections
+  for (const col of collections) {
+    const path = collectionPath(col.handle)
+    entries.push({
+      url: `${SITE_URL}/pa${path}`,
+      lastModified: col.updated_at ? new Date(col.updated_at) : new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
       alternates: {

@@ -52,6 +52,10 @@ export function categoryCanonical(countryCode: string, lang: "es" | "en", handle
   return canonicalUrl(countryCode, lang, categoryPath(handle))
 }
 
+export function collectionCanonical(countryCode: string, lang: "es" | "en", handle: string): string {
+  return canonicalUrl(countryCode, lang, collectionPath(handle))
+}
+
 // ── Alternate URLs (for hreflang) ──
 
 export function alternateUrls(countryCode: string, path: string): Record<string, string> {

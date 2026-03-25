@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { categoryPath } from "@lib/util/routes"
 import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
@@ -47,7 +48,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           </svg>
           {product.categories?.[0] && (
             <>
-              <LocalizedClientLink href={`/categorias/${product.categories[0].handle}`} className="hover:text-ergo-sky-dark transition-colors">
+              <LocalizedClientLink href={categoryPath(product.categories[0].handle)} className="hover:text-ergo-sky-dark transition-colors">
                 {product.categories[0].name}
               </LocalizedClientLink>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">

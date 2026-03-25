@@ -59,7 +59,12 @@ export default async function metaCapiHandler({
       event_name: "Purchase",
       event_time: Math.floor(Date.now() / 1000),
       event_id: eventId,
-      event_source_url: `https://ergonomicadesk.com/pa/order/${order.id}/confirmed`,
+      event_source_url: (() => {
+        const storefront = (process.env.STOREFRONT_URL || "https://ergonomicadesk.com").replace(/\/$/, "")
+        const landingPage = attribution.landing_page || ""
+        const langPrefix = landingPage.includes("/pa/en/") ? "/pa/en" : "/pa"
+        return `${storefront}${langPrefix}/order/${order.id}/confirmed`
+      })(),
       action_source: "website",
       user_data: {
         ...(email && { em: [sha256(email)] }),

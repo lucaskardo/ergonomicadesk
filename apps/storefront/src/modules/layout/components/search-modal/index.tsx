@@ -14,6 +14,7 @@ interface SearchResult {
   handle: string
   thumbnail: string | null
   price?: string
+  variants?: Array<{ sku?: string; id?: string }>
 }
 
 type SearchModalProps = {
@@ -98,6 +99,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           title: p.title,
           handle: p.handle,
           thumbnail: p.thumbnail ?? null,
+          variants: p.variants,
           price: p.variants?.[0]?.calculated_price?.calculated_amount
             ? `$${(p.variants[0].calculated_price.calculated_amount / 100).toFixed(2)}`
             : undefined,
@@ -192,7 +194,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                     <LocalizedClientLink
                       href={productPath(result.handle)}
                       onClick={() => {
-                        trackSelectItem({ id: result.id, title: result.title }, "search_results", results.indexOf(result))
+                        trackSelectItem({ id: result.id, title: result.title, variants: result.variants }, "search_results", results.indexOf(result))
                         onClose()
                       }}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-ui-bg-subtle transition-colors"

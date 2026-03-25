@@ -8,6 +8,12 @@ export default function LanguageSwitcher() {
   const pathname = usePathname()
   const lang = useLang()
 
+  // LanguageSwitcher toggles between /pa/[rest] ↔ /pa/en/[rest] by parsing
+  // the current pathname. This is intentional: the route manifest builds paths
+  // to specific pages, while the switcher preserves the user's current page
+  // and only swaps the language prefix. A route manifest helper for this
+  // would need to parse the pathname anyway, so direct parsing is simpler.
+  //
   // pathname example: /pa/store or /pa/en/store
   // Parse: /[countryCode]/[en/]?[rest]
   const parts = pathname.split("/")

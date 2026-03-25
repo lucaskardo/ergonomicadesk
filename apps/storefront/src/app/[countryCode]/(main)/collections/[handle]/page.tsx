@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { getCollectionByHandle, listCollections } from "@lib/data/collections"
+import { collectionCanonical, alternateUrls, collectionPath } from "@lib/util/routes"
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
@@ -58,10 +59,15 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
-  const metadata = {
+  const path = collectionPath(params.handle)
+  const metadata: Metadata = {
     title: `${collection.title} | Ergonómica`,
     description: `${collection.title} collection`,
-  } as Metadata
+    alternates: {
+      canonical: collectionCanonical(params.countryCode, "es", params.handle),
+      languages: alternateUrls(params.countryCode, path),
+    },
+  }
 
   return metadata
 }

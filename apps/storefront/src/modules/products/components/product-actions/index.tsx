@@ -156,7 +156,6 @@ export default function ProductActions({
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"}/store/products?limit=10&fields=variants.id,variants.sku&q=extended-warranty`,
             {
               headers: { "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "" },
-              cache: "no-store",
             }
           )
 
