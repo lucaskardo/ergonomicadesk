@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
 import { listCategories } from "@lib/data/categories"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { categoryPath } from "@lib/util/routes"
+import { categoryPath, SITE_URL } from "@lib/util/routes"
 import Image from "next/image"
 
 export async function generateMetadata({
@@ -12,7 +12,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { countryCode } = await params
   const lang = await getLang()
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
+  const baseUrl = `${SITE_URL}/${countryCode}`
   const isEn = lang === "en"
 
   return {

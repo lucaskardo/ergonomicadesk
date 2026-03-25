@@ -4,7 +4,7 @@
 - NUNCA modificar archivos en node_modules
 - NUNCA correr pnpm install/add sin que el prompt lo indique explícitamente
 - NUNCA patchear dependencias para diagnosticar errores
-- NUNCA buscar en node_modules para resolver errores
+- NUNCA buscar en node_modules para resolver errores (leer docs en node_modules/next/dist/docs/ sí está permitido)
 - Si el backend no arranca por un error que NO es de tus archivos, reportar el error y STOP
 - No diagnosticar errores preexistentes — solo tocar los archivos listados en el prompt
 - SIEMPRE reiniciar el storefront (kill + rm -rf .next + npx next dev) después de borrar .next. NUNCA dejar el servidor corriendo con .next borrado.
@@ -56,6 +56,8 @@ order/components/purchase-tracker/   → purchase dataLayer
 layout/components/utm-capture/       → UTM cookie capture on load
 store/components/store-heading/      → Bilingual H1 (useLang)
 
+Bilingual URLs: /pa/ (Spanish default), /pa/en/ (English). hreflang + canonical per language.
+
 ## Business Rules
 - Guest checkout ONLY — no customer accounts, no login/register pages
 - ITBMS 7% Panama VAT — prices stored WITHOUT tax, calculated at checkout
@@ -63,7 +65,6 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 - Shipping: Retiro ($0), Panama City ($15, free >$100), Provincias ($25)
 - 7-day return policy. 1-5 year warranties by product.
 - WhatsApp: +507 6953-3776 (https://wa.me/50769533776)
-- Prices in cents in Medusa (29900 = $299.00)
 - Two admin roles: admin (full) + sales_associate (read-only). RBAC is custom middleware.
 - Inventory source of truth: QuickBooks. QB → Medusa sync only.
 
@@ -73,11 +74,6 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 - Sobres de Melamina: 1 product, 52 variants (Color × Tamaño)
 - Sobres de Madera Natural: 1 product, multi-variant (Madera × Tamaño)
 - 154 products have metadata specs (warranty, motors, speed, lumbar, etc.)
-
-## Bilingual (ES/EN)
-- URL: /pa/ (Spanish default), /pa/en/ (English)
-- useLang() hook from @lib/i18n/context
-- SEO: hreflang tags, canonical URLs per language
 
 ## Tracking & Attribution (Built)
 - GTM: GoogleTagManager in root layout, gated by NEXT_PUBLIC_GTM_ID env var
@@ -121,11 +117,11 @@ store/components/store-heading/      → Bilingual H1 (useLang)
 - Workflows: createStep + createWorkflow from @medusajs/framework/workflows-sdk
 - Data in steps: resolve "query" from container → query.graph()
 - API routes: /store/* needs x-publishable-api-key, /admin/* needs auth, /custom/* is public
-- Payment providers fetch: ALWAYS cache: "no-store"
+- Payment providers fetch: ALWAYS cache: "no-store" — silently breaks checkout otherwise
 - Cart metadata: set before cart.complete — copies to order.metadata automatically
 - RBAC: built-in roles do NOT enforce access — custom middleware required
 - Module names: underscores not hyphens
-- Prices in CENTS — divide by 100 for display
+- Prices in CENTS (29900 = $299.00) — divide by 100 for display
 - Node.js MUST be v20 LTS
 
 ## Storefront Patterns (MUST FOLLOW)
@@ -152,26 +148,17 @@ curl -s http://localhost:9000/health
 ```
 Si no responde, revertir inmediatamente con git checkout -- <archivo>.
 
-### Prompts de múltiples fases:
-- MÁXIMO 3 fases por prompt
-- Backend y storefront NUNCA en el mismo prompt
-- Después de cada fase: verificar que compila/arranca
-- Si una fase falla: arreglar ANTES de la siguiente
-
 ### Orden de verificación obligatorio:
 1. Backend compila (curl health)
 2. Storefront compila (curl http://localhost:8000/pa)
 
 ### Debugging:
-- NUNCA buscar en node_modules
 - Si error persiste después de revertir: rm -rf node_modules && pnpm install
-- Máximo 2 minutos investigando. Si no hay causa clara: aislar con mv *.bak
+- Si no hay causa clara después de 2 intentos: STOP y reportar — no seguir investigando
 
 ## Known Gotchas
-- Payment providers fetch: cache: "no-store" or checkout breaks silently
 - Region middleware: can 404 if backend slow — has retry + fallback
 - Product feed: /custom/ not /store/ (Google can't send auth headers)
-- Docker Compose: dev only — Railway for production
 
 ## Dev Start
 ```bash
@@ -195,24 +182,11 @@ NEXT_PUBLIC_BASE_URL=https://ergonomicadesk.com
 NEXT_PUBLIC_DEFAULT_REGION=pa
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 
-## Pending (Priority)
-### Launch blockers:
-- [ ] NMI Payment Provider (replace manual payment)
-- [ ] Product photos (organize, rename to SKU, upload)
-- [ ] Cloudflare setup (domain, CDN, WAF)
-- [ ] Deploy to Railway
-
-### Post-launch:
-- [ ] Resend email templates
-- [ ] Meta CAPI server-side (subscriber on order.placed)
-- [ ] PostHog analytics
-- [ ] Google Search Console + Merchant Center
-- [ ] Meta Commerce Manager
-- [ ] GTM container config
-- [ ] RBAC middleware enforcement
-- [ ] Sentry error tracking
-- [ ] Sanity CMS
-- [ ] Dashboard (ROAS, attribution, funnel)
+## Pending — Launch Blockers (not yet built)
+- NMI Payment Provider (manual payment is placeholder)
+- Product photos (not uploaded)
+- Cloudflare setup (domain, CDN, WAF)
+- Deploy to Railway
 
 ## NMI Integration (Reference)
 - Package: @nmipayments/nmi-pay-react
@@ -241,20 +215,8 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - In the admin, create the bundle as a normal product with photos of the complete setup
 - Phase: post-launch, after base catalog is established
 
-## TODO — Reveal Animations
-- Agregar IntersectionObserver hook que añade clase "visible" a elementos con className "reveal"
-- Requiere: análisis de cada sección del homepage para evitar CLS
-- Fase: post-lanzamiento
-
-## TODO — URL Structure v2
-- Cambiar /productos/handle/sku a /productos/categoria/sku
-- Requiere: lookup table SKU → product, middleware de resolución
-- Fase: post-lanzamiento
-
 ## Prompting Rules
-- Big comprehensive prompts, not small back-and-forth
 - Search official docs (context7 MCP) before implementing
-- Execute immediately, no brainstorming
+- Execute immediately — no brainstorming preamble
 - One git commit per task
-- Use /compact when context grows
 - SIEMPRE hacer git push origin main al final de cada tarea completada

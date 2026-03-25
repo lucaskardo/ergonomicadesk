@@ -60,12 +60,20 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   const path = collectionPath(params.handle)
+  const description =
+    (collection as any).metadata?.description ||
+    `Colección ${collection.title} — escritorios, sillas y accesorios ergonómicos en Ergonómica Panamá.`
+
   const metadata: Metadata = {
     title: `${collection.title} | Ergonómica`,
-    description: `${collection.title} collection`,
+    description,
     alternates: {
       canonical: collectionCanonical(params.countryCode, "es", params.handle),
       languages: alternateUrls(params.countryCode, path),
+    },
+    openGraph: {
+      title: `${collection.title} | Ergonómica`,
+      description,
     },
   }
 

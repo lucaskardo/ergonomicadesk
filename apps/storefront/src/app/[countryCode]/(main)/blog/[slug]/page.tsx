@@ -4,20 +4,25 @@ import Link from "next/link"
 import { getPostBySlug, getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
+import { SITE_URL, blogPath, alternateUrls } from "@lib/util/routes"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { slug } = await props.params
+  const { countryCode, slug } = await props.params
   const post = getPostBySlug(slug)
   if (!post) return {}
+  const path = blogPath(slug)
   return {
     title: `${post.title} | Ergonómica Blog`,
     description: post.description,
     keywords: post.keywords,
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: {
+      canonical: `${SITE_URL}/${countryCode}${path}`,
+      languages: alternateUrls(countryCode, path),
+    },
   }
 }
 
@@ -33,9 +38,9 @@ export default async function BlogPostPage(props: Props) {
   return (
     <>
     <BreadcrumbJsonLd items={[
-      { name: "Home", url: `https://ergonomicadesk.com/${countryCode}` },
-      { name: "Blog", url: `https://ergonomicadesk.com/${countryCode}/blog` },
-      { name: post.title, url: `https://ergonomicadesk.com/${countryCode}/blog/${slug}` },
+      { name: "Home", url: `${SITE_URL}/${countryCode}` },
+      { name: "Blog", url: `${SITE_URL}/${countryCode}/blog` },
+      { name: post.title, url: `${SITE_URL}/${countryCode}/blog/${slug}` },
     ]} />
     <article className="max-w-[720px] mx-auto px-4 sm:px-6 py-14 lg:py-20">
       <Link

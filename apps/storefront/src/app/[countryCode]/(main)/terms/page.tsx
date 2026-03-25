@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { SITE_URL } from "@lib/util/routes"
 
 export async function generateMetadata({
   params,
@@ -7,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
+  const baseUrl = `${SITE_URL}/${countryCode}`
 
   return {
     title: "Términos y Condiciones | Ergonómica",
@@ -15,6 +16,11 @@ export async function generateMetadata({
       "Términos y condiciones de uso de ergonomicadesk.com. Conoce tus derechos y responsabilidades como usuario.",
     alternates: {
       canonical: `${baseUrl}/terms`,
+      languages: {
+        es: `${baseUrl}/terms`,
+        en: `${baseUrl}/en/terms`,
+        "x-default": `${baseUrl}/terms`,
+      },
     },
   }
 }

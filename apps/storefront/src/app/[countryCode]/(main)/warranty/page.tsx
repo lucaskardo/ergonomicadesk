@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { SITE_URL } from "@lib/util/routes"
 
 export async function generateMetadata({
   params,
@@ -9,7 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { countryCode } = await params
   const lang = await getLang()
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
+  const baseUrl = `${SITE_URL}/${countryCode}`
   const isEn = lang === "en"
 
   return {

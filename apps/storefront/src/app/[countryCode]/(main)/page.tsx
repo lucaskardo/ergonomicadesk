@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
 import Homepage from "@modules/home/templates/homepage"
+import { SITE_URL } from "@lib/util/routes"
 
 export async function generateMetadata({
   params,
@@ -8,7 +9,7 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `https://ergonomicadesk.com/${countryCode}`
+  const baseUrl = `${SITE_URL}/${countryCode}`
   return {
     title: "Ergonómica | Escritorios Standing y Sillas Ergonómicas en Panamá",
     description:

@@ -54,6 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/privacy", priority: 0.3 },
     { path: "/warranty", priority: 0.5 },
     { path: "/catalog", priority: 0.8 },
+    { path: "/showroom", priority: 0.6 },
   ]
 
   const entries: MetadataRoute.Sitemap = []
@@ -116,12 +117,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  // Blog posts — content lives in src/content/blog/posts.ts (real content, not placeholders)
-  // TODO: migrate to CMS-driven fetch when blog is managed externally
-  const blogSlugs = [
-    "como-elegir-standing-desk",
-    "errores-productividad-home-office",
-  ]
+  // Blog posts — sourced from src/content/blog/posts.ts
+  const { getAllPosts } = await import("@/content/blog/posts")
+  const blogSlugs = getAllPosts().map((p) => p.slug)
   for (const slug of blogSlugs) {
     const path = blogPath(slug)
     entries.push({
