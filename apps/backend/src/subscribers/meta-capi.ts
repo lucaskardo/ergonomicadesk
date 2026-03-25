@@ -111,12 +111,7 @@ export default async function metaCapiHandler({
 
     if (!response.ok) {
       const err = await response.text()
-      logger.error(`[meta-capi] Failed to send Purchase event for order ${(order as any).display_id || orderId}: ${err}`, {
-        orderId,
-        displayId: (order as any).display_id,
-        pixelId: PIXEL_ID,
-        httpStatus: response.status,
-      })
+      logger.error(`[meta-capi] Failed to send Purchase event for order ${(order as any).display_id || orderId} (pixelId: ${PIXEL_ID}, http: ${response.status}): ${err}`)
     } else {
       logger.info(`[meta-capi] Purchase event sent for order ${(order as any).display_id || order.id}`)
     }
