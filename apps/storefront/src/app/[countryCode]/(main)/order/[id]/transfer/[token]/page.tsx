@@ -1,6 +1,11 @@
+import type { Metadata } from "next"
 import { Heading, Text } from "@medusajs/ui"
 import TransferActions from "@modules/order/components/transfer-actions"
 import TransferImage from "@modules/order/components/transfer-image"
+
+export const metadata: Metadata = {
+  robots: { index: false },
+}
 
 export default async function TransferPage({
   params,

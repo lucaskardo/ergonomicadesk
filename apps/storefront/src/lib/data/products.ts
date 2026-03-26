@@ -145,14 +145,17 @@ export const listProductsWithSort = async ({
 
   const pageParam = (page - 1) * limit
 
-  const nextPage = count > pageParam + limit ? pageParam + limit : null
+  // Cap count to fetched products — price sort fetches up to 100, not the full catalog.
+  // Without capping, pagination shows buttons for pages beyond what was fetched.
+  const effectiveCount = Math.min(count, products.length)
+  const nextPage = effectiveCount > pageParam + limit ? pageParam + limit : null
 
   const paginatedProducts = sortedProducts.slice(pageParam, pageParam + limit)
 
   return {
     response: {
       products: paginatedProducts,
-      count,
+      count: effectiveCount,
     },
     nextPage,
     queryParams,

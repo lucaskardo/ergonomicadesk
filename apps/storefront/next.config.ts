@@ -1,9 +1,15 @@
 import type { NextConfig } from "next"
 import { withSentryConfig } from "@sentry/nextjs"
+import path from "path"
 
 const isDev = process.env.NODE_ENV === "development"
 
 const nextConfig: NextConfig = {
+  // Explicitly set monorepo root so Turbopack resolves hoisted pnpm packages correctly.
+  // Without this, Turbopack infers the root incorrectly and emits false "Module not found" errors.
+  turbopack: {
+    root: path.join(__dirname, "../.."),
+  },
   reactStrictMode: true,
   logging: {
     fetches: {
@@ -66,12 +72,12 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.meilisearch.com https://challenges.cloudflare.com`,
+              `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.meilisearch.com https://challenges.cloudflare.com https://secure.networkmerchants.com https://applepay.cdn-apple.com`,
               "style-src 'self' 'unsafe-inline' https://api.fontshare.com",
               "img-src 'self' data: https: blob:",
-              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.facebook.com https://api.resend.com https://graph.facebook.com https://*.meilisearch.com https://challenges.cloudflare.com https://o4511107177250816.ingest.us.sentry.io",
+              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.facebook.com https://api.resend.com https://graph.facebook.com https://*.meilisearch.com https://challenges.cloudflare.com https://o4511107177250816.ingest.us.sentry.io https://secure.nmi.com https://secure.networkmerchants.com",
               "font-src 'self' https://api.fontshare.com https://cdn.fontshare.com",
-              "frame-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com https://connect.facebook.net",
+              "frame-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com https://connect.facebook.net https://secure.nmi.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join("; "),
@@ -97,6 +103,4 @@ export default withSentryConfig(nextConfig, {
 
   silent: !process.env.CI,
 
-  // Disable the Sentry wizard's automatic tree-shaking opt-out
-  disableLogger: true,
 })

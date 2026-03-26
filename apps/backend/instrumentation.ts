@@ -8,7 +8,7 @@ import * as Sentry from "@sentry/node"
  * exceptions, request errors, and custom events via logger middleware.
  *
  * Required env vars:
- *   SENTRY_DSN  — Sentry project DSN (falls back to hardcoded project DSN)
+ *   SENTRY_DSN  — Sentry project DSN (Sentry is disabled if not set)
  *
  * Optional:
  *   SENTRY_TRACES_SAMPLE_RATE — float 0–1 (default: 0.1 in prod, 1.0 otherwise)

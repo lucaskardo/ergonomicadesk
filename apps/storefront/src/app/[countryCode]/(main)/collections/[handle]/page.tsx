@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { getCollectionByHandle, listCollections } from "@lib/data/collections"
 import { collectionCanonical, alternateUrls, collectionPath, SITE_URL } from "@lib/util/routes"
+import { getLang } from "@lib/i18n"
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
@@ -60,7 +61,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
-  const path = collectionPath(params.handle)
+  const lang = await getLang()
+  const collectionPath_ = collectionPath(params.handle)
   const description =
     (collection as any).metadata?.description ||
     `Colección ${collection.title} — escritorios, sillas y accesorios ergonómicos en Ergonómica Panamá.`
@@ -69,8 +71,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${collection.title} | Ergonómica`,
     description,
     alternates: {
-      canonical: collectionCanonical(params.countryCode, "es", params.handle),
-      languages: alternateUrls(params.countryCode, path),
+      canonical: collectionCanonical(params.countryCode, lang, params.handle),
+      languages: alternateUrls(params.countryCode, collectionPath_),
     },
     openGraph: {
       title: `${collection.title} | Ergonómica`,
@@ -94,11 +96,13 @@ export default async function CollectionPage(props: Props) {
     notFound()
   }
 
+  const lang = await getLang()
+
   return (
     <>
       <BreadcrumbJsonLd items={[
         { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
-        { name: collection.title, url: collectionCanonical(params.countryCode, "es", params.handle) },
+        { name: collection.title, url: collectionCanonical(params.countryCode, lang, params.handle) },
       ]} />
       <CollectionTemplate
         collection={collection}

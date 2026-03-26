@@ -7,7 +7,16 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/checkout", "/cart", "/studio"],
+        disallow: [
+        "/checkout",
+        "/cart",
+        "/studio",
+        "/pa/checkout",
+        "/pa/cart",
+        "/pa/en/checkout",
+        "/pa/en/cart",
+        "/pa/studio",
+      ],
       },
       { userAgent: "GPTBot", allow: "/" },
       { userAgent: "ClaudeBot", allow: "/" },
