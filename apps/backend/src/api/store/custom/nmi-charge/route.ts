@@ -316,6 +316,8 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     const paymentModuleService = req.scope.resolve(Modules.PAYMENT) as any
     await paymentModuleService.updatePaymentSession({
       id: session.id,
+      amount: amountCents,
+      currency_code: cart.currency_code as string,
       data: {
         id: session.data?.id,
         tokenizationKey: session.data?.tokenizationKey,

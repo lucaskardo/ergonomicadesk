@@ -9,7 +9,7 @@ import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useRef, useState, useTransition } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -41,7 +41,6 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
-  const [isPending, startTransition] = useTransition()
   const [quantity, setQuantity] = useState(1)
   const [extendedWarranty, setExtendedWarranty] = useState(false)
   const countryCode = useParams().countryCode as string
@@ -207,9 +206,7 @@ export default function ProductActions({
     } finally {
       setQuantity(1)
       setIsAdding(false)
-      startTransition(() => {
-        router.refresh()
-      })
+      router.refresh()
     }
   }
 
@@ -298,8 +295,8 @@ export default function ProductActions({
                 </span>
                 <p className="text-[0.72rem] text-ergo-400 mt-0.5">
                   {lang === "en"
-                    ? "Extends your warranty to 5 years. Covers motor, electronics and structure."
-                    : "Extiende tu garantía a 5 años. Cubre motor, electrónica y estructura."}
+                    ? "Extend your warranty by 5 additional years. Covers motor, electronics and structure."
+                    : "Extiende tu garantía a 5 años adicionales. Cubre motor, electrónica y estructura."}
                 </p>
               </label>
             </div>
