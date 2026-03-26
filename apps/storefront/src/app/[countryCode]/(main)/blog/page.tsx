@@ -3,22 +3,21 @@ import Link from "next/link"
 import Image from "next/image"
 import { getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
-import { canonicalUrl, alternateUrls } from "@lib/util/routes"
+import { buildMetadata } from "@lib/util/metadata"
 
 export async function generateMetadata(
   props: { params: Promise<{ countryCode: string }> }
 ): Promise<Metadata> {
   const { countryCode } = await props.params
   const lang = await getLang()
-  return {
-    title: "Blog | Ergonómica",
+  return buildMetadata({
+    title: "Blog",
     description:
       "Guías, tips y consejos para tu home office y espacio de trabajo ergonómico.",
-    alternates: {
-      canonical: canonicalUrl(countryCode, lang, "/blog"),
-      languages: alternateUrls(countryCode, "/blog"),
-    },
-  }
+    countryCode,
+    lang,
+    path: "/blog",
+  })
 }
 
 export default async function BlogPage(

@@ -2,10 +2,13 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { getPostBySlug, getAllPosts, BlogPost } from "@/content/blog/posts"
+import { getPostBySlug, getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
-import { SITE_URL, blogPath, canonicalUrl, alternateUrls } from "@lib/util/routes"
+import { ArticleJsonLd } from "@modules/common/components/json-ld/article"
+import { FAQPageJsonLd } from "@modules/common/components/json-ld/faq"
+import { blogPath, canonicalUrl } from "@lib/util/routes"
+import { buildMetadata } from "@lib/util/metadata"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
@@ -15,42 +18,21 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { countryCode, slug } = await props.params
   const post = getPostBySlug(slug)
   if (!post) return {}
-  const path = blogPath(slug)
   const lang = await getLang()
-  return {
-    title: `${post.title} | Ergonómica Blog`,
+  return buildMetadata({
+    title: post.title,
     description: post.description,
+    countryCode,
+    lang,
+    path: blogPath(slug),
     keywords: post.keywords,
-    alternates: {
-      canonical: canonicalUrl(countryCode, lang, path),
-      languages: alternateUrls(countryCode, path),
-    },
-  }
+    image: post.image,
+    suffix: "Ergonómica Blog",
+  })
 }
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }))
-}
-
-function FaqJsonLd({ faqs }: { faqs: NonNullable<BlogPost["faqs"]> }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.a,
-      },
-    })),
-  }
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
-  )
 }
 
 function formatDate(dateStr: string, lang: "es" | "en") {
@@ -86,7 +68,15 @@ export default async function BlogPostPage(props: Props) {
         { name: "Blog", url: canonicalUrl(countryCode, lang, "/blog") },
         { name: post.title, url: canonicalUrl(countryCode, lang, blogPath(slug)) },
       ]} />
-      {post.faqs && post.faqs.length > 0 && <FaqJsonLd faqs={post.faqs} />}
+      <ArticleJsonLd
+        headline={post.title}
+        description={post.description}
+        url={canonicalUrl(countryCode, lang, blogPath(slug))}
+        datePublished={post.publishedAt}
+        authorName={post.author}
+        image={post.image}
+      />
+      {post.faqs && post.faqs.length > 0 && <FAQPageJsonLd faqs={post.faqs} />}
 
       <article className="max-w-[720px] mx-auto px-4 sm:px-6 py-14 lg:py-20">
         {/* Back link */}
