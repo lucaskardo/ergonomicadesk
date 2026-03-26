@@ -5,6 +5,7 @@ import { Button, Heading } from "@medusajs/ui"
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
 import DiscountCode from "@modules/checkout/components/discount-code"
+import CheckoutTrustBar from "@modules/checkout/components/checkout-trust-bar"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { useLang } from "@lib/i18n/context"
@@ -45,6 +46,7 @@ const Summary = ({ cart }: SummaryProps) => {
       >
         <Button className="w-full h-10">{t.cart.go_to_checkout}</Button>
       </LocalizedClientLink>
+      <CheckoutTrustBar lang={lang} />
     </div>
   )
 }
