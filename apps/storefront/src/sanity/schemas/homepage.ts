@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity"
+import { defineType, defineField, defineArrayMember } from "sanity"
 
 export const homepageSchema = defineType({
   name: "homepage",
@@ -6,40 +6,30 @@ export const homepageSchema = defineType({
   type: "document",
   fields: [
     defineField({
-      name: "announcement",
-      title: "Announcement",
-      type: "string",
-    }),
-    defineField({
-      name: "heroTitle",
-      title: "Hero Title",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "heroSubtitle",
-      title: "Hero Subtitle",
-      type: "text",
-      rows: 3,
-    }),
-    defineField({
-      name: "heroImage",
-      title: "Hero Image",
-      type: "image",
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: "heroCta",
-      title: "Hero CTA Text",
-      type: "string",
-    }),
-    defineField({
-      name: "heroCtaLink",
-      title: "Hero CTA Link",
-      type: "string",
+      name: "sections",
+      title: "Sections",
+      type: "array",
+      of: [
+        defineArrayMember({ type: "heroSection" }),
+        defineArrayMember({ type: "trustBarSection" }),
+        defineArrayMember({ type: "categoryGridSection" }),
+        defineArrayMember({ type: "featuredProductsSection" }),
+        defineArrayMember({ type: "buildYourDeskSection" }),
+        defineArrayMember({ type: "testimonialsSection" }),
+        defineArrayMember({ type: "ctaImageSection" }),
+        defineArrayMember({ type: "blogPreviewSection" }),
+        defineArrayMember({ type: "newsletterSection" }),
+      ],
+      options: {
+        insertMenu: {
+          views: [{ name: "list" }],
+        },
+      },
     }),
   ],
   preview: {
-    select: { title: "heroTitle" },
+    prepare() {
+      return { title: "Homepage" }
+    },
   },
 })

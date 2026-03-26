@@ -2,6 +2,7 @@ import { getBaseURL } from "@lib/util/env"
 import { GoogleTagManager } from "@next/third-parties/google"
 import { Metadata } from "next"
 import { headers } from "next/headers"
+import { SanityLive } from "@/sanity/lib/live"
 import "styles/globals.css"
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       </head>
       <body>
         <main className="relative">{props.children}</main>
+        <SanityLive />
       </body>
       {process.env.NEXT_PUBLIC_GTM_ID && (
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />

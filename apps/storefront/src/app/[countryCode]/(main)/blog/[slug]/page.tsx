@@ -9,16 +9,46 @@ import { ArticleJsonLd } from "@modules/common/components/json-ld/article"
 import { FAQPageJsonLd } from "@modules/common/components/json-ld/faq"
 import { blogPath, canonicalUrl } from "@lib/util/routes"
 import { buildMetadata } from "@lib/util/metadata"
+import { sanityFetch } from "@/sanity/lib/live"
+import { BLOG_POST_QUERY, BLOG_SLUGS_QUERY, BLOG_POSTS_QUERY } from "@/sanity/lib/queries"
+import { urlFor } from "@/sanity/lib/image"
+import BlogPortableText from "@modules/blog/components/portable-text"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
 }
 
+// ─── generateStaticParams ──────────────────────────────────────────────────
+export async function generateStaticParams() {
+  // Merge Sanity slugs + static slugs
+  const [sanityResult] = await Promise.all([
+    sanityFetch({ query: BLOG_SLUGS_QUERY }).catch(() => ({ data: null })),
+  ])
+
+  const sanitySlugs: string[] =
+    sanityResult?.data && Array.isArray(sanityResult.data)
+      ? sanityResult.data.map((d: { slug: string }) => d.slug).filter(Boolean)
+      : []
+
+  const staticSlugs = getAllPosts().map((p) => p.slug)
+  const allSlugs = Array.from(new Set([...sanitySlugs, ...staticSlugs]))
+  return allSlugs.map((slug) => ({ slug }))
+}
+
+// ─── generateMetadata ──────────────────────────────────────────────────────
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { countryCode, slug } = await props.params
-  const post = getPostBySlug(slug)
-  if (!post) return {}
   const lang = await getLang()
+
+  // Try Sanity first
+  const sanityResult = await sanityFetch({ query: BLOG_POST_QUERY, params: { slug } }).catch(
+    () => ({ data: null })
+  )
+  const post = sanityResult?.data ?? getPostBySlug(slug)
+  if (!post) return {}
+
+  const imageUrl = (post as { mainImage?: { asset?: { url: string } } }).mainImage?.asset?.url
+
   return buildMetadata({
     title: post.title,
     description: post.description,
@@ -26,40 +56,86 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     lang,
     path: blogPath(slug),
     keywords: post.keywords,
-    image: post.image,
+    image: imageUrl ?? (post as { image?: string }).image,
     suffix: "Ergonómica Blog",
   })
 }
 
-export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }))
-}
-
+// ─── Helpers ──────────────────────────────────────────────────────────────
 function formatDate(dateStr: string, lang: "es" | "en") {
-  const date = new Date(dateStr + "T00:00:00")
+  const date = new Date(dateStr.slice(0, 10) + "T00:00:00")
   if (lang === "en") {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
   }
-  return date.toLocaleDateString("es-PA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+  return date.toLocaleDateString("es-PA", { year: "numeric", month: "long", day: "numeric" })
 }
 
+// ─── Page ──────────────────────────────────────────────────────────────────
 export default async function BlogPostPage(props: Props) {
   const { countryCode, slug } = await props.params
-  const post = getPostBySlug(slug)
-  if (!post) return notFound()
   const lang = await getLang()
 
-  const relatedPosts = getAllPosts(lang)
-    .filter((p) => p.slug !== post.slug)
-    .slice(0, 2)
+  // Try Sanity first
+  const sanityResult = await sanityFetch({ query: BLOG_POST_QUERY, params: { slug } }).catch(
+    () => ({ data: null })
+  )
+  const sanityPost = sanityResult?.data ?? null
+  const staticPost = getPostBySlug(slug)
+
+  if (!sanityPost && !staticPost) return notFound()
+
+  // Normalize to display shape
+  const isSanity = !!sanityPost
+  const post = {
+    slug,
+    title: isSanity ? sanityPost.title : staticPost!.title,
+    description: isSanity ? sanityPost.description : staticPost!.description,
+    tag: isSanity ? sanityPost.tag : staticPost!.tag,
+    readTime: isSanity ? sanityPost.readTime : staticPost!.readTime,
+    publishedAt: (isSanity ? sanityPost.publishedAt : staticPost!.publishedAt).slice(0, 10),
+    author: isSanity ? sanityPost.author : staticPost!.author,
+    keywords: isSanity ? sanityPost.keywords : staticPost!.keywords,
+    faqs: isSanity ? (sanityPost.faqs ?? []) : (staticPost!.faqs ?? []),
+    imageUrl: isSanity && sanityPost.mainImage?.asset
+      ? urlFor(sanityPost.mainImage).width(1440).height(720).fit("crop").url()
+      : (staticPost?.image ?? null),
+    portableContent: isSanity ? sanityPost.content : null,
+    htmlContent: !isSanity ? staticPost!.content : null,
+  }
+
+  // Related posts
+  const relatedSanityResult = sanityPost
+    ? await sanityFetch({ query: BLOG_POSTS_QUERY, params: { lang } }).catch(() => ({ data: null }))
+    : { data: null }
+
+  type RelatedPost = { slug: string; title: string; description: string; tag?: string; readTime?: string; publishedAt: string }
+  const relatedPosts: RelatedPost[] = (
+    relatedSanityResult?.data && Array.isArray(relatedSanityResult.data)
+      ? relatedSanityResult.data
+          .filter((p: { slug: string }) => p.slug !== slug)
+          .slice(0, 2)
+          .map((p: { slug: string; title: string; description: string; tag?: string; readTime?: string; publishedAt: string }) => ({
+            slug: p.slug,
+            title: p.title,
+            description: p.description,
+            tag: p.tag,
+            readTime: p.readTime,
+            publishedAt: p.publishedAt.slice(0, 10),
+          }))
+      : getAllPosts(lang)
+          .filter((p) => p.slug !== slug)
+          .slice(0, 2)
+          .map((p) => ({
+            slug: p.slug,
+            title: p.title,
+            description: p.description,
+            tag: p.tag,
+            readTime: p.readTime,
+            publishedAt: p.publishedAt,
+          }))
+  )
+
+  const faqsForJsonLd = post.faqs.map((f: { q: string; a: string }) => ({ q: f.q, a: f.a }))
 
   return (
     <>
@@ -74,9 +150,9 @@ export default async function BlogPostPage(props: Props) {
         url={canonicalUrl(countryCode, lang, blogPath(slug))}
         datePublished={post.publishedAt}
         authorName={post.author}
-        image={post.image}
+        image={post.imageUrl ?? undefined}
       />
-      {post.faqs && post.faqs.length > 0 && <FAQPageJsonLd faqs={post.faqs} />}
+      {faqsForJsonLd.length > 0 && <FAQPageJsonLd faqs={faqsForJsonLd} />}
 
       <article className="max-w-[720px] mx-auto px-4 sm:px-6 py-14 lg:py-20">
         {/* Back link */}
@@ -88,10 +164,10 @@ export default async function BlogPostPage(props: Props) {
         </Link>
 
         {/* Hero image */}
-        {post.image && (
+        {post.imageUrl && (
           <div className="mt-6 w-full aspect-[2/1] relative overflow-hidden rounded-base">
             <Image
-              src={post.image}
+              src={post.imageUrl}
               alt={post.title}
               fill
               className="object-cover"
@@ -128,14 +204,17 @@ export default async function BlogPostPage(props: Props) {
         {/* Divider */}
         <div className="mt-8 border-t border-ergo-100" />
 
-        {/* Content */}
-        {/* dangerouslySetInnerHTML is safe here: post.content is static HTML
-            authored in src/content/blog/posts.ts (committed to the repo).
-            There is no user-generated content or external CMS involved. */}
-        <div
-          className="mt-8 prose-ergo max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        {/* Content — Portable Text (Sanity) or HTML (static) */}
+        <div className="mt-8 prose-ergo max-w-none">
+          {post.portableContent ? (
+            <BlogPortableText value={post.portableContent} />
+          ) : post.htmlContent ? (
+            /* dangerouslySetInnerHTML is safe here: post.htmlContent is static HTML
+               authored in src/content/blog/posts.ts (committed to the repo).
+               There is no user-generated content. */
+            <div dangerouslySetInnerHTML={{ __html: post.htmlContent }} />
+          ) : null}
+        </div>
 
         {/* Bottom CTA banner */}
         <div className="mt-12 bg-ergo-950 rounded-base p-6 sm:p-8">

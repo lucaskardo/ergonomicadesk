@@ -21,6 +21,10 @@ const ChatIcon = () => (
   </svg>
 )
 
+type Localized = { es?: string; en?: string }
+type TrustBarSanityItem = { _key?: string; emoji?: string; title?: Localized; subtitle?: Localized }
+type TrustBarSanityData = { items?: TrustBarSanityItem[] }
+
 const CONTENT = {
   es: [
     { Icon: TruckIcon, title: "Envío Gratis >$99", sub: "Ciudad de Panamá" },
@@ -36,28 +40,55 @@ const CONTENT = {
   ],
 }
 
-export default function TrustBar({ lang }: { lang: "es" | "en" }) {
-  const items = CONTENT[lang]
+export default function TrustBar({
+  lang,
+  sanityData,
+}: {
+  lang: "es" | "en"
+  sanityData?: TrustBarSanityData
+}) {
+  const useSanity = !!(sanityData?.items && sanityData.items.length > 0)
+  const sanityItems = useSanity ? sanityData!.items! : []
+  const hardcodedItems = CONTENT[lang]
 
   return (
     <div className="bg-white border-b border-ergo-200/60">
       <div className="max-w-[1360px] mx-auto grid grid-cols-2 md:grid-cols-4">
-        {items.map(({ Icon, title, sub }, i) => (
-          <div
-            key={title}
-            className={`flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
-              i < items.length - 1 ? "border-r border-ergo-200/60" : ""
-            }`}
-          >
-            <div className="w-9 h-9 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0">
-              <Icon />
-            </div>
-            <div>
-              <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight">{title}</p>
-              <p className="text-[0.68rem] text-ergo-400 mt-0.5">{sub}</p>
-            </div>
-          </div>
-        ))}
+        {useSanity
+          ? sanityItems.map((item, i) => (
+              <div
+                key={item._key ?? i}
+                className={`flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
+                  i < sanityItems.length - 1 ? "border-r border-ergo-200/60" : ""
+                }`}
+              >
+                <div className="w-9 h-9 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 text-lg">
+                  {item.emoji}
+                </div>
+                <div>
+                  <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight">
+                    {item.title?.[lang]}
+                  </p>
+                  <p className="text-[0.68rem] text-ergo-400 mt-0.5">{item.subtitle?.[lang]}</p>
+                </div>
+              </div>
+            ))
+          : hardcodedItems.map(({ Icon, title, sub }, i) => (
+              <div
+                key={title}
+                className={`flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
+                  i < hardcodedItems.length - 1 ? "border-r border-ergo-200/60" : ""
+                }`}
+              >
+                <div className="w-9 h-9 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0">
+                  <Icon />
+                </div>
+                <div>
+                  <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight">{title}</p>
+                  <p className="text-[0.68rem] text-ergo-400 mt-0.5">{sub}</p>
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   )

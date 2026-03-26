@@ -31,6 +31,9 @@
       ],
       "@/content/*": [
         "content/*"
+      ],
+      "@/sanity/*": [
+        "sanity/*"
       ]
     },
     "plugins": [
@@ -51,6 +54,7 @@
     ".next",
     ".nyc_output",
     "coverage",
-    "jest-coverage"
+    "jest-coverage",
+    "scripts"
   ]
 }

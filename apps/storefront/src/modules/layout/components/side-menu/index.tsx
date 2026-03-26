@@ -11,10 +11,13 @@ import { Locale } from "@lib/data/locales"
 import { useLang } from "@lib/i18n/context"
 import { categoryPath } from "@lib/util/routes"
 
+type SanityNavLink = { _key?: string; labelEs?: string; labelEn?: string; handle?: string }
+
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
   locales: Locale[] | null
   currentLocale: string | null
+  sanityNavLinks?: SanityNavLink[]
 }
 
 const CATEGORY_LINKS = [
@@ -25,7 +28,7 @@ const CATEGORY_LINKS = [
   { handle: "accessories", es: "Accesorios", en: "Accessories" },
 ]
 
-const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
+const SideMenu = ({ regions, locales, currentLocale, sanityNavLinks }: SideMenuProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const lang = useLang()
 
@@ -38,10 +41,16 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
     { label: lang === "en" ? "Cart" : "Carrito", href: "/cart" },
   ]
 
-  const categoryLinks = CATEGORY_LINKS.map((c) => ({
-    label: lang === "en" ? c.en : c.es,
-    href: categoryPath(c.handle),
-  }))
+  const categoryLinks =
+    sanityNavLinks && sanityNavLinks.length > 0
+      ? sanityNavLinks.map((l) => ({
+          label: lang === "en" ? (l.labelEn ?? "") : (l.labelEs ?? ""),
+          href: l.handle ? categoryPath(l.handle) : "#",
+        }))
+      : CATEGORY_LINKS.map((c) => ({
+          label: lang === "en" ? c.en : c.es,
+          href: categoryPath(c.handle),
+        }))
 
   return (
     <div className="h-full flex items-center">

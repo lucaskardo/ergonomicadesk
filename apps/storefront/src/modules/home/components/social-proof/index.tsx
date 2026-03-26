@@ -69,8 +69,48 @@ const CONTENT = {
   },
 }
 
-export default function SocialProof({ lang }: { lang: "es" | "en" }) {
-  const c = CONTENT[lang]
+type Localized = { es?: string; en?: string }
+type SocialProofSanityData = {
+  heading?: Localized
+  headingAccent?: Localized
+  subtitle?: Localized
+  reviews?: Array<{ _key?: string; quote?: Localized; author?: string; role?: Localized }>
+  stats?: Array<{ _key?: string; value?: string; label?: Localized }>
+}
+
+export default function SocialProof({
+  lang,
+  sanityData,
+}: {
+  lang: "es" | "en"
+  sanityData?: SocialProofSanityData
+}) {
+  const defaults = CONTENT[lang]
+  const heading = sanityData?.heading?.[lang] ?? defaults.heading
+  const headingAccent = sanityData?.headingAccent?.[lang] ?? defaults.headingAccent
+  const subtitle = sanityData?.subtitle?.[lang] ?? defaults.subtitle
+
+  const reviews =
+    sanityData?.reviews && sanityData.reviews.length > 0
+      ? sanityData.reviews.map((r) => ({
+          text: r.quote?.[lang] ?? "",
+          author: r.author ?? "",
+          role: r.role?.[lang] ?? "",
+          initials: (r.author ?? "")
+            .split(" ")
+            .map((p) => p[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase(),
+        }))
+      : defaults.reviews
+
+  const stats =
+    sanityData?.stats && sanityData.stats.length > 0
+      ? sanityData.stats.map((s) => ({ number: s.value ?? "", label: s.label?.[lang] ?? "" }))
+      : defaults.stats
+
+  const c = { heading, headingAccent, subtitle, reviews, stats }
 
   return (
     <section className="bg-ergo-bg-warm py-16">

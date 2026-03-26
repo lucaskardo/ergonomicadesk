@@ -1,10 +1,8 @@
-import { defineLive } from "next-sanity/experimental/live"
+import { defineLive } from "next-sanity/live"
 import { client } from "../client"
 
 export const { sanityFetch, SanityLive } = defineLive({
-  client: client.withConfig({
-    // Live API requires a token with viewer permissions when the dataset is private.
-    // For public datasets this can be omitted.
-    token: process.env.SANITY_API_TOKEN,
-  }),
+  client: client.withConfig({ apiVersion: "2025-03-18" }),
+  serverToken: process.env.SANITY_API_READ_TOKEN,
+  browserToken: process.env.SANITY_API_READ_TOKEN,
 })

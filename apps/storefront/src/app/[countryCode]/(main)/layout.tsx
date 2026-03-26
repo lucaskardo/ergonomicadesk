@@ -14,6 +14,8 @@ import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-p
 import WhatsAppButton from "@modules/common/components/whatsapp-button"
 import UtmCapture from "@modules/layout/components/utm-capture"
 import ScrollProgress from "@modules/layout/components/scroll-progress"
+import { sanityFetch } from "@/sanity/lib/live"
+import { FOOTER_NAV_QUERY } from "@/sanity/lib/queries"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -40,6 +42,9 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
 
   const lang = await getLang()
 
+  const footerNavResult = await sanityFetch({ query: FOOTER_NAV_QUERY }).catch(() => ({ data: null }))
+  const footerColumns = footerNavResult?.data?.columns ?? undefined
+
   return (
     <LangProvider lang={lang}>
       <ScrollProgress />
@@ -55,7 +60,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         />
       )}
       {props.children}
-      <Footer />
+      <Footer sanityColumns={footerColumns} />
       <WhatsAppButton />
       <UtmCapture />
     </LangProvider>

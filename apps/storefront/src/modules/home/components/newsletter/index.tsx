@@ -23,10 +23,34 @@ const CONTENT = {
   },
 }
 
-export default function Newsletter({ lang }: { lang: "es" | "en" }) {
+type Localized = { es?: string; en?: string }
+type NewsletterSanityData = {
+  heading?: Localized
+  headingAccent?: Localized
+  subtitle?: Localized
+  placeholder?: Localized
+  buttonText?: Localized
+}
+
+export default function Newsletter({
+  lang,
+  sanityData,
+}: {
+  lang: "es" | "en"
+  sanityData?: NewsletterSanityData
+}) {
   const [email, setEmail] = useState("")
   const [submitted, setSubmitted] = useState(false)
-  const c = CONTENT[lang]
+  const defaults = CONTENT[lang]
+  const c = {
+    heading: sanityData?.heading?.[lang] ?? defaults.heading,
+    headingAccent: sanityData?.headingAccent?.[lang] ?? defaults.headingAccent,
+    subtitle: sanityData?.subtitle?.[lang] ?? defaults.subtitle,
+    placeholder: sanityData?.placeholder?.[lang] ?? defaults.placeholder,
+    cta: sanityData?.buttonText?.[lang] ?? defaults.cta,
+    success: defaults.success,
+    note: defaults.note,
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

@@ -4,6 +4,9 @@ import Image from "next/image"
 import { getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
 import { buildMetadata } from "@lib/util/metadata"
+import { sanityFetch } from "@/sanity/lib/live"
+import { BLOG_POSTS_QUERY } from "@/sanity/lib/queries"
+import { urlFor } from "@/sanity/lib/image"
 
 export async function generateMetadata(
   props: { params: Promise<{ countryCode: string }> }
@@ -25,7 +28,63 @@ export default async function BlogPage(
 ) {
   const { countryCode } = await props.params
   const lang = await getLang()
-  const allPosts = getAllPosts(lang)
+
+  // Try Sanity first, fall back to static posts
+  const sanityResult = await sanityFetch({
+    query: BLOG_POSTS_QUERY,
+    params: { lang },
+  }).catch(() => ({ data: null }))
+
+  type SanityPost = {
+    _id: string
+    slug: string
+    title: string
+    description: string
+    tag?: string
+    readTime?: string
+    publishedAt: string
+    author?: string
+    lang: "es" | "en"
+    mainImage?: { asset?: { _id: string; url: string }; alt?: string }
+  }
+
+  const sanityPosts: SanityPost[] | null =
+    sanityResult?.data && Array.isArray(sanityResult.data) && sanityResult.data.length > 0
+      ? sanityResult.data
+      : null
+
+  // Normalize to a common shape for rendering
+  type DisplayPost = {
+    slug: string
+    title: string
+    description: string
+    tag?: string
+    readTime?: string
+    publishedAt: string
+    image?: string
+  }
+
+  const posts: DisplayPost[] = sanityPosts
+    ? sanityPosts.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        tag: p.tag,
+        readTime: p.readTime,
+        publishedAt: p.publishedAt.slice(0, 10),
+        image: p.mainImage?.asset
+          ? urlFor(p.mainImage).width(640).height(360).fit("crop").url()
+          : undefined,
+      }))
+    : getAllPosts(lang).map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        tag: p.tag,
+        readTime: p.readTime,
+        publishedAt: p.publishedAt,
+        image: p.image,
+      }))
 
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 py-14 lg:py-24">
@@ -42,7 +101,7 @@ export default async function BlogPage(
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {allPosts.map((post) => (
+        {posts.map((post) => (
           <Link
             key={post.slug}
             href={`/${countryCode}/blog/${post.slug}`}

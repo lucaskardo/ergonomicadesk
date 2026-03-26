@@ -50,6 +50,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "pub-*.r2.dev",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
     ],
   },
   async headers() {

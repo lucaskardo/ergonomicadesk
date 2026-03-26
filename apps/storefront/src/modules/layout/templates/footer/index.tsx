@@ -44,7 +44,10 @@ const socialLinks = [
   },
 ]
 
-export default function Footer() {
+type SanityFooterLink = { _key?: string; labelEs?: string; labelEn?: string; href?: string }
+type SanityFooterColumn = { _key?: string; titleEs?: string; titleEn?: string; links?: SanityFooterLink[] }
+
+export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooterColumn[] }) {
   const lang = useLang()
 
   const t = {
@@ -103,10 +106,14 @@ export default function Footer() {
   return (
     <footer className="w-full bg-ergo-950" style={{ color: "rgba(255,255,255,0.55)" }}>
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
-        {/* Main footer grid — 5 columns */}
+        {/* Main footer grid */}
         <div
           className="grid gap-8 py-14"
-          style={{ gridTemplateColumns: "1.8fr 1fr 1fr 1fr 1.4fr" }}
+          style={{
+            gridTemplateColumns: sanityColumns && sanityColumns.length > 0
+              ? `1.8fr ${sanityColumns.map(() => "1fr").join(" ")} 1.4fr`
+              : "1.8fr 1fr 1fr 1fr 1.4fr",
+          }}
         >
           {/* Column 1: Brand */}
           <div className="flex flex-col gap-3.5">
@@ -140,104 +147,81 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Products */}
-          <div className="flex flex-col gap-3">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>
-              {t.products}
-            </span>
-            <ul className="flex flex-col gap-1.5 text-[0.8rem]">
-              <li>
-                <LocalizedClientLink href={categoryPath("standing-desks")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.standingDesks}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href={categoryPath("chairs")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.chairs}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.arms}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.accessories}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.lighting}
-                </LocalizedClientLink>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Support */}
-          <div className="flex flex-col gap-3">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>
-              {t.support}
-            </span>
-            <ul className="flex flex-col gap-1.5 text-[0.8rem]">
-              <li>
-                <LocalizedClientLink href="/faq" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.faq}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href="/returns" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.deliveries}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href="/returns" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.returns}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href="/warranty" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.warranty}
-                </LocalizedClientLink>
-              </li>
-              <li>
-                <LocalizedClientLink href="/catalog" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>
-                  {t.catalog}
-                </LocalizedClientLink>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Company */}
-          <div className="flex flex-col gap-3">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>
-              {t.company}
-            </span>
-            <ul className="flex flex-col gap-1.5 text-[0.8rem]">
-              <li>
-                <a
-                  href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition-colors hover:text-ergo-sky"
-                  style={{ color: "rgba(255,255,255,0.4)" }}
-                >
-                  {t.showroom}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://wa.me/50769533776"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition-colors hover:text-ergo-sky"
-                  style={{ color: "rgba(255,255,255,0.4)" }}
-                >
-                  {t.contact}
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Columns 2–N: from Sanity if available, otherwise hardcoded */}
+          {sanityColumns && sanityColumns.length > 0
+            ? sanityColumns.map((col) => (
+                <div key={col._key ?? col.titleEs} className="flex flex-col gap-3">
+                  <span
+                    className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]"
+                    style={{ color: "rgba(255,255,255,0.8)" }}
+                  >
+                    {lang === "en" ? col.titleEn : col.titleEs}
+                  </span>
+                  <ul className="flex flex-col gap-1.5 text-[0.8rem]">
+                    {col.links?.map((link) => (
+                      <li key={link._key ?? link.href}>
+                        {link.href?.startsWith("http") ? (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="transition-colors hover:text-ergo-sky"
+                            style={{ color: "rgba(255,255,255,0.4)" }}
+                          >
+                            {lang === "en" ? link.labelEn : link.labelEs}
+                          </a>
+                        ) : (
+                          <LocalizedClientLink
+                            href={link.href ?? "#"}
+                            className="transition-colors hover:text-ergo-sky"
+                            style={{ color: "rgba(255,255,255,0.4)" }}
+                          >
+                            {lang === "en" ? link.labelEn : link.labelEs}
+                          </LocalizedClientLink>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            : (
+              <>
+                {/* Column 2: Products */}
+                <div className="flex flex-col gap-3">
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>
+                    {t.products}
+                  </span>
+                  <ul className="flex flex-col gap-1.5 text-[0.8rem]">
+                    <li><LocalizedClientLink href={categoryPath("standing-desks")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.standingDesks}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href={categoryPath("chairs")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.chairs}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.arms}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.accessories}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href={categoryPath("accessories")} className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.lighting}</LocalizedClientLink></li>
+                  </ul>
+                </div>
+                {/* Column 3: Support */}
+                <div className="flex flex-col gap-3">
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>
+                    {t.support}
+                  </span>
+                  <ul className="flex flex-col gap-1.5 text-[0.8rem]">
+                    <li><LocalizedClientLink href="/faq" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.faq}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href="/returns" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.deliveries}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href="/returns" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.returns}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href="/warranty" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.warranty}</LocalizedClientLink></li>
+                    <li><LocalizedClientLink href="/catalog" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.catalog}</LocalizedClientLink></li>
+                  </ul>
+                </div>
+                {/* Column 4: Company */}
+                <div className="flex flex-col gap-3">
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>{t.company}</span>
+                  <ul className="flex flex-col gap-1.5 text-[0.8rem]">
+                    <li><a href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z" target="_blank" rel="noreferrer" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.showroom}</a></li>
+                    <li><a href="https://wa.me/50769533776" target="_blank" rel="noreferrer" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.contact}</a></li>
+                  </ul>
+                </div>
+              </>
+            )}
 
           {/* Column 5: Contact */}
           <div className="flex flex-col gap-3">

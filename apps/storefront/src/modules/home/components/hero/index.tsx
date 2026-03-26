@@ -1,5 +1,15 @@
 import Link from "next/link"
 
+type Localized = { es?: string; en?: string }
+type HeroSanityData = {
+  label?: Localized
+  title?: Localized
+  titleAccent?: Localized
+  subtitle?: Localized
+  ctaPrimary?: { text?: Localized; href?: string }
+  ctaSecondary?: { text?: Localized; href?: string }
+}
+
 const CONTENT = {
   es: {
     label: "Standing Desks & Ergonomía · Panamá",
@@ -22,13 +32,27 @@ const CONTENT = {
 export default function Hero({
   lang,
   countryCode,
+  sanityData,
 }: {
   lang: "es" | "en"
   countryCode: string
+  sanityData?: HeroSanityData
 }) {
   const langPrefix = lang === "en" ? "/en" : ""
   const base = `/${countryCode}${langPrefix}`
-  const c = CONTENT[lang]
+  const defaults = CONTENT[lang]
+  const c = {
+    label: sanityData?.label?.[lang] ?? defaults.label,
+    title: sanityData?.title?.[lang] ?? defaults.title,
+    titleAccent: sanityData?.titleAccent?.[lang] ?? defaults.titleAccent,
+    subtitle: sanityData?.subtitle?.[lang] ?? defaults.subtitle,
+    ctaPrimary: sanityData?.ctaPrimary?.text?.[lang] ?? defaults.ctaPrimary,
+    ctaPrimaryHref: sanityData?.ctaPrimary?.href ?? `${base}/store`,
+    ctaSecondary: sanityData?.ctaSecondary?.text?.[lang] ?? defaults.ctaSecondary,
+    ctaSecondaryHref:
+      sanityData?.ctaSecondary?.href ??
+      "https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z",
+  }
 
   return (
     <section
@@ -94,7 +118,7 @@ export default function Hero({
         {/* CTAs */}
         <div className="flex flex-wrap gap-3 mt-8">
           <Link
-            href={`${base}/store`}
+            href={c.ctaPrimaryHref}
             className="inline-flex items-center gap-2 px-8 py-4 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] tracking-[0.01em] hover:bg-ergo-sky transition-all duration-300 hover:-translate-y-0.5"
             style={{ boxShadow: "none" }}
           >
@@ -104,7 +128,7 @@ export default function Hero({
             </svg>
           </Link>
           <a
-            href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
+            href={c.ctaSecondaryHref}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] border-ergo-200 text-ergo-800 font-semibold text-[0.84rem] hover:border-ergo-950 hover:bg-ergo-950/[0.02] transition-all duration-300"

@@ -14,6 +14,10 @@ import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import SearchButton from "@modules/layout/components/search-button"
 import AnnouncementBar from "@modules/layout/components/announcement-bar"
 import Logo from "@modules/common/components/logo"
+import { sanityFetch } from "@/sanity/lib/live"
+import { ANNOUNCEMENT_BAR_QUERY, HEADER_NAV_QUERY } from "@/sanity/lib/queries"
+
+type NavCategoryItem = { _key?: string; handle?: string; labelEs?: string; labelEn?: string }
 
 const NAV_CATEGORIES = [
   { handle: "standing-desks", es: "Standing Desks", en: "Standing Desks" },
@@ -44,9 +48,22 @@ export default async function Nav() {
     console.error("Nav data fetch failed:", err instanceof Error ? err.message : err)
   }
 
+  const [announcementResult, headerNavResult] = await Promise.all([
+    sanityFetch({ query: ANNOUNCEMENT_BAR_QUERY }).catch(() => ({ data: null })),
+    sanityFetch({ query: HEADER_NAV_QUERY }).catch(() => ({ data: null })),
+  ])
+
+  const announcementData = announcementResult?.data ?? undefined
+  const headerNavLinks = headerNavResult?.data?.links ?? undefined
+
+  const navCategories: NavCategoryItem[] =
+    headerNavLinks && (headerNavLinks as NavCategoryItem[]).length > 0
+      ? (headerNavLinks as NavCategoryItem[])
+      : NAV_CATEGORIES.map((c) => ({ _key: c.handle, labelEs: c.es, labelEn: c.en, handle: c.handle }))
+
   return (
     <div className="sticky top-0 inset-x-0 z-50">
-      <AnnouncementBar />
+      <AnnouncementBar sanityData={announcementData} />
       <header
         className="relative border-b border-ergo-200/60"
         style={{
@@ -61,7 +78,12 @@ export default async function Nav() {
           <div className="flex items-center gap-x-3 h-full">
             {/* Mobile burger */}
             <div className="large:hidden h-full">
-              <SideMenu regions={regions} locales={locales} currentLocale={currentLocale} />
+              <SideMenu
+                regions={regions}
+                locales={locales}
+                currentLocale={currentLocale}
+                sanityNavLinks={headerNavLinks}
+              />
             </div>
 
             {/* Logo */}
@@ -78,13 +100,13 @@ export default async function Nav() {
 
             {/* Desktop category links — centered */}
             <div className="hidden large:flex items-center gap-x-8 h-full ml-8">
-              {NAV_CATEGORIES.map((cat) => (
+              {navCategories.map((cat) => (
                 <LocalizedClientLink
-                  key={cat.handle}
-                  href={categoryPath(cat.handle)}
+                  key={cat.handle ?? cat._key}
+                  href={cat.handle ? categoryPath(cat.handle) : "#"}
                   className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
                 >
-                  {lang === "en" ? cat.en : cat.es}
+                  {lang === "en" ? (cat.labelEn ?? cat.labelEs ?? "") : (cat.labelEs ?? "")}
                   <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
                 </LocalizedClientLink>
               ))}
