@@ -9,7 +9,7 @@ import SkeletonCardDetails from "@modules/skeletons/components/skeleton-card-det
 import { CardElement } from "@stripe/react-stripe-js"
 import { StripeCardElementOptions } from "@stripe/stripe-js"
 import PaymentTest from "../payment-test"
-import { StripeContext } from "../payment-wrapper/stripe-wrapper"
+import { StripeContext } from "../payment-wrapper/stripe-context"
 
 type PaymentContainerProps = {
   paymentProviderId: string

@@ -4,7 +4,7 @@ import StoreTemplate from "@modules/store/templates"
 import { SITE_URL } from "@lib/util/routes"
 
 type Params = {
-  searchParams: Promise<{ sortBy?: SortOptions; page?: string }>
+  searchParams: Promise<{ sortBy?: SortOptions; page?: string; category_id?: string; q?: string }>
   params: Promise<{ countryCode: string }>
 }
 
@@ -28,13 +28,15 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
 export default async function StoreEnPage(props: Params) {
   const params = await props.params
   const searchParams = await props.searchParams
-  const { sortBy, page } = searchParams
+  const { sortBy, page, category_id, q } = searchParams
 
   return (
     <StoreTemplate
       sortBy={sortBy}
       page={page}
       countryCode={params.countryCode}
+      categoryId={category_id}
+      q={q}
     />
   )
 }

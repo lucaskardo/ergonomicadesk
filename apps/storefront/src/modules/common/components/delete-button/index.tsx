@@ -1,7 +1,8 @@
 import { deleteLineItem } from "@lib/data/cart"
 import { Spinner, Trash } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
-import { useState } from "react"
+import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { trackRemoveFromCart } from "@lib/tracking"
 
 const DeleteButton = ({
@@ -18,6 +19,8 @@ const DeleteButton = ({
   className?: string
 }) => {
   const [isDeleting, setIsDeleting] = useState(false)
+  const router = useRouter()
+  const [, startTransition] = useTransition()
 
   const handleDelete = async (lineId: string) => {
     setIsDeleting(true)
@@ -28,8 +31,7 @@ const DeleteButton = ({
       console.error("Failed to delete line item:", err)
       setIsDeleting(false)
     })
-    // revalidateTag(carts) inside deleteLineItem handles the re-render —
-    // no router.refresh() needed
+    startTransition(() => router.refresh())
   }
 
   return (

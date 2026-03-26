@@ -3,7 +3,7 @@
 import { loadStripe, Stripe, StripeElementsOptions } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { HttpTypes } from "@medusajs/types"
-import { createContext } from "react"
+import { StripeContext } from "./stripe-context"
 
 type StripeWrapperProps = {
   paymentSession: HttpTypes.StorePaymentSession
@@ -11,8 +11,6 @@ type StripeWrapperProps = {
   stripeAccountId?: string
   children: React.ReactNode
 }
-
-export const StripeContext = createContext(false)
 
 // Module-level cache — loadStripe is only called once per key (this module is only
 // loaded via next/dynamic when Stripe is actually needed).

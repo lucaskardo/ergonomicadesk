@@ -9,7 +9,7 @@ import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -44,6 +44,7 @@ export default function ProductActions({
   const [added, setAdded] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [extendedWarranty, setExtendedWarranty] = useState(false)
+  const [, startTransition] = useTransition()
   const countryCode = useParams().countryCode as string
   // Preloaded warranty variant IDs: { [sku]: variantId }
   const warrantyVariantsRef = useRef<Record<string, string>>({})
@@ -218,9 +219,9 @@ export default function ProductActions({
     } finally {
       setQuantity(1)
       setIsAdding(false)
-      // revalidateTag(carts) inside addToCart already invalidates the cache —
-      // no router.refresh() needed (avoids full page re-render)
       setTimeout(() => setAdded(false), 2000)
+      // Refresh server components (CartButton/counter) without blocking optimistic UI
+      startTransition(() => router.refresh())
     }
   }
 

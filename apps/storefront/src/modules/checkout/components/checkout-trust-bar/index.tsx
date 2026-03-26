@@ -1,16 +1,6 @@
 const items = {
-  es: [
-    { icon: "🔒", text: "Pago seguro" },
-    { icon: "🚚", text: "Envío gratis en pedidos >$99" },
-    { icon: "🔧", text: "Ensamblaje incluido" },
-    { icon: "💬", text: "Soporte por WhatsApp" },
-  ],
-  en: [
-    { icon: "🔒", text: "Secure checkout" },
-    { icon: "🚚", text: "Free shipping on orders >$99" },
-    { icon: "🔧", text: "Assembly included" },
-    { icon: "💬", text: "WhatsApp support" },
-  ],
+  es: [{ icon: "🔒", text: "Pago seguro" }],
+  en: [{ icon: "🔒", text: "Secure checkout" }],
 }
 
 export default function CheckoutTrustBar({ lang = "es" }: { lang?: "es" | "en" }) {
