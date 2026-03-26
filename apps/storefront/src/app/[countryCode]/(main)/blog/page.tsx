@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
 import { canonicalUrl, alternateUrls } from "@lib/util/routes"
@@ -46,20 +47,54 @@ export default async function BlogPage(
           <Link
             key={post.slug}
             href={`/${countryCode}/blog/${post.slug}`}
-            className="group bg-ergo-950 p-6 flex flex-col min-h-[260px] transition-transform duration-300 hover:-translate-y-1"
+            className="group flex flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-1"
           >
-            <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ergo-sky font-semibold">
-              {post.tag}
-            </span>
-            <h2 className="font-display font-bold text-white text-[1rem] leading-[1.25] mt-2.5 flex-1">
-              {post.title}
-            </h2>
-            <p
-              className="text-[0.68rem] mt-auto pt-4"
-              style={{ color: "rgba(91,192,235,0.5)" }}
+            {/* Image or dark header */}
+            {post.image ? (
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-ergo-950/30" />
+                <span className="absolute top-3 left-3 text-[0.6rem] uppercase tracking-[0.12em] text-white bg-ergo-sky px-2 py-0.5 font-semibold rounded-soft">
+                  {post.tag}
+                </span>
+              </div>
+            ) : (
+              <div className="bg-ergo-950 px-6 pt-6 pb-4 flex items-start">
+                <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ergo-sky font-semibold">
+                  {post.tag}
+                </span>
+              </div>
+            )}
+
+            {/* Card body */}
+            <div
+              className={`flex flex-col flex-1 p-6 ${post.image ? "bg-white border border-ergo-100 border-t-0" : "bg-ergo-950"}`}
             >
-              {post.readTime} · {post.publishedAt}
-            </p>
+              <h2
+                className={`font-display font-bold text-[1rem] leading-[1.25] ${post.image ? "text-ergo-950" : "text-white"}`}
+              >
+                {post.title}
+              </h2>
+              <p
+                className={`text-[0.82rem] mt-2 leading-relaxed line-clamp-2 flex-1 ${post.image ? "text-ergo-400" : "text-ergo-300"}`}
+              >
+                {post.description}
+              </p>
+              <p
+                className="text-[0.68rem] mt-4 pt-4 border-t"
+                style={{
+                  color: post.image ? "#7B8BA5" : "rgba(91,192,235,0.5)",
+                  borderColor: post.image ? "#E8ECF2" : "rgba(255,255,255,0.07)",
+                }}
+              >
+                {post.readTime} · {post.publishedAt}
+              </p>
+            </div>
           </Link>
         ))}
       </div>
