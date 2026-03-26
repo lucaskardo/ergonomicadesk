@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import StripeWrapper from "./stripe-wrapper"
+import dynamic from "next/dynamic"
 import { HttpTypes } from "@medusajs/types"
 import { isStripeLike } from "@lib/constants"
 
@@ -16,13 +16,10 @@ const stripeKey =
 
 const medusaAccountId = process.env.NEXT_PUBLIC_MEDUSA_PAYMENTS_ACCOUNT_ID
 
-// Lazy-import Stripe only when a key is configured.
-// Top-level import of @stripe/stripe-js auto-injects js.stripe.com even when Stripe
-// is not used — dynamic import prevents that when stripeKey is undefined.
-const stripePromise = stripeKey
-  ? import("@stripe/stripe-js").then(({ loadStripe }) =>
-      loadStripe(stripeKey, medusaAccountId ? { stripeAccount: medusaAccountId } : undefined)
-    )
+// Use next/dynamic so @stripe/stripe-js (which auto-injects js.stripe.com on import)
+// is never evaluated when Stripe is not the active payment provider.
+const StripeWrapper = stripeKey
+  ? dynamic(() => import("./stripe-wrapper"), { ssr: false })
   : null
 
 const PaymentWrapper: React.FC<PaymentWrapperProps> = ({ cart, children }) => {
@@ -33,13 +30,13 @@ const PaymentWrapper: React.FC<PaymentWrapperProps> = ({ cart, children }) => {
   if (
     isStripeLike(paymentSession?.provider_id) &&
     paymentSession &&
-    stripePromise
+    StripeWrapper
   ) {
     return (
       <StripeWrapper
         paymentSession={paymentSession}
-        stripeKey={stripeKey}
-        stripePromise={stripePromise}
+        stripeKey={stripeKey!}
+        stripeAccountId={medusaAccountId}
       >
         {children as React.ReactNode}
       </StripeWrapper>

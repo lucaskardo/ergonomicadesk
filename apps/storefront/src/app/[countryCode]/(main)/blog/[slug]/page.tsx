@@ -35,13 +35,14 @@ export default async function BlogPostPage(props: Props) {
   const { countryCode, slug } = await props.params
   const post = getPostBySlug(slug)
   if (!post) return notFound()
+  const lang = await getLang()
 
   return (
     <>
     <BreadcrumbJsonLd items={[
-      { name: "Home", url: `${SITE_URL}/${countryCode}` },
-      { name: "Blog", url: `${SITE_URL}/${countryCode}/blog` },
-      { name: post.title, url: `${SITE_URL}/${countryCode}/blog/${slug}` },
+      { name: "Home", url: canonicalUrl(countryCode, lang, "") },
+      { name: "Blog", url: canonicalUrl(countryCode, lang, "/blog") },
+      { name: post.title, url: canonicalUrl(countryCode, lang, blogPath(slug)) },
     ]} />
     <article className="max-w-[720px] mx-auto px-4 sm:px-6 py-14 lg:py-20">
       <Link

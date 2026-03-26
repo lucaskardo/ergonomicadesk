@@ -130,7 +130,12 @@ const NmiChargeButton = ({
       if (!res.ok) {
         let msg: string
         try { msg = JSON.parse(raw).message } catch { msg = raw }
-        setError(msg || (isEnglish ? "Payment declined. Please check your card." : "Pago rechazado. Verifica tu tarjeta."))
+        const isDecline = res.status === 400 && msg?.toLowerCase().includes("declined")
+        setError(
+          isDecline
+            ? (isEnglish ? "Payment declined. Please try again or use a different card." : "Pago rechazado. Intenta de nuevo o usa una tarjeta diferente.")
+            : (msg || (isEnglish ? "Payment could not be processed. Please refresh and try again." : "No se pudo procesar el pago. Recarga e inténtalo de nuevo."))
+        )
         setSubmitting(false)
         sessionStorage.removeItem("nmi_payment_token")
         return
@@ -141,7 +146,11 @@ const NmiChargeButton = ({
       if (err?.digest?.startsWith?.("NEXT_REDIRECT")) {
         throw err
       }
-      setError(err.message || (isEnglish ? "Error" : "Error"))
+      setError(
+        isEnglish
+          ? "Connection error. Please check your internet and try again."
+          : "Error de conexión. Verifica tu internet e inténtalo de nuevo."
+      )
       setSubmitting(false)
     }
   }

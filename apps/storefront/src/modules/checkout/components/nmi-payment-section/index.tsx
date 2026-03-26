@@ -77,11 +77,19 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
       const chargeData = await chargeRes.json()
 
       if (!chargeRes.ok) {
+        // NMI PSP decline vs technical/infrastructure error
+        const isDecline =
+          chargeRes.status === 400 &&
+          chargeData.message?.toLowerCase().includes("declined")
         setError(
-          chargeData.message ||
-            (isEnglish
-              ? "Payment declined. Please check your card and try again."
-              : "Pago rechazado. Verifica tu tarjeta e intenta de nuevo.")
+          isDecline
+            ? (isEnglish
+                ? "Payment declined. Please try again or use a different card."
+                : "Pago rechazado. Intenta de nuevo o usa una tarjeta diferente.")
+            : (chargeData.message ||
+                (isEnglish
+                  ? "Payment could not be processed. Please refresh and try again."
+                  : "No se pudo procesar el pago. Recarga e inténtalo de nuevo."))
         )
         setSubmitting(false)
         cardFieldsRef.current?.resetFields()
@@ -110,7 +118,11 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
             : "Tu pago fue recibido pero la orden no pudo confirmarse. Nuestro equipo lo está validando."
         )
       } else {
-        setError(err.message || (isEnglish ? "An error occurred" : "Ocurrió un error"))
+        setError(
+          isEnglish
+            ? "Connection error. Please check your internet and try again."
+            : "Error de conexión. Verifica tu internet e inténtalo de nuevo."
+        )
       }
       setSubmitting(false)
     }

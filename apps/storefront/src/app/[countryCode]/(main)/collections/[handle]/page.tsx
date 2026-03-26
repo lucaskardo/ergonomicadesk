@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { getCollectionByHandle, listCollections } from "@lib/data/collections"
-import { collectionCanonical, alternateUrls, collectionPath, SITE_URL } from "@lib/util/routes"
+import { collectionCanonical, alternateUrls, collectionPath, canonicalUrl } from "@lib/util/routes"
 import { getLang } from "@lib/i18n"
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
@@ -65,7 +65,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const collectionPath_ = collectionPath(params.handle)
   const description =
     (collection as any).metadata?.description ||
-    `Colección ${collection.title} — escritorios, sillas y accesorios ergonómicos en Ergonómica Panamá.`
+    (lang === "en"
+      ? `${collection.title} collection — ergonomic desks, chairs and accessories in Ergonómica Panama.`
+      : `Colección ${collection.title} — escritorios, sillas y accesorios ergonómicos en Ergonómica Panamá.`)
 
   const metadata: Metadata = {
     title: `${collection.title} | Ergonómica`,
@@ -101,7 +103,7 @@ export default async function CollectionPage(props: Props) {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
+        { name: "Home", url: canonicalUrl(params.countryCode, lang, "") },
         { name: collection.title, url: collectionCanonical(params.countryCode, lang, params.handle) },
       ]} />
       <CollectionTemplate

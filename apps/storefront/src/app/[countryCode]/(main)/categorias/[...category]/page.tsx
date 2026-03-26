@@ -7,7 +7,7 @@ import { StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
-import { SITE_URL, categoryCanonical, categoryPath, alternateUrls } from "@lib/util/routes"
+import { categoryCanonical, categoryPath, alternateUrls, canonicalUrl } from "@lib/util/routes"
 import { getLang } from "@lib/i18n"
 
 type Props = {
@@ -93,7 +93,7 @@ export default async function CategoryPage(props: Props) {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
+        { name: "Home", url: canonicalUrl(params.countryCode, lang, "") },
         { name: productCategory.name, url: categoryCanonical(params.countryCode, lang, categoryHandle) },
       ]} />
       <CategoryTemplate

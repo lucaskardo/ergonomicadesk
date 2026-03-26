@@ -1,45 +1,46 @@
 "use client"
 
-import { Stripe, StripeElementsOptions } from "@stripe/stripe-js"
+import { loadStripe, Stripe, StripeElementsOptions } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { HttpTypes } from "@medusajs/types"
 import { createContext } from "react"
 
 type StripeWrapperProps = {
   paymentSession: HttpTypes.StorePaymentSession
-  stripeKey?: string
-  stripePromise: Promise<Stripe | null> | null
+  stripeKey: string
+  stripeAccountId?: string
   children: React.ReactNode
 }
 
 export const StripeContext = createContext(false)
 
+// Module-level cache — loadStripe is only called once per key (this module is only
+// loaded via next/dynamic when Stripe is actually needed).
+let cachedPromise: Promise<Stripe | null> | null = null
+let cachedKey: string | undefined
+
+function getStripePromise(key: string, accountId?: string): Promise<Stripe | null> {
+  if (!cachedPromise || cachedKey !== key) {
+    cachedKey = key
+    cachedPromise = loadStripe(key, accountId ? { stripeAccount: accountId } : undefined)
+  }
+  return cachedPromise
+}
+
 const StripeWrapper: React.FC<StripeWrapperProps> = ({
   paymentSession,
   stripeKey,
-  stripePromise,
+  stripeAccountId,
   children,
 }) => {
-  const options: StripeElementsOptions = {
-    clientSecret: paymentSession!.data?.client_secret as string | undefined,
-  }
-
-  if (!stripeKey) {
-    throw new Error(
-      "Stripe key is missing. Set NEXT_PUBLIC_STRIPE_KEY environment variable."
-    )
-  }
-
-  if (!stripePromise) {
-    throw new Error(
-      "Stripe promise is missing. Make sure you have provided a valid Stripe key."
-    )
-  }
-
   if (!paymentSession?.data?.client_secret) {
-    throw new Error(
-      "Stripe client secret is missing. Cannot initialize Stripe."
-    )
+    throw new Error("Stripe client secret is missing. Cannot initialize Stripe.")
+  }
+
+  const stripePromise = getStripePromise(stripeKey, stripeAccountId)
+
+  const options: StripeElementsOptions = {
+    clientSecret: paymentSession.data.client_secret as string,
   }
 
   return (
