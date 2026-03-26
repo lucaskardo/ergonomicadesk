@@ -10,6 +10,7 @@ import WorkspacesSection from "@modules/home/components/workspaces-section"
 import SocialProof from "@modules/home/components/social-proof"
 import BlogPreview from "@modules/home/components/blog-preview"
 import ShowroomSection from "@modules/home/components/showroom-section"
+import B2BBanner from "@modules/home/components/b2b-banner"
 import Newsletter from "@modules/home/components/newsletter"
 
 export default async function Homepage({
@@ -34,6 +35,7 @@ export default async function Homepage({
       <BuildYourDesk lang={lang} countryCode={countryCode} />
       <WorkspacesSection lang={lang} countryCode={countryCode} />
       <SocialProof lang={lang} />
+      <B2BBanner lang={lang} />
       <BlogPreview lang={lang} />
       <ShowroomSection lang={lang} />
       <Newsletter lang={lang} />
