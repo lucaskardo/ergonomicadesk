@@ -4,7 +4,7 @@ import Link from "next/link"
 import { getPostBySlug, getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
-import { SITE_URL, blogPath, alternateUrls } from "@lib/util/routes"
+import { SITE_URL, blogPath, canonicalUrl, alternateUrls } from "@lib/util/routes"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
@@ -15,12 +15,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const post = getPostBySlug(slug)
   if (!post) return {}
   const path = blogPath(slug)
+  const lang = await getLang()
   return {
     title: `${post.title} | Ergonómica Blog`,
     description: post.description,
     keywords: post.keywords,
     alternates: {
-      canonical: `${SITE_URL}/${countryCode}${path}`,
+      canonical: canonicalUrl(countryCode, lang, path),
       languages: alternateUrls(countryCode, path),
     },
   }

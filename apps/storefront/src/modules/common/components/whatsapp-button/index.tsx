@@ -1,30 +1,33 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useLang } from "@lib/i18n/context"
 import { trackEvent } from "@lib/tracking"
 
-function getLeadId(): string {
-  if (typeof document === "undefined") return ""
-  const match = document.cookie.match(/(?:^|;)\s*_ergo_lid=([^;]+)/)
-  return match ? decodeURIComponent(match[1]) : ""
-}
-
-function buildWaHref(lang: "es" | "en"): string {
+function buildWaHref(lang: "es" | "en", leadId?: string): string {
   const base = lang === "en"
     ? "Hello, I visited ergonomicadesk.com and need help"
     : "Hola, entré a ergonomicadesk.com y necesito ayuda"
-  const leadId = getLeadId()
   const text = leadId ? `${base} [lid:${leadId}]` : base
   return `https://wa.me/50769533776?text=${encodeURIComponent(text)}`
 }
 
 export default function WhatsAppButton() {
   const lang = useLang()
+  // SSR and initial client render use base href (no lead_id) to avoid hydration mismatch.
+  // After mount, useEffect reads the cookie and updates href if lead_id exists.
+  const [href, setHref] = useState(() => buildWaHref(lang))
   const tooltip = lang === "en" ? "Questions? Chat with us" : "¿Dudas? Escríbenos"
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|;)\s*_ergo_lid=([^;]+)/)
+    const leadId = match ? decodeURIComponent(match[1]) : ""
+    setHref(buildWaHref(lang, leadId || undefined))
+  }, [lang])
 
   return (
     <a
-      href={buildWaHref(lang)}
+      href={href}
       target="_blank"
       rel="noreferrer"
       className="fixed bottom-6 right-6 z-50 group"

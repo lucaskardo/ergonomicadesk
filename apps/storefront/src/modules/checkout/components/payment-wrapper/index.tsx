@@ -1,6 +1,5 @@
 "use client"
 
-import { loadStripe } from "@stripe/stripe-js"
 import React from "react"
 import StripeWrapper from "./stripe-wrapper"
 import { HttpTypes } from "@medusajs/types"
@@ -16,10 +15,13 @@ const stripeKey =
   process.env.NEXT_PUBLIC_MEDUSA_PAYMENTS_PUBLISHABLE_KEY
 
 const medusaAccountId = process.env.NEXT_PUBLIC_MEDUSA_PAYMENTS_ACCOUNT_ID
+
+// Lazy-import Stripe only when a key is configured.
+// Top-level import of @stripe/stripe-js auto-injects js.stripe.com even when Stripe
+// is not used — dynamic import prevents that when stripeKey is undefined.
 const stripePromise = stripeKey
-  ? loadStripe(
-      stripeKey,
-      medusaAccountId ? { stripeAccount: medusaAccountId } : undefined
+  ? import("@stripe/stripe-js").then(({ loadStripe }) =>
+      loadStripe(stripeKey, medusaAccountId ? { stripeAccount: medusaAccountId } : undefined)
     )
   : null
 

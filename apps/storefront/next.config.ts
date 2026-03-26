@@ -75,7 +75,7 @@ const nextConfig: NextConfig = {
               `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.meilisearch.com https://challenges.cloudflare.com https://secure.networkmerchants.com https://applepay.cdn-apple.com`,
               "style-src 'self' 'unsafe-inline' https://api.fontshare.com",
               "img-src 'self' data: https: blob:",
-              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.facebook.com https://api.resend.com https://graph.facebook.com https://*.meilisearch.com https://challenges.cloudflare.com https://o4511107177250816.ingest.us.sentry.io https://secure.nmi.com https://secure.networkmerchants.com",
+              `connect-src 'self'${isDev ? " http://localhost:9000" : ""} https://*.google-analytics.com https://*.analytics.google.com https://*.facebook.com https://api.resend.com https://graph.facebook.com https://*.meilisearch.com https://challenges.cloudflare.com https://o4511107177250816.ingest.us.sentry.io https://secure.nmi.com https://secure.networkmerchants.com`,
               "font-src 'self' https://api.fontshare.com https://cdn.fontshare.com",
               "frame-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com https://connect.facebook.net https://secure.nmi.com",
               "object-src 'none'",

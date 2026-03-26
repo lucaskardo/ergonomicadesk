@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
-import { SITE_URL, alternateUrls } from "@lib/util/routes"
+import { SITE_URL, canonicalUrl, alternateUrls } from "@lib/util/routes"
 
 import ShowroomCTA from "@modules/home/components/showroom-cta"
 
@@ -14,7 +14,6 @@ export async function generateMetadata({
   const { countryCode } = await params
   const lang = await getLang()
   const isEn = lang === "en"
-  const baseUrl = `${SITE_URL}/${countryCode}`
 
   return {
     title: isEn
@@ -24,7 +23,7 @@ export async function generateMetadata({
       ? "Visit our showroom in Coco del Mar, Panama City. Try our standing desks and ergonomic chairs before buying. Mon–Fri 12–6PM, Sat 9AM–12PM."
       : "Visítanos en nuestro showroom en Coco del Mar, Ciudad de Panamá. Prueba nuestros standing desks y sillas ergonómicas antes de comprar. Lun–Vie 12–18, Sáb 9–12.",
     alternates: {
-      canonical: `${baseUrl}${SHOWROOM_PATH}`,
+      canonical: canonicalUrl(countryCode, lang, SHOWROOM_PATH),
       languages: alternateUrls(countryCode, SHOWROOM_PATH),
     },
     openGraph: {

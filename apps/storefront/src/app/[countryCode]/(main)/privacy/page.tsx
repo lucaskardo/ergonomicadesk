@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { SITE_URL } from "@lib/util/routes"
+import { canonicalUrl, alternateUrls } from "@lib/util/routes"
+import { getLang } from "@lib/i18n"
 
 export async function generateMetadata({
   params,
@@ -8,19 +9,15 @@ export async function generateMetadata({
   params: Promise<{ countryCode: string }>
 }): Promise<Metadata> {
   const { countryCode } = await params
-  const baseUrl = `${SITE_URL}/${countryCode}`
+  const lang = await getLang()
 
   return {
     title: "Políticas de Privacidad | Ergonómica",
     description:
       "Política de privacidad de Ergonómica (TORUS S.A.). Información sobre el tratamiento de datos personales en ergonomicadesk.com.",
     alternates: {
-      canonical: `${baseUrl}/privacy`,
-      languages: {
-        es: `${baseUrl}/privacy`,
-        en: `${baseUrl}/en/privacy`,
-        "x-default": `${baseUrl}/privacy`,
-      },
+      canonical: canonicalUrl(countryCode, lang, "/privacy"),
+      languages: alternateUrls(countryCode, "/privacy"),
     },
   }
 }

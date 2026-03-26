@@ -2,24 +2,20 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { getAllPosts } from "@/content/blog/posts"
 import { getLang } from "@lib/i18n"
-import { SITE_URL } from "@lib/util/routes"
+import { canonicalUrl, alternateUrls } from "@lib/util/routes"
 
 export async function generateMetadata(
   props: { params: Promise<{ countryCode: string }> }
 ): Promise<Metadata> {
   const { countryCode } = await props.params
-  const baseUrl = `${SITE_URL}/${countryCode}`
+  const lang = await getLang()
   return {
     title: "Blog | Ergonómica",
     description:
       "Guías, tips y consejos para tu home office y espacio de trabajo ergonómico.",
     alternates: {
-      canonical: `${baseUrl}/blog`,
-      languages: {
-        es: `${baseUrl}/blog`,
-        en: `${baseUrl}/en/blog`,
-        "x-default": `${baseUrl}/blog`,
-      },
+      canonical: canonicalUrl(countryCode, lang, "/blog"),
+      languages: alternateUrls(countryCode, "/blog"),
     },
   }
 }
