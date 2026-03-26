@@ -1,18 +1,33 @@
 import { NextRequest, NextResponse } from "next/server"
 
+const EXPECTED_HOSTNAME = process.env.NEXT_PUBLIC_BASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_BASE_URL).hostname
+  : "ergonomicadesk.com"
+
 /**
  * Validates a Cloudflare Turnstile token.
  *
- * Graceful degradation: if TURNSTILE_SECRET_KEY is not set (dev / pre-Cloudflare),
- * returns success immediately so checkout continues to work normally.
+ * Graceful degradation in development: if TURNSTILE_SECRET_KEY is not set,
+ * returns success so checkout works normally in local dev.
+ *
+ * Fail-closed in production: if TURNSTILE_SECRET_KEY is missing, returns 503
+ * to prevent checkout from proceeding without bot protection.
  */
 export async function POST(req: NextRequest) {
   const secretKey = process.env.TURNSTILE_SECRET_KEY
+  const isDev = process.env.NODE_ENV !== "production"
 
-  // Graceful degradation — no secret key means Turnstile is not configured
   if (!secretKey) {
-    console.warn("[turnstile-verify] TURNSTILE_SECRET_KEY is not set — skipping verification. Set it in production.")
-    return NextResponse.json({ success: true })
+    if (isDev) {
+      // Dev: skip verification so checkout works without Cloudflare configured
+      return NextResponse.json({ success: true })
+    }
+    // Production: fail closed — bot protection must be configured
+    console.error("[turnstile-verify] TURNSTILE_SECRET_KEY is not set in production — rejecting request")
+    return NextResponse.json(
+      { success: false, error: "Bot protection not configured" },
+      { status: 503 }
+    )
   }
 
   let token: string | undefined
@@ -31,7 +46,7 @@ export async function POST(req: NextRequest) {
   params.append("secret", secretKey)
   params.append("response", token)
 
-  let result: { success: boolean }
+  let result: { success: boolean; hostname?: string }
   try {
     const cfRes = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -51,6 +66,14 @@ export async function POST(req: NextRequest) {
 
   if (!result.success) {
     return NextResponse.json({ success: false, error: "Challenge failed" }, { status: 403 })
+  }
+
+  // Validate hostname to prevent token reuse across sites
+  if (result.hostname && result.hostname !== EXPECTED_HOSTNAME) {
+    console.warn(
+      `[turnstile-verify] Hostname mismatch: expected ${EXPECTED_HOSTNAME}, got ${result.hostname}`
+    )
+    return NextResponse.json({ success: false, error: "Token hostname mismatch" }, { status: 403 })
   }
 
   return NextResponse.json({ success: true })

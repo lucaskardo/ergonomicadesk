@@ -39,11 +39,11 @@ export default async function reconcilePaymentsJob(container: MedusaContainer) {
       if (intent.status === "pending" && ageHours > 24) {
         logger.warn(
           `[reconcile-payments] Stale pending intent ${intent.id} ` +
-          `(cart: ${intent.cart_id}, amount: ${amountFormatted}, age: ${ageHours.toFixed(1)}h) — marking abandoned`
+          `(cart: ${intent.cart_id}, amount: ${amountFormatted}, age: ${ageHours.toFixed(1)}h) — marking expired`
         )
         try {
-          await nmiPaymentService.updateNmiPaymentIntents([{ id: intent.id, status: "abandoned" }])
-          logger.info(`[reconcile-payments] Intent ${intent.id} → abandoned`)
+          await nmiPaymentService.updateNmiPaymentIntents([{ id: intent.id, status: "expired" }])
+          logger.info(`[reconcile-payments] Intent ${intent.id} → expired`)
         } catch (updateErr: any) {
           logger.warn(`[reconcile-payments] Failed to update intent ${intent.id}: ${updateErr?.message ?? updateErr}`)
         }

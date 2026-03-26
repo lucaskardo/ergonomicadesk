@@ -10,9 +10,9 @@ interface OrderPlacedData {
   id: string
 }
 
-async function sendEmail(to: string, subject: string, html: string) {
+async function sendEmail(to: string, subject: string, html: string, logger: { info: (msg: string) => void; warn: (msg: string) => void }) {
   if (!RESEND_API_KEY || RESEND_API_KEY === "placeholder") {
-    console.log(`[order-confirmation] DEV MODE — would send to ${to}: ${subject}`)
+    logger.info(`[order-confirmation] No API key — skipping email to ${to}: ${subject}`)
     return
   }
 
@@ -27,7 +27,7 @@ async function sendEmail(to: string, subject: string, html: string) {
 
   if (!res.ok) {
     const err = await res.text()
-    console.error(`[order-confirmation] Failed to send to ${to}:`, err)
+    logger.warn(`[order-confirmation] Failed to send to ${to}: ${err}`)
   }
 }
 
@@ -236,7 +236,8 @@ export default async function orderConfirmationHandler({
       await sendEmail(
         customerEmail,
         `Orden confirmada #${order.display_id || order.id?.slice(-8)} — Ergonómica`,
-        buildCustomerEmailHtml(order)
+        buildCustomerEmailHtml(order),
+        logger
       )
       logger.info(`[order-confirmation] Customer email sent to ${customerEmail}`)
     }
@@ -245,7 +246,8 @@ export default async function orderConfirmationHandler({
     await sendEmail(
       ADMIN_EMAIL,
       `🛒 Nueva Orden #${order.display_id || order.id?.slice(-8)} — ${formatMoney(order.total || 0, order.currency_code || "usd")}`,
-      buildAdminEmailHtml(order)
+      buildAdminEmailHtml(order),
+      logger
     )
     logger.info(`[order-confirmation] Admin email sent to ${ADMIN_EMAIL}`)
 

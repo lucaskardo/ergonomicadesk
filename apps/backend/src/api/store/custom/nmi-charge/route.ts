@@ -66,8 +66,15 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     cart_id?: string
     payment_token?: string
     three_ds?: Record<string, string>
+    company_website?: string
   }
   const { cart_id, payment_token, three_ds } = body
+
+  // Honeypot check — bots fill hidden fields, humans don't
+  if (body.company_website) {
+    logger.warn("[NmiCharge] Honeypot triggered — rejecting bot submission", { cart_id })
+    return res.status(400).json({ message: "Invalid request" })
+  }
 
   if (!cart_id || !payment_token) {
     return res.status(400).json({ message: "cart_id and payment_token are required" })

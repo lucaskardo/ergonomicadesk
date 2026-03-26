@@ -54,7 +54,15 @@ function getRedis(): Redis | null {
   if (redisReady) return redis
   redisReady = true
   const url = process.env.REDIS_URL
-  if (!url) return null
+  if (!url) {
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        "[rate-limiter] REDIS_URL is not set in production — rate limiting is in-memory only. " +
+        "This will not work correctly across multiple instances."
+      )
+    }
+    return null
+  }
   try {
     redis = new Redis(url, {
       lazyConnect: false,
