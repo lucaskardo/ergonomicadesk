@@ -90,15 +90,17 @@ export const listProducts = async ({
 }
 
 /**
- * Fetches products and sorts them client-side before paginating.
- * TODO: Replace client-side sort with Medusa server-side `order` param once
- * price/title sorts are confirmed stable across all regions in v2.
- * Until then, limit:100 caps the sort window — with 231 products this may
- * miss items on later pages for price/title sorts. For created_at the
- * `order` param is already passed and this is a non-issue.
+ * Fetches products with server-side or client-side sort depending on sortBy.
+ *
+ * created_at: fully server-side — only the required page is fetched (12 products).
+ *
+ * price_asc / price_desc: calculated_price cannot be sorted server-side in Medusa v2.
+ * Fetches up to 100 products and sorts client-side. With 231 catalog items, price
+ * sort beyond page 8 may not be perfectly ordered — acceptable trade-off vs. fetching
+ * the entire catalog on every request.
  */
 export const listProductsWithSort = async ({
-  page = 0,
+  page = 1,
   queryParams,
   sortBy = "created_at",
   countryCode,
@@ -114,6 +116,20 @@ export const listProductsWithSort = async ({
 }> => {
   const limit = queryParams?.limit || 12
 
+  // Server-side sort: fetch only the required page
+  if (sortBy === "created_at") {
+    return listProducts({
+      pageParam: page,
+      queryParams: {
+        ...queryParams,
+        limit,
+        order: "-created_at",
+      },
+      countryCode,
+    })
+  }
+
+  // Client-side price sort: fetch top-100 and sort in memory
   const {
     response: { products, count },
   } = await listProducts({

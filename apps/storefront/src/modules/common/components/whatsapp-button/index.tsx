@@ -3,13 +3,28 @@
 import { useLang } from "@lib/i18n/context"
 import { trackEvent } from "@lib/tracking"
 
+function getLeadId(): string {
+  if (typeof document === "undefined") return ""
+  const match = document.cookie.match(/(?:^|;)\s*_ergo_lid=([^;]+)/)
+  return match ? decodeURIComponent(match[1]) : ""
+}
+
+function buildWaHref(lang: "es" | "en"): string {
+  const base = lang === "en"
+    ? "Hello, I visited ergonomicadesk.com and need help"
+    : "Hola, entré a ergonomicadesk.com y necesito ayuda"
+  const leadId = getLeadId()
+  const text = leadId ? `${base} [lid:${leadId}]` : base
+  return `https://wa.me/50769533776?text=${encodeURIComponent(text)}`
+}
+
 export default function WhatsAppButton() {
   const lang = useLang()
   const tooltip = lang === "en" ? "Questions? Chat with us" : "¿Dudas? Escríbenos"
 
   return (
     <a
-      href="https://wa.me/50769533776?text=Hola%20entre%20a%20ergonomicadesk.com%20y%20necesito%20ayuda"
+      href={buildWaHref(lang)}
       target="_blank"
       rel="noreferrer"
       className="fixed bottom-6 right-6 z-50 group"

@@ -215,6 +215,26 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - In the admin, create the bundle as a normal product with photos of the complete setup
 - Phase: post-launch, after base catalog is established
 
+## Cache Strategy by Page Type
+
+All server fetches use Next.js tag-based revalidation via `getCacheOptions(tag)`.
+The `_medusa_cache_id` cookie scopes cache entries per-user where needed.
+
+| Page | Fetches | Cache |
+|------|---------|-------|
+| **Homepage** | `getRegion()` → regions tag; `listProducts()` (featured) → products tag | Static per region; revalidated on product/region mutation |
+| **Store / Catalog** | `listProductsWithSort()` → products tag; `listCategories()` → categories tag | Static; revalidated on product/category mutation |
+| **Category** | `listProductsWithSort()` with category filter → products tag | Same as Store |
+| **PDP** | `listProducts({ handle })` → products tag; `getRegion()` → regions tag | Static per product; revalidated on product mutation. `generateStaticParams` pre-renders all handles at build time |
+| **Blog** | Static MDX — no Medusa fetch | Next.js static (no revalidation needed) |
+| **Checkout** | `retrieveCart()` → cart tag (user-scoped via `_medusa_cache_id`); payment providers → `cache: "no-store"` | User-scoped force-cache for cart; **no-store for payment providers** (CRITICAL — breaks checkout silently otherwise) |
+| **Order confirmed** | `retrieveOrder()` → order tag (user-scoped) | User-scoped force-cache |
+
+**Key rules:**
+- Payment provider fetches MUST use `cache: "no-store"` — silently breaks checkout otherwise
+- Cart fetches use per-user tag (`${tag}-${cacheId}`) invalidated on every mutation via `revalidateTag`
+- Product/region caches are shared across users — no PII stored in shared cache entries
+
 ## Prompting Rules
 - Search official docs (context7 MCP) before implementing
 - Execute immediately — no brainstorming preamble

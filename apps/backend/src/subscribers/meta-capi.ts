@@ -29,6 +29,28 @@ interface OrderPlacedData {
   id: string
 }
 
+/** Order fields fetched via query.graph() for CAPI reporting */
+interface CapiOrder {
+  id: string
+  display_id?: number
+  email?: string
+  total?: number | { value?: number; numeric?: number }
+  currency_code?: string
+  metadata?: Record<string, unknown>
+  items?: Array<{
+    variant?: { sku?: string }
+    variant_id?: string
+    quantity: number
+  }>
+  shipping_address?: {
+    phone?: string
+    first_name?: string
+    last_name?: string
+    city?: string
+    country_code?: string
+  }
+}
+
 function sha256(value: string): string {
   return crypto.createHash("sha256").update(value.trim().toLowerCase()).digest("hex")
 }
@@ -63,23 +85,24 @@ export default async function metaCapiHandler({
       return
     }
 
-    const meta = (order.metadata || {}) as any
-    const attribution = meta.attribution || {}
-    const email = (order as any).email || ""
-    const phone = (order.shipping_address as any)?.phone || ""
-    const firstName = (order.shipping_address as any)?.first_name || ""
-    const lastName = (order.shipping_address as any)?.last_name || ""
-    const city = (order.shipping_address as any)?.city || ""
-    const countryCode = (order.shipping_address as any)?.country_code || ""
+    const typedOrder = order as unknown as CapiOrder
+    const meta = (typedOrder.metadata || {}) as Record<string, unknown>
+    const attribution = (meta.attribution as Record<string, string>) || {}
+    const email = typedOrder.email || ""
+    const phone = typedOrder.shipping_address?.phone || ""
+    const firstName = typedOrder.shipping_address?.first_name || ""
+    const lastName = typedOrder.shipping_address?.last_name || ""
+    const city = typedOrder.shipping_address?.city || ""
+    const countryCode = typedOrder.shipping_address?.country_code || ""
 
     if (!email) {
       logger.warn(`[meta-capi] Order ${orderId} has no email — CAPI user_data will be sparse`)
     }
 
     // Use order display_id as event_id for stable dedup (browser sends same ID)
-    const eventId = `purchase_${(order as any).display_id || order.id}`
+    const eventId = `purchase_${typedOrder.display_id || typedOrder.id}`
 
-    const eventData: any = {
+    const eventData: Record<string, unknown> = {
       event_name: "Purchase",
       event_time: Math.floor(Date.now() / 1000),
       event_id: eventId,
@@ -102,23 +125,29 @@ export default async function metaCapiHandler({
         ...(attribution.lead_id && { external_id: [sha256(attribution.lead_id)] }),
       },
       custom_data: {
-        currency: ((order as any).currency_code || "usd").toUpperCase(),
-        value: ((order as any).total || 0) / 100,
+        currency: (typedOrder.currency_code || "usd").toUpperCase(),
+        value: (typeof typedOrder.total === "object" && typedOrder.total !== null
+          ? Number(typedOrder.total.value ?? typedOrder.total.numeric ?? 0)
+          : Number(typedOrder.total ?? 0)) / 100,
         content_type: "product",
-        contents: ((order as any).items || []).map((item: any) => ({
+        contents: (typedOrder.items || []).map((item) => ({
           id: item.variant?.sku || item.variant_id,
           quantity: item.quantity,
         })),
-        order_id: (order as any).display_id || order.id,
+        order_id: typedOrder.display_id || typedOrder.id,
         ...(attribution.utm_source && { utm_source: attribution.utm_source }),
         ...(attribution.utm_campaign && { utm_campaign: attribution.utm_campaign }),
       },
     }
 
-    const displayId = (order as any).display_id || orderId
-    const value = ((order as any).total || 0) / 100
+    const displayId = typedOrder.display_id || orderId
+    const value = (typeof typedOrder.total === "object" && typedOrder.total !== null
+      ? Number(typedOrder.total.value ?? typedOrder.total.numeric ?? 0)
+      : Number(typedOrder.total ?? 0)) / 100
+    const currency = (typedOrder.currency_code || "usd").toUpperCase()
+    const itemCount = typedOrder.items?.length ?? 0
     logger.info(
-      `[meta-capi] Sending Purchase event — order: ${displayId}, event_id: ${eventId}, value: ${value} ${eventData.custom_data.currency}, items: ${eventData.custom_data.contents.length}`
+      `[meta-capi] Sending Purchase event — order: ${displayId}, event_id: ${eventId}, value: ${value} ${currency}, items: ${itemCount}`
     )
 
     const payload = {

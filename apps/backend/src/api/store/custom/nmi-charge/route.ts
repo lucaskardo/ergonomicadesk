@@ -4,22 +4,57 @@ import { NmiClient, NmiLane } from "../../../../modules/nmi-payment/nmi-client"
 import { NMI_PAYMENT_MODULE } from "../../../../modules/nmi-payment"
 import { checkRateLimit } from "../../../../lib/rate-limiter"
 
+/** Shape of NMI-specific data stored in the Medusa payment session */
+interface NmiSessionData {
+  id?: string
+  tokenizationKey?: string
+  nmi_status?: string
+  nmi_transaction_id?: string
+  nmi_auth_code?: string
+}
+
+/** Cart total as returned by query.graph() — may be a BigNumber object or plain number */
+type BigNumberLike = number | { value?: number; numeric?: number } | null | undefined
+
+/** Cart fields resolved via query.graph() */
+interface CartQueryResult {
+  id: string
+  total: BigNumberLike
+  currency_code: string
+  completed_at: string | null | undefined
+  payment_collection?: {
+    id: string
+    payment_sessions?: Array<{
+      id: string
+      data: NmiSessionData
+      provider_id: string
+      status: string
+    }>
+  }
+}
+
+// Medusa's runtime logger (Winston-based) accepts extra metadata objects but
+// the Logger interface from @medusajs/types only types the base signatures.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MedusaLogger = any
+
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER) as any
+  const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER) as MedusaLogger
 
   try {
     return await handleNmiCharge(req, res, logger)
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const e = err as Error
     logger.error("[payment-alert] [NmiCharge] Unhandled error — payment outcome unknown", {
-      error: err?.message,
-      stack: err?.stack,
-      cartId: (req.body as any)?.cart_id,
+      error: e?.message,
+      stack: e?.stack,
+      cartId: (req.body as { cart_id?: string })?.cart_id,
     })
     return res.status(500).json({ message: "Internal payment error. Please try again." })
   }
 }
 
-async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: any) {
+async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: MedusaLogger) {
   // 0. Environment guard
   if (!process.env.NMI_SECURITY_KEY) {
     logger.error("[NmiCharge] NMI_SECURITY_KEY not configured")
@@ -53,7 +88,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   }
 
   // 2. Resolve cart server-side — NEVER trust amount from frontend
-  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY) as any
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const { data: carts } = await query.graph({
     entity: "cart",
     filters: { id: cart_id },
@@ -70,7 +105,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     ],
   })
 
-  const cart = carts?.[0]
+  const cart = carts?.[0] as unknown as CartQueryResult | undefined
   if (!cart) {
     return res.status(400).json({ message: "Cart not found" })
   }
@@ -81,7 +116,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   }
 
   // 4. Find pending NMI payment session
-  const sessions: any[] = cart.payment_collection?.payment_sessions ?? []
+  const sessions = cart.payment_collection?.payment_sessions ?? []
 
   // 4a. Check for already-authorized session
   const alreadyAuthorized = sessions.find(
@@ -101,9 +136,9 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   // 5. Calculate amount server-side — cart.total may be BigNumber object or plain number
   // amountCents is stored in payment_intent (e.g. 29900 for $299.00)
   // amountDollars is sent to NMI as a string (e.g. "299.00") — NMI requires dollars, NOT cents
-  const rawTotal = (cart as any).total
+  const rawTotal: BigNumberLike = cart.total
   const amountCents = typeof rawTotal === "object" && rawTotal !== null
-    ? Math.round(Number((rawTotal as any).value ?? (rawTotal as any).numeric ?? 0))
+    ? Math.round(Number(rawTotal.value ?? rawTotal.numeric ?? 0))
     : Number(rawTotal)
   if (!amountCents || amountCents < 100) {
     return res.status(400).json({ message: "Invalid cart total (minimum $1.00)" })
@@ -112,7 +147,8 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
 
   // 6. Idempotency check (also covers charged_unreconciled)
   const idempotencyKey = `nmi_${cart_id}_${session.id}`
-  const nmiPaymentService = req.scope.resolve(NMI_PAYMENT_MODULE) as any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const nmiPaymentService = req.scope.resolve(NMI_PAYMENT_MODULE) as any // custom module — no typed interface yet
 
   const existingIntents = await nmiPaymentService.listNmiPaymentIntents({
     idempotency_key: idempotencyKey,
@@ -274,19 +310,20 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   // 14. Update payment session data so authorizePayment succeeds
   // Only persist known safe fields — avoid spreading session.data to prevent injection
   try {
+    // IPaymentModuleService.updatePaymentSession requires currency_code+amount but Medusa
+    // runtime accepts partial updates — keeping as any until full DTO is available
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const paymentModuleService = req.scope.resolve(Modules.PAYMENT) as any
-    await paymentModuleService.updatePaymentSessions([
-      {
-        id: session.id,
-        data: {
-          id: (session.data as any)?.id,
-          tokenizationKey: (session.data as any)?.tokenizationKey,
-          nmi_status: "charged",
-          nmi_transaction_id: nmiResult.transactionId,
-          nmi_auth_code: nmiResult.authCode,
-        },
+    await paymentModuleService.updatePaymentSession({
+      id: session.id,
+      data: {
+        id: session.data?.id,
+        tokenizationKey: session.data?.tokenizationKey,
+        nmi_status: "charged",
+        nmi_transaction_id: nmiResult.transactionId,
+        nmi_auth_code: nmiResult.authCode,
       },
-    ])
+    })
   } catch (err) {
     // Session update failed — mark charged_unreconciled so authorizePayment DB fallback handles it
     await nmiPaymentService.updateNmiPaymentIntents([
