@@ -14,6 +14,14 @@ import { HttpTypes } from "@medusajs/types"
 import ProductActionsWrapper from "./product-actions-wrapper"
 import ProductTracker from "@modules/products/components/product-tracker"
 
+const CAT_ES: Record<string, string> = {
+  "standing-desks": "Standing Desks",
+  office: "Oficina",
+  chairs: "Sillas",
+  storage: "Almacenamiento",
+  accessories: "Accesorios",
+}
+
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
   region: HttpTypes.StoreRegion
@@ -21,6 +29,7 @@ type ProductTemplateProps = {
   images: HttpTypes.StoreProductImage[]
   selectedVariant?: HttpTypes.StoreProductVariant
   initialVariantId?: string
+  lang?: "es" | "en"
 }
 
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
@@ -30,6 +39,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   images,
   selectedVariant,
   initialVariantId,
+  lang = "es",
 }) => {
   if (!product || !product.id) {
     return notFound()
@@ -42,14 +52,18 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
       {/* Breadcrumb */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 pt-5">
         <div className="flex items-center gap-1.5 text-[0.75rem] text-ergo-400">
-          <LocalizedClientLink href="/" className="hover:text-ergo-sky-dark transition-colors">Home</LocalizedClientLink>
+          <LocalizedClientLink href="/" className="hover:text-ergo-sky-dark transition-colors">
+            {lang === "en" ? "Home" : "Inicio"}
+          </LocalizedClientLink>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
             <path d="M9 18l6-6-6-6" />
           </svg>
           {product.categories?.[0] && (
             <>
-              <LocalizedClientLink href={categoryPath(product.categories[0].handle)} className="hover:text-ergo-sky-dark transition-colors">
-                {product.categories[0].name}
+              <LocalizedClientLink href={categoryPath(product.categories[0].handle ?? "")} className="hover:text-ergo-sky-dark transition-colors">
+                {lang === "en"
+                  ? (product.categories[0].name ?? "")
+                  : (CAT_ES[product.categories[0].handle ?? ""] ?? product.categories[0].name ?? "")}
               </LocalizedClientLink>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
                 <path d="M9 18l6-6-6-6" />

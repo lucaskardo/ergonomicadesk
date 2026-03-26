@@ -5,7 +5,7 @@ import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 import { ProductJsonLd } from "@modules/common/components/json-ld/product"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
-import { productCanonical, alternateUrls, productPath, SITE_URL } from "@lib/util/routes"
+import { productCanonical, categoryCanonical, alternateUrls, productPath, SITE_URL } from "@lib/util/routes"
 import { HttpTypes } from "@medusajs/types"
 
 type Props = {
@@ -175,8 +175,10 @@ export default async function ProductPage(props: Props) {
         })()}
       />
       <BreadcrumbJsonLd items={[
-        { name: "Home", url: `${SITE_URL}/${params.countryCode}` },
-        { name: "Productos", url: `${SITE_URL}/${params.countryCode}/store` },
+        { name: "Inicio", url: `${SITE_URL}/${params.countryCode}` },
+        ...(pricedProduct.categories?.[0]
+          ? [{ name: pricedProduct.categories[0].name ?? "", url: categoryCanonical(params.countryCode, "es", pricedProduct.categories[0].handle ?? "") }]
+          : [{ name: "Tienda", url: `${SITE_URL}/${params.countryCode}/store` }]),
         { name: pricedProduct.title ?? "", url: canonicalUrl },
       ]} />
       <ProductTemplate
@@ -185,6 +187,7 @@ export default async function ProductPage(props: Props) {
         countryCode={params.countryCode}
         images={images ?? []}
         selectedVariant={selectedVariant}
+        lang="es"
       />
     </>
   )

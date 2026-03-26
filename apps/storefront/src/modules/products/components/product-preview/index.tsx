@@ -35,6 +35,7 @@ export default async function ProductPreview({
               images={product.images}
               size="full"
               isFeatured={isFeatured}
+              className="h-full !aspect-auto"
             />
           </div>
           {/* Heart icon on hover */}

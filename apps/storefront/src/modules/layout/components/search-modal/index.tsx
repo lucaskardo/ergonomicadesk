@@ -148,6 +148,19 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
         onClose()
         return
       }
+      if (e.key === "Enter") {
+        e.preventDefault()
+        if (activeIndex >= 0 && results.length > 0) {
+          navigateToResult(results[activeIndex], activeIndex)
+        } else if (query.trim()) {
+          const storePath = lang === "en"
+            ? `/${countryCode}/en/store?q=${encodeURIComponent(query.trim())}`
+            : `/${countryCode}/store?q=${encodeURIComponent(query.trim())}`
+          onClose()
+          router.push(storePath)
+        }
+        return
+      }
       if (results.length === 0) return
       if (e.key === "ArrowDown") {
         e.preventDefault()
@@ -155,9 +168,6 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
         setActiveIndex((i) => Math.max(i - 1, 0))
-      } else if (e.key === "Enter" && activeIndex >= 0) {
-        e.preventDefault()
-        navigateToResult(results[activeIndex], activeIndex)
       }
     }
     if (isOpen) document.addEventListener("keydown", handleKey)
@@ -168,13 +178,13 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-[108px] px-4"
       role="dialog"
       aria-modal="true"
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
 
