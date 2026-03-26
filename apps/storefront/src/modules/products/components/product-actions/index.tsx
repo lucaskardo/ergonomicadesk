@@ -41,9 +41,34 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const [added, setAdded] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [extendedWarranty, setExtendedWarranty] = useState(false)
   const countryCode = useParams().countryCode as string
+  // Preloaded warranty variant IDs: { [sku]: variantId }
+  const warrantyVariantsRef = useRef<Record<string, string>>({})
+
+  // Preload warranty variants on mount so the click path is fetch-free
+  useEffect(() => {
+    const key = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+    const base = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+    fetch(
+      `${base}/store/products?limit=10&fields=variants.id,variants.sku&q=extended-warranty`,
+      { headers: { "x-publishable-api-key": key } }
+    )
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return
+        const map: Record<string, string> = {}
+        for (const wp of data.products || []) {
+          for (const v of wp.variants || []) {
+            if (v.sku && v.id) map[v.sku] = v.id
+          }
+        }
+        warrantyVariantsRef.current = map
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     // Pre-select variant from initialVariantId (SKU URL) or single-variant product
@@ -129,6 +154,12 @@ export default function ProductActions({
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
     setIsAdding(true)
+    setAdded(true)
+
+    // Open cart drawer immediately — don't wait for backend
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("ergo:cart:added"))
+    }
 
     try {
       // 1. Add the main product
@@ -139,7 +170,7 @@ export default function ProductActions({
         metadata: extendedWarranty ? { extended_warranty: true, warranty_surcharge_pct: 33 } : undefined,
       })
 
-      // 2. If extended warranty checked, add warranty product as second line item
+      // 2. If extended warranty checked, add warranty as second line item
       if (extendedWarranty) {
         try {
           // Determine warranty SKU from product categories
@@ -156,43 +187,23 @@ export default function ProductActions({
             warrantySku = "extended-warranty-storage"
           }
 
-          // Find warranty variant ID by SKU
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"}/store/products?limit=10&fields=variants.id,variants.sku&q=extended-warranty`,
-            {
-              headers: { "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "" },
-            }
-          )
-
-          if (res.ok) {
-            const { products: warrantyProducts } = await res.json()
-            let warrantyVariantId: string | null = null
-            for (const wp of warrantyProducts || []) {
-              for (const v of wp.variants || []) {
-                if (v.sku === warrantySku) {
-                  warrantyVariantId = v.id
-                  break
-                }
-              }
-              if (warrantyVariantId) break
-            }
-
-            if (warrantyVariantId) {
-              const surchargeAmount = Math.ceil(
-                ((selectedVariant?.calculated_price?.calculated_amount ?? 0) * 0.33) / 100
-              )
-              await addToCart({
-                variantId: warrantyVariantId,
-                quantity: 1,
-                countryCode,
-                metadata: {
-                  warranty_for_sku: selectedVariant.sku || selectedVariant.id,
-                  warranty_for_product: product.title,
-                  warranty_surcharge_amount: surchargeAmount,
-                  warranty_surcharge_pct: 33,
-                },
-              })
-            }
+          // Use preloaded variant ID — no fetch on the critical click path
+          const warrantyVariantId = warrantyVariantsRef.current[warrantySku] ?? null
+          if (warrantyVariantId) {
+            const surchargeAmount = Math.ceil(
+              ((selectedVariant?.calculated_price?.calculated_amount ?? 0) * 0.33) / 100
+            )
+            await addToCart({
+              variantId: warrantyVariantId,
+              quantity: 1,
+              countryCode,
+              metadata: {
+                warranty_for_sku: selectedVariant.sku || selectedVariant.id,
+                warranty_for_product: product.title,
+                warranty_surcharge_amount: surchargeAmount,
+                warranty_surcharge_pct: 33,
+              },
+            })
           }
         } catch (err) {
           console.error("Failed to add warranty to cart:", err)
@@ -202,11 +213,14 @@ export default function ProductActions({
 
       trackAddToCart(product, selectedVariant, quantity)
     } catch (err) {
+      setAdded(false)
       console.error("Failed to add to cart:", err)
     } finally {
       setQuantity(1)
       setIsAdding(false)
-      router.refresh()
+      // revalidateTag(carts) inside addToCart already invalidates the cache —
+      // no router.refresh() needed (avoids full page re-render)
+      setTimeout(() => setAdded(false), 2000)
     }
   }
 
@@ -309,9 +323,9 @@ export default function ProductActions({
           disabled={
             !inStock || !selectedVariant || !!disabled || isAdding || !isValidVariant
           }
-          className="w-full h-14 font-semibold text-[0.92rem] tracking-[0.01em]"
+          className="w-full h-14 font-semibold text-[0.92rem] tracking-[0.01em] transition-colors"
           style={{
-            background: "#2A8BBF",
+            background: added ? "#16a34a" : "#2A8BBF",
             color: "white",
             border: "none",
             display: "flex",
@@ -319,21 +333,29 @@ export default function ProductActions({
             justifyContent: "center",
             gap: "8px",
           }}
-          isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!isAdding && (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 01-8 0" />
-            </svg>
+          {added ? (
+            <>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              {lang === "en" ? "Added!" : "¡Agregado!"}
+            </>
+          ) : (
+            <>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 01-8 0" />
+              </svg>
+              {!selectedVariant && !options
+                ? labels.selectVariant
+                : !inStock || !isValidVariant
+                ? labels.outOfStock
+                : labels.addToCart}
+            </>
           )}
-          {!selectedVariant && !options
-            ? labels.selectVariant
-            : !inStock || !isValidVariant
-            ? labels.outOfStock
-            : labels.addToCart}
         </Button>
 
         {/* WhatsApp */}

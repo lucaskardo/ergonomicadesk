@@ -31,16 +31,26 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
   const subtotal = cartState?.subtotal ?? 0
   const itemRef = useRef<number>(totalItems || 0)
 
-  // Open drawer when cart changes (item added), but not on cart page
+  // Open drawer immediately when product-actions fires ergo:cart:added
   useEffect(() => {
-    if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
+    if (pathname.includes("/cart")) return
+    const handler = () => {
       setIsOpen(true)
       if (cartState) trackViewCart(cartState)
       const timer = setTimeout(() => setIsOpen(false), 5000)
-      itemRef.current = totalItems
       return () => clearTimeout(timer)
     }
-    itemRef.current = totalItems
+    window.addEventListener("ergo:cart:added", handler)
+    return () => window.removeEventListener("ergo:cart:added", handler)
+  }, [pathname, cartState])
+
+  // Also sync when cart prop updates (catches qty changes and deletes)
+  useEffect(() => {
+    if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
+      itemRef.current = totalItems
+    } else {
+      itemRef.current = totalItems
+    }
   }, [totalItems, pathname])
 
   const open = () => {
@@ -264,6 +274,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                       <LocalizedClientLink
                         href="/cart"
                         onClick={close}
+                        prefetch={true}
                         className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg text-center transition-colors"
                         data-testid="go-to-cart-button"
                       >

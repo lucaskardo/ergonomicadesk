@@ -13,8 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import { productPath } from "@lib/util/routes"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
-import { useRouter } from "next/navigation"
-import { useState, useEffect, useTransition } from "react"
+import { useState, useEffect } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
@@ -24,10 +23,8 @@ type ItemProps = {
 
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
-  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [localQty, setLocalQty] = useState(item.quantity)
-  const router = useRouter()
 
   useEffect(() => {
     setLocalQty(item.quantity)
@@ -43,12 +40,12 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
     })
       .catch((err) => {
         setError(err.message)
+        setLocalQty(item.quantity) // Rollback optimistic update
       })
       .finally(() => {
         setUpdating(false)
-        startTransition(() => {
-          router.refresh()
-        })
+        // revalidateTag(carts) inside updateLineItem handles the re-render —
+        // no router.refresh() needed
       })
   }
 
