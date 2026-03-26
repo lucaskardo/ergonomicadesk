@@ -48,9 +48,8 @@ function ProductCard({
   const { cheapestPrice } = getProductPrice({ product })
   const c = CONTENT[lang]
 
-  const firstSku = product.variants?.[0]?.sku
   // productPath() returns /productos/[handle] — LocalizedClientLink prepends /pa or /pa/en
-  const productHref = productPath(product.handle || "", firstSku ?? undefined)
+  const productHref = productPath(product.handle || "")
 
   return (
     <LocalizedClientLink

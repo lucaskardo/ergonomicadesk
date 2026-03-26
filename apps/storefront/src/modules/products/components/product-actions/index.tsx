@@ -81,10 +81,16 @@ export default function ProductActions({
   }, [product.variants, options])
 
   useEffect(() => {
-    if (!isValidVariant || !selectedVariant?.sku) return
-    const productPath = pathname.includes("/en/") ? "en/productos" : "productos"
-    const targetUrl = `/${countryCode}/${productPath}/${product.handle}/${selectedVariant.sku}`
-    if (pathname === targetUrl) return
+    if (!isValidVariant || !selectedVariant?.id) return
+    const basePath = pathname.includes("/en/") ? `/${countryCode}/en/productos` : `/${countryCode}/productos`
+    const targetUrl = `${basePath}/${product.handle}?v_id=${selectedVariant.id}`
+    // Strip existing ?v_id for comparison so we don't re-push the same variant
+    const currentBase = pathname.split("?")[0]
+    const targetBase = targetUrl.split("?")[0]
+    const currentVId = new URLSearchParams(
+      typeof window !== "undefined" ? window.location.search : ""
+    ).get("v_id")
+    if (currentBase === targetBase && currentVId === selectedVariant.id) return
     router.replace(targetUrl, { scroll: false })
   }, [selectedVariant, isValidVariant])
 

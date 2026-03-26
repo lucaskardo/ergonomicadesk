@@ -1,3 +1,5 @@
+import { SITE_URL } from "@lib/util/routes"
+
 export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
   const description =
     lang === "en"
@@ -9,8 +11,8 @@ export function OrganizationJsonLd({ lang = "es" }: { lang?: "es" | "en" }) {
     "@type": ["Organization", "LocalBusiness"],
     name: "Ergonómica",
     alternateName: "Ergonomica Office",
-    url: "https://ergonomicadesk.com",
-    logo: "https://ergonomicadesk.com/logo.svg",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.svg`,
     description,
     telephone: "+507-6953-3776",
     email: "ventas@ergonomicadesk.com",

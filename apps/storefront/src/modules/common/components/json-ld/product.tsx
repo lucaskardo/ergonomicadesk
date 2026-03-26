@@ -1,3 +1,5 @@
+import { SITE_URL } from "@lib/util/routes"
+
 type ProductJsonLdProps = {
   name: string
   description: string | null
@@ -68,7 +70,7 @@ export function ProductJsonLd({
       seller: {
         "@type": "Organization",
         name: "Ergonómica",
-        url: "https://ergonomicadesk.com",
+        url: SITE_URL,
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",

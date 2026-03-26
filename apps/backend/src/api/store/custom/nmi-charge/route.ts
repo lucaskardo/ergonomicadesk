@@ -82,7 +82,7 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
   }
 
   // Rate limiting (5 attempts per minute per cart)
-  if (!checkRateLimit(cart_id)) {
+  if (!(await checkRateLimit(cart_id))) {
     logger.warn("[NmiCharge] Rate limit exceeded", { cart_id })
     return res.status(429).json({ message: "Too many payment attempts. Please wait a minute." })
   }
@@ -164,8 +164,8 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     })
   }
 
-  // TODO: Implement scheduled job to clean up stale "pending" intents older than 1 hour
-  // These occur when users abandon checkout after intent creation but before NMI charge
+  // Stale "pending" intents (user abandoned checkout before charge) are cleaned up
+  // by the reconcile-payments job (runs hourly, marks >24h pending as "abandoned").
 
   // 7. Create payment intent (pending) — unique constraint on idempotency_key prevents races
   let intent: any

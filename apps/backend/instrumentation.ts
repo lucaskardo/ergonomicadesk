@@ -14,10 +14,9 @@ import * as Sentry from "@sentry/node"
  *   SENTRY_TRACES_SAMPLE_RATE — float 0–1 (default: 0.1 in prod, 1.0 otherwise)
  */
 export function register() {
+  if (!process.env.SENTRY_DSN) return
   Sentry.init({
-    dsn:
-      process.env.SENTRY_DSN ||
-      "https://dc13a43b3cc859ca20a5d09b8d0d7d44@o4511107177250816.ingest.us.sentry.io/4511107193634816",
+    dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || "development",
     tracesSampleRate: process.env.NODE_ENV === "production"
       ? Number(process.env.SENTRY_TRACES_SAMPLE_RATE ?? 0.1)

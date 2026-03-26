@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { getLang } from "@lib/i18n"
 import { SITE_URL, alternateUrls } from "@lib/util/routes"
+
 import ShowroomCTA from "@modules/home/components/showroom-cta"
 
 const SHOWROOM_PATH = "/showroom"
@@ -49,7 +50,7 @@ export default async function ShowroomPage({
     "@context": "https://schema.org",
     "@type": "FurnitureStore",
     name: "Ergonómica",
-    url: "https://ergonomicadesk.com",
+    url: SITE_URL,
     telephone: "+507-6953-3776",
     email: "ventas@ergonomicadesk.com",
     description:

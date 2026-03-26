@@ -18,8 +18,7 @@ export default async function ProductPreview({
   const { cheapestPrice } = getProductPrice({ product })
   const category = product.categories?.[0]
   const lang = await getLang()
-  const firstSku = product.variants?.[0]?.sku
-  const productHref = productPath(product.handle || "", firstSku ?? undefined)
+  const productHref = productPath(product.handle || "")
 
   return (
     <LocalizedClientLink

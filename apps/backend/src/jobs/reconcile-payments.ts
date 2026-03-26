@@ -1,9 +1,11 @@
 import type { MedusaContainer } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { NMI_PAYMENT_MODULE } from "../modules/nmi-payment"
 
 export default async function reconcilePaymentsJob(container: MedusaContainer) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const nmiPaymentService = container.resolve(NMI_PAYMENT_MODULE)
 
   logger.info("[reconcile-payments] Starting hourly reconciliation check...")
 
@@ -37,8 +39,14 @@ export default async function reconcilePaymentsJob(container: MedusaContainer) {
       if (intent.status === "pending" && ageHours > 24) {
         logger.warn(
           `[reconcile-payments] Stale pending intent ${intent.id} ` +
-          `(cart: ${intent.cart_id}, amount: ${amountFormatted}, age: ${ageHours.toFixed(1)}h) — abandoned checkout`
+          `(cart: ${intent.cart_id}, amount: ${amountFormatted}, age: ${ageHours.toFixed(1)}h) — marking abandoned`
         )
+        try {
+          await nmiPaymentService.updateNmiPaymentIntents([{ id: intent.id, status: "abandoned" }])
+          logger.info(`[reconcile-payments] Intent ${intent.id} → abandoned`)
+        } catch (updateErr: any) {
+          logger.warn(`[reconcile-payments] Failed to update intent ${intent.id}: ${updateErr?.message ?? updateErr}`)
+        }
         stalePendingCount++
       }
     }

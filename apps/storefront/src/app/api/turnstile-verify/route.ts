@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
 
   // Graceful degradation — no secret key means Turnstile is not configured
   if (!secretKey) {
+    console.warn("[turnstile-verify] TURNSTILE_SECRET_KEY is not set — skipping verification. Set it in production.")
     return NextResponse.json({ success: true })
   }
 
