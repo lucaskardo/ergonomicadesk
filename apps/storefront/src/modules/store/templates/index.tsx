@@ -42,6 +42,31 @@ const StoreTemplate = async ({
     (c: any) => !c.parent_category_id && !c.parent_category
   )
 
+  // Expand categoryId to include children (same logic as CategoryTemplate)
+  let resolvedCategoryIds: string[] | undefined
+  if (categoryId) {
+    const cat = allCategories.find((c: any) => c.id === categoryId)
+    resolvedCategoryIds = [
+      categoryId,
+      ...(cat?.category_children?.map((c: any) => c.id) ?? []),
+    ]
+  } else if (q && q.length >= 3) {
+    // Category-name search: if q matches a category name, filter by that category
+    const qLower = q.toLowerCase()
+    const matchingCat = parentCategories.find((cat: any) => {
+      const esName = (CAT_ES[cat.handle ?? ""] ?? cat.name ?? "").toLowerCase()
+      const enName = (cat.name ?? "").toLowerCase()
+      return esName.includes(qLower) || qLower.includes(esName) ||
+             enName.includes(qLower) || qLower.includes(enName)
+    })
+    if (matchingCat) {
+      resolvedCategoryIds = [
+        matchingCat.id,
+        ...(matchingCat.category_children?.map((c: any) => c.id) ?? []),
+      ]
+    }
+  }
+
   return (
     <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
       {/* Top row: heading */}
@@ -91,8 +116,8 @@ const StoreTemplate = async ({
           sortBy={sort}
           page={pageNumber}
           countryCode={countryCode}
-          categoryId={categoryId}
-          q={q}
+          categoryId={resolvedCategoryIds}
+          q={resolvedCategoryIds && !categoryId ? undefined : q}
           initialQuery={q}
         />
       </Suspense>

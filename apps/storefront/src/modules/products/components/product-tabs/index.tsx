@@ -68,11 +68,7 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
       )
     : []
 
-  const tabs = [
-    {
-      label: t === "en" ? "Description" : "Descripción",
-      component: <DescriptionTab product={product} />,
-    },
+  const accordionTabs = [
     ...(specs.length > 0
       ? [
           {
@@ -89,8 +85,12 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
 
   return (
     <div className="w-full mt-6 border-t border-ergo-200/60">
+      {/* Description always visible */}
+      <DescriptionTab product={product} />
+
+      {/* Specs and Shipping in accordion */}
       <Accordion type="multiple">
-        {tabs.map((tab, i) => (
+        {accordionTabs.map((tab, i) => (
           <Accordion.Item key={i} title={tab.label} headingSize="medium" value={tab.label}>
             {tab.component}
           </Accordion.Item>

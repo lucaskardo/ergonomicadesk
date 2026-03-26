@@ -137,16 +137,14 @@ export default function ProductActions({
     selectVariant: "Select an option",
     quantity: "Qty",
     whatsapp: "Ask on WhatsApp",
-    priceTrust: "Price does not include ITBMS",
-    freeDelivery: "Free delivery + assembly on orders >$99 in Panama City",
+    priceTrust: "Does not include ITBMS",
   } : {
     addToCart: "Agregar al carrito",
     outOfStock: "Agotado",
     selectVariant: "Selecciona una opción",
     quantity: "Cant.",
     whatsapp: "Consultar por WhatsApp",
-    priceTrust: "Precio no incluye ITBMS",
-    freeDelivery: "Envío gratis + ensamblaje en pedidos >$99 en Ciudad de Panamá",
+    priceTrust: "No incluye ITBMS",
   }
 
   const actionsRef = useRef<HTMLDivElement>(null)
@@ -238,10 +236,7 @@ export default function ProductActions({
         <div className="border-t border-b border-ergo-200/60 py-5 mt-3">
           <ProductPrice product={product} variant={selectedVariant} />
           <p className="text-[0.78rem] text-ergo-400 mt-1">
-            {labels.priceTrust} ·{" "}
-            <span className="font-semibold" style={{ color: "#14B8A6" }}>
-              {labels.freeDelivery}
-            </span>
+            {labels.priceTrust}
           </p>
         </div>
 
