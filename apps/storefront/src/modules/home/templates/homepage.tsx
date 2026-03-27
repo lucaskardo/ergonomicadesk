@@ -118,7 +118,10 @@ export default async function Homepage({
 }) {
   const [region, sanityResult] = await Promise.all([
     withTimeout(getRegion(countryCode), { fallback: null, label: "getRegion-homepage" }),
-    sanityFetch({ query: HOMEPAGE_QUERY }).catch(() => ({ data: null })),
+    sanityFetch({ query: HOMEPAGE_QUERY }).catch((err) => {
+      console.error("[Homepage] sanityFetch error:", err)
+      return { data: null }
+    }),
   ])
 
   const sections: Section[] | null =

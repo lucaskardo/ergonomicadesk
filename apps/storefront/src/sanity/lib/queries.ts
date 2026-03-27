@@ -7,7 +7,7 @@ const localizedStringFragment = `{ es, en }`
 const localizedTextFragment = `{ es, en }`
 const ctaFragment = `{ text ${localizedStringFragment}, href }`
 const imageFragment = `{ asset->{ _id, url }, alt, hotspot, crop }`
-const statFragment = `{ value, label ${localizedStringFragment} }`
+const statFragment = `value, label ${localizedStringFragment}`
 
 // ─── Homepage page builder ───────────────────────────────────────────────────
 
