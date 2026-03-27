@@ -39,3 +39,26 @@
 - NUNCA matar el dev server del storefront (puerto 8000) ni el backend (puerto 9000). Son procesos del usuario.
 - Si necesitás reiniciar el storefront para probar cambios, decí "reiniciá el storefront" y dejá que el usuario lo haga.
 - Si `next build` necesita correr, usá `npx next build` — no mates procesos primero.
+
+## ⛔ REGLAS ABSOLUTAS — VIOLACIÓN = PROYECTO ROTO
+
+### node_modules y package manager
+- NUNCA correr `pnpm install`, `pnpm add`, `pnpm remove`, `npm install`, `yarn install`, ni NINGÚN comando de package manager
+- NUNCA correr `rm -rf node_modules` ni eliminar node_modules de ninguna forma
+- NUNCA modificar `package.json` (dependencias), `pnpm-lock.yaml`, ni `pnpm-workspace.yaml`
+- Si un import falla con "Cannot find module", PARAR y reportar al usuario. NO intentar instalar nada
+
+### Dev servers y procesos
+- NUNCA matar procesos en puertos 8000 o 9000
+- NUNCA correr `pnpm dev`, `next dev`, `medusa develop`, ni iniciar dev servers
+- NUNCA correr `rm -rf .next` ni `rm -rf .medusa`
+- Para tests usar puertos 8001-8099
+
+### Imports en scripts .mjs
+- Usar `next-sanity` para createClient, NO `@sanity/client`
+- Verificar que imports existen ANTES de usarlos
+
+### Verificación de tareas
+- Al final de cada tarea correr `cd apps/storefront && npx next build`
+- Si el build falla, arreglar. Si no se puede, reportar exactamente qué falló
+- NUNCA reportar "todo listo" sin haber corrido el build
