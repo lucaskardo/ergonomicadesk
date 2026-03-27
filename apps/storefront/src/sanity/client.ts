@@ -6,7 +6,8 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: true,
-  stega: {
-    studioUrl: "/studio",
-  },
+  // stega (visual editing overlays) only when explicitly enabled — not needed for published-only mode
+  stega: process.env.SANITY_VISUAL_EDITING === "true"
+    ? { studioUrl: "/studio" }
+    : false,
 })

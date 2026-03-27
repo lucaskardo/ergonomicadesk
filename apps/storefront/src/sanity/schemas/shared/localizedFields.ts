@@ -31,7 +31,17 @@ export const ctaObject = defineType({
       title: "Texto / Text",
       type: "localizedString",
     }),
-    defineField({ name: "href", title: "Link", type: "string" }),
+    defineField({
+      name: "href",
+      title: "Link",
+      type: "string",
+      validation: (rule) =>
+        rule.custom((value) => {
+          if (!value) return true
+          if (value.startsWith("/") || value.startsWith("tel:") || value.startsWith("mailto:")) return true
+          try { new URL(value); return true } catch { return "Must be a valid URL or a relative path" }
+        }),
+    }),
   ],
   preview: {
     select: { title: "text.es", subtitle: "href" },

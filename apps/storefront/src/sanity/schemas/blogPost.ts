@@ -97,7 +97,7 @@ export const blogPostSchema = defineType({
       type: "image",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", type: "string", title: "Alt text" }),
+        defineField({ name: "alt", type: "string", title: "Alt text", validation: (rule) => rule.required() }),
       ],
     }),
     defineField({

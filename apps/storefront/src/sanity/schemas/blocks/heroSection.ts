@@ -14,6 +14,7 @@ export const heroSectionSchema = defineType({
       name: "title",
       title: "Título / Title",
       type: "localizedString",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "titleAccent",
@@ -40,6 +41,7 @@ export const heroSectionSchema = defineType({
       title: "Background Image (optional)",
       type: "image",
       options: { hotspot: true },
+      fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
     }),
   ],
   preview: {

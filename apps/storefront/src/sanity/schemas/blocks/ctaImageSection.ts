@@ -6,7 +6,7 @@ export const ctaImageSectionSchema = defineType({
   type: "object",
   fields: [
     defineField({ name: "label", title: "Label", type: "localizedString" }),
-    defineField({ name: "title", title: "Título / Title", type: "localizedString" }),
+    defineField({ name: "title", title: "Título / Title", type: "localizedString", validation: (rule) => rule.required() }),
     defineField({ name: "titleAccent", title: "Título — acento", type: "localizedString" }),
     defineField({ name: "subtitle", title: "Subtítulo / Subtitle", type: "localizedText" }),
     defineField({

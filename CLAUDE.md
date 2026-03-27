@@ -235,6 +235,14 @@ The `_medusa_cache_id` cookie scopes cache entries per-user where needed.
 - Cart fetches use per-user tag (`${tag}-${cacheId}`) invalidated on every mutation via `revalidateTag`
 - Product/region caches are shared across users — no PII stored in shared cache entries
 
+## Localización Sanity
+- Page builder / settings / nav: field-level con objetos {es, en} (tipo `localizedString` / `localizedText`)
+- Blog posts: un documento por idioma con campo `lang` ("es" | "en")
+- Esta separación es intencional: los bloques son compactos y bilingües, los posts son largos y monolingües
+- Singletons protegidos (no duplicar ni borrar): siteSettings, announcementBar, headerNav, footerNav, homepage
+- Revalidación via webhook: POST /api/sanity/revalidate con SANITY_REVALIDATE_SECRET
+- Visual editing desactivado por defecto — activar seteando SANITY_VISUAL_EDITING=true
+
 ## Prompting Rules
 - Search official docs (context7 MCP) before implementing
 - Execute immediately — no brainstorming preamble
