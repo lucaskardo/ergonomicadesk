@@ -23,6 +23,10 @@ export function blogPath(slug: string): string {
   return `/blog/${slug}`
 }
 
+export function commercialPath(slug?: string): string {
+  return slug ? `/comercial/${slug}` : "/comercial"
+}
+
 // Static paths
 export const PATHS = {
   home: "/",
@@ -35,6 +39,7 @@ export const PATHS = {
   terms: "/terms",
   privacy: "/privacy",
   blog: "/blog",
+  comercial: "/comercial",
 } as const
 
 // ── Canonical URL builders (absolute, for metadata + JSON-LD + sitemap) ──

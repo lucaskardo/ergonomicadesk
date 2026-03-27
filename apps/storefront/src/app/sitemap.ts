@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-import { SITE_URL, productPath, categoryPath, collectionPath, blogPath, alternateUrls } from "@lib/util/routes"
+import { SITE_URL, productPath, categoryPath, collectionPath, blogPath, commercialPath, alternateUrls } from "@lib/util/routes"
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
 const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
@@ -114,6 +114,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: {
         languages: alternateUrls("pa", path),
       },
+    })
+  }
+
+  // Comercial pages
+  const commercialSlugs = ["oficinas", "educacion", "horeca", "salud"]
+  entries.push({
+    url: `${SITE_URL}/pa/comercial`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+    alternates: { languages: alternateUrls("pa", "/comercial") },
+  })
+  for (const slug of commercialSlugs) {
+    const path = commercialPath(slug)
+    entries.push({
+      url: `${SITE_URL}/pa${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+      alternates: { languages: alternateUrls("pa", path) },
     })
   }
 

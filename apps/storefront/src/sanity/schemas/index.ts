@@ -19,6 +19,7 @@ import { headerNavSchema } from "./headerNav"
 import { footerNavSchema } from "./footerNav"
 import { homepageSchema } from "./homepage"
 import { blogPostSchema } from "./blogPost"
+import { commercialSectorSchema } from "./commercialSector"
 import { pageSchema } from "./page"
 
 export const schemas = [
@@ -45,5 +46,6 @@ export const schemas = [
   footerNavSchema,
   homepageSchema,
   blogPostSchema,
+  commercialSectorSchema,
   pageSchema,
 ]

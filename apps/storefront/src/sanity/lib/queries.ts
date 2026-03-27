@@ -133,6 +133,52 @@ export const BLOG_SLUGS_QUERY = `
   }
 `
 
+// ─── Commercial sectors ───────────────────────────────────────────────────────
+
+export const COMMERCIAL_SECTORS_QUERY = `
+  *[_type == "commercialSector"] | order(title.es asc){
+    _id,
+    "slug": slug.current,
+    title ${localizedStringFragment},
+    subtitle ${localizedTextFragment},
+    heroImage ${imageFragment}
+  }
+`
+
+export const COMMERCIAL_SECTOR_QUERY = `
+  *[_type == "commercialSector" && slug.current == $slug][0]{
+    _id,
+    "slug": slug.current,
+    title ${localizedStringFragment},
+    subtitle ${localizedTextFragment},
+    description ${localizedTextFragment},
+    heroImage ${imageFragment},
+    "spaces": spaces[]{
+      _key,
+      name ${localizedStringFragment},
+      "slug": slug,
+      description ${localizedTextFragment},
+      icon
+    },
+    "gallery": gallery[]{
+      _key,
+      asset->{ _id, url },
+      alt
+    },
+    "catalogFile": catalogFile{ asset->{ _id, url } },
+    "faqs": faqs[]{
+      _key,
+      question ${localizedStringFragment},
+      answer ${localizedTextFragment}
+    },
+    seoTitle ${localizedStringFragment},
+    seoDescription ${localizedTextFragment},
+    keywords,
+    ctaText ${localizedStringFragment},
+    ctaLink
+  }
+`
+
 // ─── Site settings ───────────────────────────────────────────────────────────
 
 export const SITE_SETTINGS_QUERY = `

@@ -243,6 +243,18 @@ The `_medusa_cache_id` cookie scopes cache entries per-user where needed.
 - Revalidación via webhook: POST /api/sanity/revalidate con SANITY_REVALIDATE_SECRET
 - Visual editing desactivado por defecto — activar seteando SANITY_VISUAL_EDITING=true
 
+## Sección Comercial
+- 3 niveles: Sector → Espacio → Tipo de producto
+- Fase 1 (actual): solo sectores como páginas, espacios como secciones dentro del sector
+- Fase 2 (futuro): espacios como páginas propias (/pa/comercial/[sector]/[espacio])
+- Fase 3 (futuro): tipos de producto como páginas con productos de Medusa
+- Productos en Medusa (una vez), contexto editorial en Sanity (por sector/espacio)
+- Un mismo producto puede aparecer en múltiples sectores con contexto editorial diferente
+- URLs: /pa/comercial, /pa/comercial/[sector]
+- Schema: commercialSector (Sanity document type, no singleton)
+- No es ecommerce de carrito — generación de leads con CTA a WhatsApp
+- Route helper: commercialPath(slug?) en routes.ts
+
 ## Prompting Rules
 - Search official docs (context7 MCP) before implementing
 - Execute immediately — no brainstorming preamble

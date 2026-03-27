@@ -53,11 +53,19 @@ export const structure = (S: any) =>
         .title("Blog Posts")
         .child(S.documentTypeList("blogPost").title("Blog Posts")),
 
+      // ── Comercial ───────────────────────────────────────────────────────────
+      S.listItem()
+        .title("Proyectos Comerciales")
+        .child(S.documentTypeList("commercialSector").title("Proyectos Comerciales")),
+
       S.divider(),
 
       // ── Remaining document types (filtered — no singletons) ─────────────────
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...S.documentTypeListItems().filter(
-        (item: any) => !SINGLETONS.includes(item.getId() as string) && item.getId() !== "blogPost"
+        (item: any) =>
+          !SINGLETONS.includes(item.getId() as string) &&
+          item.getId() !== "blogPost" &&
+          item.getId() !== "commercialSector"
       ),
     ])

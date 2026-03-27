@@ -69,6 +69,7 @@ export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooter
       about: "Nosotros",
       blog: "Blog",
       showroom: "Showroom",
+      commercial: "Proyectos Comerciales",
       business: "Empresas",
       contact: "Contacto",
       hours: "Lun–Vie 12PM–6PM · Sáb 9AM–12PM",
@@ -94,6 +95,7 @@ export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooter
       about: "About Us",
       blog: "Blog",
       showroom: "Showroom",
+      commercial: "Commercial Projects",
       business: "Business",
       contact: "Contact",
       hours: "Mon–Fri 12PM–6PM · Sat 9AM–12PM",
@@ -216,6 +218,7 @@ export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooter
                 <div className="flex flex-col gap-3">
                   <span className="text-[0.7rem] font-semibold uppercase tracking-[0.07em]" style={{ color: "rgba(255,255,255,0.8)" }}>{t.company}</span>
                   <ul className="flex flex-col gap-1.5 text-[0.8rem]">
+                    <li><LocalizedClientLink href="/comercial" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.commercial}</LocalizedClientLink></li>
                     <li><a href="https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z" target="_blank" rel="noreferrer" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.showroom}</a></li>
                     <li><a href="https://wa.me/50769533776" target="_blank" rel="noreferrer" className="transition-colors hover:text-ergo-sky" style={{ color: "rgba(255,255,255,0.4)" }}>{t.contact}</a></li>
                   </ul>
