@@ -32,3 +32,10 @@
 ### Sitemap
 - `next-sitemap.js` auto-generates sitemap entries for products, categories, collections, and blog posts
 - When adding a new route type, add a `additionalPaths` entry in `next-sitemap.config.js`
+
+## Reglas de node_modules y dev server (CRÍTICO)
+- NUNCA correr `pnpm install`, `npm install`, `pnpm add`, o cualquier package manager command. Si necesitás un paquete nuevo, decilo y el usuario lo instala.
+- NUNCA correr `rm -rf node_modules`. Si necesitás limpiar, usá `mv node_modules /tmp/trash_$(date +%s)` y avisá al usuario que corra `pnpm install --force` después.
+- NUNCA matar el dev server del storefront (puerto 8000) ni el backend (puerto 9000). Son procesos del usuario.
+- Si necesitás reiniciar el storefront para probar cambios, decí "reiniciá el storefront" y dejá que el usuario lo haga.
+- Si `next build` necesita correr, usá `npx next build` — no mates procesos primero.
