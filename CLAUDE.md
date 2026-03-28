@@ -94,25 +94,6 @@ apps/storefront/                 → Next.js 16 (port 8000)
 - Precios en CENTAVOS en Medusa (29900 = $299.00)
 - Inventario: QuickBooks es source of truth
 
-## Sanity CMS
-
-- Page builder: homepage con sections[] (hero, trustBar, categoryGrid, featuredProducts, buildYourDesk, testimonials, ctaImage, blogPreview, newsletter)
-- Singletons protegidos: siteSettings, announcementBar, headerNav, footerNav, homepage
-- Localización: field-level {es, en} para bloques; documento por idioma para blog
-- Revalidación: webhook POST /api/sanity/revalidate
-- Queries: GROQ en src/sanity/lib/queries.ts con projecciones explícitas
-
-## Sección Comercial
-
-- 3 niveles: Sector → Espacio → Tipo de producto
-- **Fase 1 (actual):** solo sectores como páginas, espacios como secciones dentro
-- Fase 2 (futuro): `/pa/comercial/[sector]/[espacio]`
-- Fase 3 (futuro): tipos de producto con productos de Medusa
-- Un producto puede aparecer en múltiples sectores con contexto editorial diferente
-- Schema: `commercialSector` (document type, no singleton)
-- NO es ecommerce de carrito — generación de leads con CTA a WhatsApp
-- Route helper: `commercialPath(slug?)` en routes.ts
-
 ## Patrones obligatorios
 
 ### Storefront
@@ -130,21 +111,8 @@ apps/storefront/                 → Next.js 16 (port 8000)
 - Cart metadata: set ANTES de `cart.complete` → se copia a order.metadata
 - Módulos: underscores no hyphens. Node.js v20 LTS obligatorio
 
-## Bundles (post-launch)
-
-- Bundle = producto en Medusa con `metadata.bundle_type = "bundle"`
-- NO tiene SKU propio — solo para display/PDP
-- `metadata.bundle_items = ["sku1", "sku2"]`
-- Al carrito: SKUs individuales como line items separados (contabilidad)
-- Descuento proporcionalmente a cada SKU
-
-## NMI Payments
-
-- onChange (NO onPay) para 3DS
-- Amount: STRING "299.00" no number
-- Backend POST a transact.php: `application/x-www-form-urlencoded` (NO JSON)
-- Response: key=value → URLSearchParams
-- Después de pago fallido: `resetFields()` en ref
+## Contexto especializado (skills)
+Para Sanity CMS, sección comercial, NMI payments, bundles, tracking, o backend Medusa → Claude carga automáticamente el skill relevante de `.claude/skills/`. No necesitan estar en este archivo.
 
 ## Dev Start
 
