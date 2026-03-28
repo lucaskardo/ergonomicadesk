@@ -11,6 +11,7 @@ import SocialProof from "@modules/home/components/social-proof"
 import BlogPreview from "@modules/home/components/blog-preview"
 import ShowroomSection from "@modules/home/components/showroom-section"
 import B2BBanner from "@modules/home/components/b2b-banner"
+import CommercialPreview from "@modules/home/components/commercial-preview"
 import Newsletter from "@modules/home/components/newsletter"
 import CtaImageSection from "@modules/home/components/cta-image-section"
 import { sanityFetch } from "@/sanity/lib/live"
@@ -92,6 +93,10 @@ function PageBuilder({
             )
           case "blogPreviewSection":
             return <BlogPreview key={section._key} lang={lang} />
+          case "commercialPreviewSection":
+            return (
+              <CommercialPreview key={section._key} lang={lang} countryCode={countryCode} />
+            )
           case "newsletterSection":
             return (
               <Newsletter
@@ -149,7 +154,7 @@ export default async function Homepage({
           <BuildYourDesk lang={lang} countryCode={countryCode} />
           <WorkspacesSection lang={lang} countryCode={countryCode} />
           <SocialProof lang={lang} />
-          <B2BBanner lang={lang} />
+          <CommercialPreview lang={lang} countryCode={countryCode} />
           <BlogPreview lang={lang} />
           <ShowroomSection lang={lang} />
           <Newsletter lang={lang} />

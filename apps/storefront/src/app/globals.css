@@ -27,7 +27,7 @@ body {
 
 /* ── Blog prose styles ──────────────────────────────────────── */
 .prose-ergo {
-  color: #1B2540;
+  color: #2E2E2B;
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -37,7 +37,7 @@ body {
 .prose-ergo p.blog-lead {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #0C1222;
+  color: #1C1C1A;
   border-left: 3px solid #5BC0EB;
   padding-left: 1rem;
   margin-bottom: 1.5rem;
@@ -45,7 +45,7 @@ body {
 .prose-ergo h2 {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #0C1222;
+  color: #1C1C1A;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
   line-height: 1.25;
@@ -53,7 +53,7 @@ body {
 .prose-ergo h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1B2540;
+  color: #2E2E2B;
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
   line-height: 1.3;
@@ -74,7 +74,7 @@ body {
 }
 .prose-ergo strong {
   font-weight: 700;
-  color: #0C1222;
+  color: #1C1C1A;
 }
 .prose-ergo em {
   font-style: italic;

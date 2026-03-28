@@ -22,21 +22,23 @@ module.exports = {
       },
       colors: {
         ergo: {
+          // Sky blue — NO TOCAR, es el color del logo
           sky: "#5BC0EB",
           "sky-hover": "#4AB0DB",
           "sky-dark": "#2A8BBF",
           "sky-light": "#D6F0FB",
           "sky-50": "#EBF7FD",
-          char: "#424242",
-          950: "#0C1222",
-          800: "#1B2540",
-          600: "#3D4E6B",
-          400: "#7B8BA5",
-          300: "#A5B1C7",
-          200: "#D0D7E3",
-          100: "#E8ECF2",
-          bg: "#F8FAFB",
-          "bg-warm": "#F0F4F7",
+          // Neutrales cálidos (reemplazan los azul-oscuros)
+          char: "#3D3D3A",
+          950: "#1C1C1A",
+          800: "#2E2E2B",
+          600: "#5A5A55",
+          400: "#8A8A82",
+          300: "#B0B0A8",
+          200: "#D4D4CC",
+          100: "#EDEDE8",
+          bg: "#F8F5F0",
+          "bg-warm": "#F3EDE5",
         },
         grey: {
           0: "#FFFFFF",

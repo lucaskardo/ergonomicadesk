@@ -63,7 +63,7 @@ export default function BlogPreview({ lang }: { lang: "es" | "en" }) {
               key={post.title}
               className="flex flex-col p-7 cursor-pointer transition-transform duration-300 hover:-translate-y-1"
               style={{
-                background: "linear-gradient(135deg, #1B2540, #2A3B5C)",
+                background: "linear-gradient(135deg, #2E2E2B, #4A4A45)",
                 minHeight: "260px",
               }}
             >

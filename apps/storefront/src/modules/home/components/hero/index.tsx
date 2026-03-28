@@ -1,4 +1,6 @@
+import Image from "next/image"
 import Link from "next/link"
+import { urlFor } from "@/sanity/lib/image"
 
 type Localized = { es?: string; en?: string }
 type HeroSanityData = {
@@ -8,6 +10,12 @@ type HeroSanityData = {
   subtitle?: Localized
   ctaPrimary?: { text?: Localized; href?: string }
   ctaSecondary?: { text?: Localized; href?: string }
+  backgroundImage?: {
+    asset?: { _id: string; url: string }
+    alt?: string
+    hotspot?: unknown
+    crop?: unknown
+  }
 }
 
 const CONTENT = {
@@ -54,14 +62,32 @@ export default function Hero({
       "https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z",
   }
 
+  const heroImageUrl =
+    sanityData?.backgroundImage?.asset
+      ? urlFor(sanityData.backgroundImage).width(1920).height(1080).fit("crop").url()
+      : null
+
   return (
     <section
       className="relative overflow-hidden"
       style={{
         minHeight: "clamp(480px, 80vh, 720px)",
-        background: "linear-gradient(135deg, #E8ECF2 0%, #D5DCE8 40%, #C4CDE0 100%)",
+        background: heroImageUrl
+          ? undefined
+          : "linear-gradient(135deg, #F3EDE5 0%, #E8E0D5 40%, #DDD4C8 100%)",
       }}
     >
+      {/* Background image from Sanity */}
+      {heroImageUrl && (
+        <Image
+          src={heroImageUrl}
+          alt={sanityData?.backgroundImage?.alt ?? ""}
+          fill
+          className="object-cover"
+          priority
+        />
+      )}
+
       {/* Radial gradient accents */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
@@ -74,8 +100,9 @@ export default function Hero({
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to right, rgba(248,250,251,0.94) 0%, rgba(248,250,251,0.65) 42%, rgba(248,250,251,0.15) 68%, transparent 100%)",
+          background: heroImageUrl
+            ? "linear-gradient(to right, rgba(28,28,26,0.75) 0%, rgba(28,28,26,0.45) 42%, rgba(28,28,26,0.10) 68%, transparent 100%)"
+            : "linear-gradient(to right, rgba(243,237,229,0.94) 0%, rgba(243,237,229,0.65) 42%, rgba(243,237,229,0.15) 68%, transparent 100%)",
         }}
       />
 
@@ -88,7 +115,7 @@ export default function Hero({
           <span className="block w-6 h-[1.5px] bg-ergo-sky-dark" />
           <span
             className="text-[0.7rem] font-semibold uppercase tracking-[0.14em]"
-            style={{ color: "#2A8BBF" }}
+            style={{ color: heroImageUrl ? "#5BC0EB" : "#2A8BBF" }}
           >
             {c.label}
           </span>
@@ -96,7 +123,7 @@ export default function Hero({
 
         {/* H1 */}
         <h1
-          className="font-display font-extrabold text-ergo-950 leading-[1.06] tracking-tight"
+          className={`font-display font-extrabold leading-[1.06] tracking-tight ${heroImageUrl ? "text-white" : "text-ergo-950"}`}
           style={{
             fontSize: "clamp(2.4rem, 4.8vw, 3.8rem)",
             maxWidth: 560,
@@ -104,12 +131,12 @@ export default function Hero({
           }}
         >
           {c.title}{" "}
-          <span style={{ color: "#2A8BBF" }}>{c.titleAccent}</span>
+          <span style={{ color: "#5BC0EB" }}>{c.titleAccent}</span>
         </h1>
 
         {/* Subtitle */}
         <p
-          className="text-ergo-400 leading-relaxed mt-5"
+          className={`leading-relaxed mt-5 ${heroImageUrl ? "text-white/75" : "text-ergo-400"}`}
           style={{ maxWidth: 400, fontSize: "0.98rem" }}
         >
           {c.subtitle}
@@ -131,7 +158,11 @@ export default function Hero({
             href={c.ctaSecondaryHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] border-ergo-200 text-ergo-800 font-semibold text-[0.84rem] hover:border-ergo-950 hover:bg-ergo-950/[0.02] transition-all duration-300"
+            className={`inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] font-semibold text-[0.84rem] transition-all duration-300 ${
+              heroImageUrl
+                ? "border-white/30 text-white hover:border-white hover:bg-white/10"
+                : "border-ergo-200 text-ergo-800 hover:border-ergo-950 hover:bg-ergo-950/[0.02]"
+            }`}
           >
             {c.ctaSecondary}
           </a>

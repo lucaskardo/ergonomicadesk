@@ -10,13 +10,13 @@ const CONTENT = {
         tag: "Home Office",
         title: "El espacio que mereces",
         desc: "Standing desks, sillas mesh y almacenamiento inteligente para tu home office.",
-        bg: "linear-gradient(145deg, #1B2540 0%, #2A3B5C 100%)",
+        bg: "linear-gradient(145deg, #2E2E2B 0%, #4A4A45 100%)",
       },
       {
         tag: "Gaming & Creativo",
         title: "Setup sin límites",
         desc: "Soportes de monitores, sillas gaming y escritorios que se adaptan a tu flujo.",
-        bg: "linear-gradient(145deg, #0C1222 0%, #1B2540 100%)",
+        bg: "linear-gradient(145deg, #1C1C1A 0%, #2E2E2B 100%)",
       },
     ],
     benefits: [
@@ -34,13 +34,13 @@ const CONTENT = {
         tag: "Home Office",
         title: "The space you deserve",
         desc: "Standing desks, mesh chairs and smart storage for your home office.",
-        bg: "linear-gradient(145deg, #1B2540 0%, #2A3B5C 100%)",
+        bg: "linear-gradient(145deg, #2E2E2B 0%, #4A4A45 100%)",
       },
       {
         tag: "Gaming & Creative",
         title: "Setup without limits",
         desc: "Monitor arms, gaming chairs and desks that adapt to your workflow.",
-        bg: "linear-gradient(145deg, #0C1222 0%, #1B2540 100%)",
+        bg: "linear-gradient(145deg, #1C1C1A 0%, #2E2E2B 100%)",
       },
     ],
     benefits: [

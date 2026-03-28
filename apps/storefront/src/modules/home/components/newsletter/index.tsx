@@ -4,21 +4,21 @@ import { useState } from "react"
 
 const CONTENT = {
   es: {
-    heading: "Mantente al día con",
-    headingAccent: "Ergonómica",
-    subtitle: "Recibe lanzamientos, promociones exclusivas y tips de ergonomía directamente en tu correo.",
+    heading: "10% en tu",
+    headingAccent: "primera compra",
+    subtitle: "Suscríbete y recibe tu código de descuento, más lanzamientos exclusivos y tips de ergonomía.",
     placeholder: "tu@email.com",
-    cta: "Suscribirse",
-    success: "¡Gracias! Te avisaremos con lo mejor.",
+    cta: "Obtener mi 10%",
+    success: "¡Listo! Revisa tu correo para tu código.",
     note: "Sin spam. Darte de baja cuando quieras.",
   },
   en: {
-    heading: "Stay updated with",
-    headingAccent: "Ergonómica",
-    subtitle: "Receive launches, exclusive promotions and ergonomics tips directly in your inbox.",
+    heading: "10% off your",
+    headingAccent: "first purchase",
+    subtitle: "Subscribe and get your discount code, plus exclusive launches and ergonomics tips.",
     placeholder: "your@email.com",
-    cta: "Subscribe",
-    success: "Thanks! We'll keep you in the loop.",
+    cta: "Get my 10%",
+    success: "Done! Check your email for your code.",
     note: "No spam. Unsubscribe anytime.",
   },
 }
