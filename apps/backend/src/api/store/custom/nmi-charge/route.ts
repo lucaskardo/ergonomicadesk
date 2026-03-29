@@ -81,10 +81,41 @@ async function handleNmiCharge(req: MedusaRequest, res: MedusaResponse, logger: 
     return res.status(400).json({ message: "Invalid cart ID" })
   }
 
+  // IP-based rate limit (prevents creating multiple carts to bypass cart-based limit)
+  const clientIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "unknown"
+  if (!(await checkRateLimit(`nmi_ip_${clientIp}`, 10, 60_000))) {
+    logger.warn("[NmiCharge] IP rate limit exceeded", { ip: clientIp })
+    return res.status(429).json({ message: "Too many payment attempts. Please wait a minute." })
+  }
+
   // Rate limiting (5 attempts per minute per cart)
   if (!(await checkRateLimit(cart_id))) {
     logger.warn("[NmiCharge] Rate limit exceeded", { cart_id })
     return res.status(429).json({ message: "Too many payment attempts. Please wait a minute." })
+  }
+
+  // Turnstile bot verification (graceful skip if not configured)
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY
+  if (turnstileSecret) {
+    const turnstileToken = (body as any).turnstile_token
+    if (!turnstileToken || typeof turnstileToken !== "string") {
+      return res.status(400).json({ message: "Bot verification required" })
+    }
+    try {
+      const cfRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret: turnstileSecret, response: turnstileToken }),
+      })
+      const cfData = await cfRes.json() as { success: boolean }
+      if (!cfData.success) {
+        logger.warn("[NmiCharge] Turnstile verification failed", { cart_id })
+        return res.status(403).json({ message: "Bot verification failed" })
+      }
+    } catch (err) {
+      // Turnstile API down — allow through to avoid blocking legitimate orders
+      logger.warn("[NmiCharge] Turnstile API error — allowing through", { error: (err as Error).message })
+    }
   }
 
   // 2. Resolve cart server-side — NEVER trust amount from frontend

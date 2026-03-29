@@ -123,6 +123,9 @@ export default async function metaCapiHandler({
         ...(attribution._fbp && { fbp: attribution._fbp }),
         ...(attribution._fbc && { fbc: attribution._fbc }),
         ...(attribution.lead_id && { external_id: [sha256(attribution.lead_id)] }),
+        // client_ip_address and client_user_agent are NOT hashed per Meta spec
+        ...(attribution.client_ip && { client_ip_address: attribution.client_ip }),
+        ...(attribution.client_ua && { client_user_agent: attribution.client_ua }),
       },
       custom_data: {
         currency: (typedOrder.currency_code || "usd").toUpperCase(),

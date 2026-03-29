@@ -93,7 +93,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const canonical = productCanonical(params.countryCode, "es", handle)
 
   return {
-    title: `${product.title} | Ergonómica`,
+    title: `${product.title} | Ergonómica Panamá`,
     description: product.description
       ? product.description.slice(0, 160)
       : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
@@ -102,7 +102,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       languages: alternateUrls(params.countryCode, productPath(handle)),
     },
     openGraph: {
-      title: `${product.title} | Ergonómica`,
+      title: `${product.title} | Ergonómica Panamá`,
       description: product.description
         ? product.description.slice(0, 160)
         : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,

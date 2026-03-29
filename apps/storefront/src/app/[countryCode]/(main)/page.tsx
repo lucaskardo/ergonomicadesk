@@ -26,6 +26,7 @@ export async function generateMetadata({
       title: "Ergonómica | Muebles de Oficina Ergonómicos en Panamá",
       description:
         "Escritorios standing, sillas ergonómicas y accesorios para home office. Envío gratis en Ciudad de Panamá.",
+      images: [{ url: `${SITE_URL}/og-home.jpg`, width: 1200, height: 630 }],
     },
   }
 }

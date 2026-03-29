@@ -53,6 +53,7 @@ const Payment = ({
   )
   const [nmiToken, setNmiToken] = useState<string | null>(null)
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const cardFieldsRef = useRef<any>(null)
 
   const searchParams = useSearchParams()
@@ -133,6 +134,7 @@ const Payment = ({
           body: JSON.stringify({
             cart_id: cart.id,
             payment_token: nmiToken,
+            ...(turnstileToken && { turnstile_token: turnstileToken }),
           }),
         })
 
@@ -146,6 +148,11 @@ const Payment = ({
               ? "Payment declined. Please check your card and try again."
               : "Pago rechazado. Verifica tu tarjeta e intenta de nuevo.")
           )
+          // Scroll to error and highlight card fields
+          const cardContainer = document.querySelector("[data-nmi-card-container]")
+          cardContainer?.classList.add("border-red-500", "border-2")
+          cardContainer?.scrollIntoView({ behavior: "smooth", block: "center" })
+          setTimeout(() => cardContainer?.classList.remove("border-red-500", "border-2"), 5000)
           cardFieldsRef.current?.resetFields?.()
           setNmiToken(null)
           setIsLoading(false)
@@ -258,7 +265,7 @@ const Payment = ({
           )}
 
           {isNmi(selectedPaymentMethod) && isOpen && (
-            <div className="border border-ui-border-base rounded-lg p-4 mt-4">
+            <div className="border border-ui-border-base rounded-lg p-4 mt-4" data-nmi-card-container>
               <p className="text-sm font-medium text-ui-fg-base mb-3">
                 {lang === "en" ? "Card Details" : "Datos de Tarjeta"}
               </p>

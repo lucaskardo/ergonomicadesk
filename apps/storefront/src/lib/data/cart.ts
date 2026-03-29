@@ -21,7 +21,7 @@ import {
 } from "./cookies"
 import { getRegion } from "./regions"
 import { getLocale } from "@lib/data/locale-actions"
-import { cookies } from "next/headers"
+import { cookies, headers as getRequestHeaders } from "next/headers"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -434,6 +434,11 @@ export async function placeOrder(cartId?: string) {
 
     const firstTouch = ftRaw ? JSON.parse(decodeURIComponent(ftRaw)) : {}
 
+    // Capture client signals for Meta CAPI Event Match Quality
+    const headersList = await getRequestHeaders()
+    const clientIp = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || ""
+    const clientUa = headersList.get("user-agent") || ""
+
     const metadata = {
       attribution: {
         ...utm,
@@ -443,6 +448,8 @@ export async function placeOrder(cartId?: string) {
         first_touch: firstTouch,
         _fbp: fbpRaw || "",
         _fbc: fbcRaw || "",
+        client_ip: clientIp,
+        client_ua: clientUa,
       },
       products_viewed: productsViewed,
       funnel_checkout_started: new Date().toISOString(),

@@ -59,7 +59,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const canonicalUrl = productCanonical(params.countryCode, "en", handle)
   return {
-    title: `${product.title} | Ergonómica`,
+    title: `${product.title} | Ergonomica Office Panama`,
     description: product.description
       ? product.description.slice(0, 160)
       : `${product.title} — Buy at Ergonómica Panama. Free shipping in Panama City. Warranty included.`,
@@ -68,7 +68,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       languages: alternateUrls(params.countryCode, productPath(handle)),
     },
     openGraph: {
-      title: `${product.title} | Ergonómica`,
+      title: `${product.title} | Ergonomica Office Panama`,
       description: product.description?.slice(0, 160) || `${product.title} — Ergonómica Panama`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },

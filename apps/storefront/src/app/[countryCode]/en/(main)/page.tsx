@@ -21,6 +21,12 @@ export async function generateMetadata({
         "x-default": `${baseUrl}/`,
       },
     },
+    openGraph: {
+      title: "Ergonómica — Your home office, elevated | Ergonomic Furniture Panama",
+      description:
+        "Standing desks, ergonomic chairs, and office accessories in Panama. Free delivery in Panama City. 1-5 year warranty.",
+      images: [{ url: `${SITE_URL}/og-home.jpg`, width: 1200, height: 630 }],
+    },
   }
 }
 

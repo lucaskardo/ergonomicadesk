@@ -1,6 +1,16 @@
 const items = {
-  es: [{ icon: "🔒", text: "Pago seguro" }],
-  en: [{ icon: "🔒", text: "Secure checkout" }],
+  es: [
+    { icon: "🔒", text: "Pago seguro con cifrado 256-bit" },
+    { icon: "🛡️", text: "Garantía 1–5 años" },
+    { icon: "🚚", text: "Envío y armado gratis" },
+    { icon: "↩️", text: "Devolución en 7 días" },
+  ],
+  en: [
+    { icon: "🔒", text: "256-bit secure payment" },
+    { icon: "🛡️", text: "1–5 year warranty" },
+    { icon: "🚚", text: "Free delivery + assembly" },
+    { icon: "↩️", text: "7-day returns" },
+  ],
 }
 
 export default function CheckoutTrustBar({ lang = "es" }: { lang?: "es" | "en" }) {

@@ -29,6 +29,10 @@ export function getItemId(item: {
 export function trackEvent(event: string, data: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return
   window.dataLayer = window.dataLayer || []
+  // GA4 requires clearing stale ecommerce data before each new ecommerce push
+  if (data.ecommerce) {
+    window.dataLayer.push({ ecommerce: null })
+  }
   window.dataLayer.push({
     event,
     event_id: (data.event_id as string) || generateEventId(),
@@ -121,6 +125,7 @@ export function trackViewItemList(
   listName: string
 ) {
   if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "view_item_list",
     ecommerce: {
@@ -141,6 +146,7 @@ export function trackSelectItem(
   index: number
 ) {
   if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "select_item",
     ecommerce: {
@@ -157,6 +163,7 @@ export function trackSelectItem(
 
 export function trackRemoveFromCart(item: any, currencyCode: string) {
   if (typeof window === "undefined" || !window.dataLayer) return
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "remove_from_cart",
     ecommerce: {
@@ -175,6 +182,7 @@ export function trackRemoveFromCart(item: any, currencyCode: string) {
 export function trackAddShippingInfo(cart: any) {
   if (typeof window === "undefined" || !window.dataLayer) return
   const currency = (cart.region?.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "add_shipping_info",
     ecommerce: {
@@ -194,6 +202,7 @@ export function trackAddShippingInfo(cart: any) {
 export function trackAddPaymentInfo(cart: any, paymentType: string) {
   if (typeof window === "undefined" || !window.dataLayer) return
   const currency = (cart.region?.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "add_payment_info",
     ecommerce: {
@@ -213,6 +222,7 @@ export function trackAddPaymentInfo(cart: any, paymentType: string) {
 export function trackViewCart(cart: any) {
   if (typeof window === "undefined" || !window.dataLayer) return
   const currency = (cart.region?.currency_code || cart.currency_code || "usd").toUpperCase()
+  window.dataLayer.push({ ecommerce: null })
   window.dataLayer.push({
     event: "view_cart",
     ecommerce: {
