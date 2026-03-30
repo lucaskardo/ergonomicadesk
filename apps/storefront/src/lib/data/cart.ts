@@ -343,7 +343,7 @@ export async function submitPromotionForm(
   }
 }
 
-// TODO: Pass a POJO instead of a form entity here
+// Secure helper to parse and truncate strings from FormData
 export async function setAddresses(currentState: unknown, formData: FormData) {
   try {
     if (!formData) {
@@ -354,20 +354,23 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
       throw new Error("No existing cart found when setting addresses")
     }
 
+    const safeStr = (val: FormDataEntryValue | null, maxLen = 100) => 
+      val ? String(val).slice(0, maxLen).trim() : ""
+
     const data = {
       shipping_address: {
-        first_name: formData.get("shipping_address.first_name"),
-        last_name: formData.get("shipping_address.last_name"),
-        address_1: formData.get("shipping_address.address_1"),
+        first_name: safeStr(formData.get("shipping_address.first_name"), 50),
+        last_name: safeStr(formData.get("shipping_address.last_name"), 50),
+        address_1: safeStr(formData.get("shipping_address.address_1"), 250),
         address_2: "",
-        company: formData.get("shipping_address.company"),
-        postal_code: formData.get("shipping_address.postal_code"),
-        city: formData.get("shipping_address.city"),
-        country_code: formData.get("shipping_address.country_code"),
-        province: formData.get("shipping_address.province"),
-        phone: formData.get("shipping_address.phone"),
+        company: safeStr(formData.get("shipping_address.company"), 100),
+        postal_code: safeStr(formData.get("shipping_address.postal_code"), 20),
+        city: safeStr(formData.get("shipping_address.city"), 100),
+        country_code: safeStr(formData.get("shipping_address.country_code"), 10),
+        province: safeStr(formData.get("shipping_address.province"), 50),
+        phone: safeStr(formData.get("shipping_address.phone"), 50),
       },
-      email: formData.get("email"),
+      email: safeStr(formData.get("email"), 150),
     } as any
 
     const sameAsBilling = formData.get("same_as_billing")
@@ -375,16 +378,16 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 
     if (sameAsBilling !== "on")
       data.billing_address = {
-        first_name: formData.get("billing_address.first_name"),
-        last_name: formData.get("billing_address.last_name"),
-        address_1: formData.get("billing_address.address_1"),
+        first_name: safeStr(formData.get("billing_address.first_name"), 50),
+        last_name: safeStr(formData.get("billing_address.last_name"), 50),
+        address_1: safeStr(formData.get("billing_address.address_1"), 250),
         address_2: "",
-        company: formData.get("billing_address.company"),
-        postal_code: formData.get("billing_address.postal_code"),
-        city: formData.get("billing_address.city"),
-        country_code: formData.get("billing_address.country_code"),
-        province: formData.get("billing_address.province"),
-        phone: formData.get("billing_address.phone"),
+        company: safeStr(formData.get("billing_address.company"), 100),
+        postal_code: safeStr(formData.get("billing_address.postal_code"), 20),
+        city: safeStr(formData.get("billing_address.city"), 100),
+        country_code: safeStr(formData.get("billing_address.country_code"), 10),
+        province: safeStr(formData.get("billing_address.province"), 50),
+        phone: safeStr(formData.get("billing_address.phone"), 50),
       }
     await updateCart(data)
   } catch (e: any) {

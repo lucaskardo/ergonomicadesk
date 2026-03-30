@@ -17,6 +17,7 @@ import { useLang } from "@lib/i18n/context"
 import { getTranslations } from "@lib/i18n"
 import { trackAddPaymentInfo } from "@lib/tracking"
 import dynamic from "next/dynamic"
+import { TurnstileWidget } from "../turnstile"
 
 const NmiCardFields = dynamic(() => import("../nmi-card-fields"), {
   ssr: false,
@@ -278,6 +279,12 @@ const Payment = ({
                   }}
                 />
               </div>
+              <div className="mt-4">
+                <TurnstileWidget
+                  onVerify={(t) => setTurnstileToken(t)}
+                  onExpire={() => setTurnstileToken(null)}
+                />
+              </div>
             </div>
           )}
 
@@ -308,6 +315,7 @@ const Payment = ({
             disabled={
               (isStripeLike(selectedPaymentMethod) && !cardComplete) ||
               (isNmi(selectedPaymentMethod) && !nmiToken) ||
+              (isNmi(selectedPaymentMethod) && !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) ||
               (!selectedPaymentMethod && !paidByGiftcard) ||
               chargeSucceeded
             }

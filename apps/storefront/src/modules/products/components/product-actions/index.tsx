@@ -129,6 +129,13 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
+  const maxQuantity = useMemo(() => {
+    if (!selectedVariant) return 1
+    if (!selectedVariant.manage_inventory) return 99
+    if (selectedVariant.allow_backorder) return 99
+    return selectedVariant.inventory_quantity || 1
+  }, [selectedVariant])
+
   const lang = pathname.includes("/en/") ? "en" : "es"
 
   const labels = lang === "en" ? {
@@ -274,8 +281,9 @@ export default function ProductActions({
             <span className="w-10 text-sm font-semibold text-center text-ergo-950">{quantity}</span>
             <button
               type="button"
-              className="w-9 h-9 flex items-center justify-center text-ergo-400 hover:text-ergo-950 hover:bg-ergo-100 transition-colors"
-              onClick={() => setQuantity(quantity + 1)}
+              className="w-9 h-9 flex items-center justify-center text-ergo-400 hover:text-ergo-950 hover:bg-ergo-100 transition-colors disabled:opacity-30"
+              onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
+              disabled={quantity >= maxQuantity}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
             </button>

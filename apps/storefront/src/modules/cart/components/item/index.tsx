@@ -13,7 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import { productPath } from "@lib/util/routes"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
-import { useState, useEffect, useTransition } from "react"
+import { useState, useEffect, useTransition, useMemo } from "react"
 import { useRouter } from "next/navigation"
 
 type ItemProps = {
@@ -51,9 +51,11 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       })
   }
 
-  // TODO: Update this to grab the actual max inventory
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
+  const maxQuantity = useMemo(() => {
+    if (!item.variant?.manage_inventory) return 99 // Arbitrary high fallback
+    if (item.variant?.allow_backorder) return 99
+    return item.variant?.inventory_quantity || 1
+  }, [item.variant])
 
   return (
     <Table.Row className="w-full" data-testid="product-row">
