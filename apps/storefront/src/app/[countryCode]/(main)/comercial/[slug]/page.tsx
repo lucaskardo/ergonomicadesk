@@ -12,19 +12,23 @@ import { sanityFetch } from "@/sanity/lib/live"
 import { COMMERCIAL_SECTOR_QUERY, COMMERCIAL_SECTORS_QUERY } from "@/sanity/lib/queries"
 import { urlFor } from "@/sanity/lib/image"
 
+type SpaceImage = { asset?: { _id: string; url: string }; alt?: string; hotspot?: unknown; crop?: unknown }
+
 type SectorData = {
   _id: string
   slug: string
   title: { es?: string; en?: string }
   subtitle?: { es?: string; en?: string }
   description?: { es?: string; en?: string }
-  heroImage?: { asset?: { _id: string; url: string }; alt?: string; hotspot?: unknown; crop?: unknown }
+  heroImage?: SpaceImage
   spaces?: Array<{
     _key: string
     name: { es?: string; en?: string }
     slug?: string
     description?: { es?: string; en?: string }
     icon?: string
+    image?: SpaceImage
+    gallery?: Array<{ _key: string; asset?: { _id: string; url: string }; alt?: string }>
   }>
   gallery?: Array<{ _key: string; asset?: { _id: string; url: string }; alt?: string }>
   catalogFile?: { asset?: { _id: string; url: string } }
@@ -130,6 +134,21 @@ export default async function CommercialSectorPage(
       <BreadcrumbJsonLd items={breadcrumbs} />
       {faqItems.length > 0 && <FAQPageJsonLd faqs={faqItems} />}
 
+      {/* Visual breadcrumb */}
+      <nav className="bg-white border-b border-ergo-100 px-4 sm:px-6 lg:px-10 py-3">
+        <div className="max-w-[1360px] mx-auto flex items-center gap-2 text-[0.75rem] text-ergo-400">
+          <LocalizedClientLink href="/" className="hover:text-ergo-sky transition-colors">
+            {lang === "en" ? "Home" : "Inicio"}
+          </LocalizedClientLink>
+          <span>/</span>
+          <LocalizedClientLink href={commercialPath()} className="hover:text-ergo-sky transition-colors">
+            {lang === "en" ? "Commercial" : "Comercial"}
+          </LocalizedClientLink>
+          <span>/</span>
+          <span className="text-ergo-950 font-medium">{title}</span>
+        </div>
+      </nav>
+
       {/* Hero */}
       <section className="relative bg-ergo-950 overflow-hidden" style={{ minHeight: 320 }}>
         {heroImageUrl && (
@@ -180,20 +199,51 @@ export default async function CommercialSectorPage(
               className="font-display font-bold text-ergo-950 tracking-tight mb-10"
               style={{ fontSize: "clamp(1.2rem, 1.8vw, 1.6rem)" }}
             >
-              {lang === "en" ? "Spaces we furnish" : "Espacios que equipamos"}
+              {lang === "en" ? "Choose your space" : "Escoge tu espacio"}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {sector.spaces.map((space) => {
                 const spaceName = lang === "en" ? (space.name.en ?? space.name.es ?? "") : (space.name.es ?? "")
                 const spaceDesc = lang === "en" ? (space.description?.en ?? space.description?.es ?? "") : (space.description?.es ?? "")
-                return (
-                  <div key={space._key} className="bg-white p-6 border border-ergo-100">
-                    {space.icon && (
-                      <span className="text-2xl mb-3 block">{space.icon}</span>
-                    )}
-                    <h3 className="font-display font-bold text-ergo-950 text-[0.95rem] mb-2">{spaceName}</h3>
-                    {spaceDesc && <p className="text-ergo-400 text-[0.8rem] leading-relaxed">{spaceDesc}</p>}
+                const spaceImageUrl = space.image?.asset
+                  ? urlFor(space.image).width(640).height(420).fit("crop").url()
+                  : undefined
+                const cardContent = (
+                  <div className="group flex flex-col overflow-hidden border border-ergo-100 hover:border-ergo-sky/50 hover:-translate-y-1 transition-all duration-300 bg-white">
+                    {/* Photo */}
+                    <div className="relative w-full aspect-[4/3] overflow-hidden">
+                      {spaceImageUrl ? (
+                        <Image
+                          src={spaceImageUrl}
+                          alt={space.image?.alt ?? spaceName}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-ergo-100 to-ergo-200" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-ergo-950/60 to-transparent" />
+                      <div className="absolute bottom-3 left-4">
+                        <h3 className="font-display font-bold text-white text-[0.95rem] leading-tight">{spaceName}</h3>
+                      </div>
+                    </div>
+                    {/* Body */}
+                    <div className="flex flex-col flex-1 p-5">
+                      {spaceDesc && (
+                        <p className="text-ergo-400 text-[0.8rem] leading-relaxed flex-1 mb-4">{spaceDesc}</p>
+                      )}
+                      <span className="text-[0.72rem] font-semibold text-ergo-sky uppercase tracking-[0.08em] flex items-center gap-1">
+                        {lang === "en" ? "See product types →" : "Ver tipos de producto →"}
+                      </span>
+                    </div>
                   </div>
+                )
+                return space.slug ? (
+                  <LocalizedClientLink key={space._key} href={commercialPath(slug, space.slug)}>
+                    {cardContent}
+                  </LocalizedClientLink>
+                ) : (
+                  <div key={space._key}>{cardContent}</div>
                 )
               })}
             </div>

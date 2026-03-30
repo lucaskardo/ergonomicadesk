@@ -158,7 +158,13 @@ export const COMMERCIAL_SECTOR_QUERY = `
       name ${localizedStringFragment},
       "slug": slug,
       description ${localizedTextFragment},
-      icon
+      icon,
+      image ${imageFragment},
+      "gallery": gallery[]{
+        _key,
+        asset->{ _id, url },
+        alt
+      }
     },
     "gallery": gallery[]{
       _key,

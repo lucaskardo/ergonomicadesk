@@ -47,9 +47,32 @@ export const commercialSectorSchema = defineType({
           type: "object",
           fields: [
             defineField({ name: "name", title: "Nombre / Name", type: "localizedString", validation: (rule) => rule.required() }),
-            defineField({ name: "slug", title: "Slug (Fase 2)", type: "string" }),
+            defineField({ name: "slug", title: "Slug", type: "string" }),
             defineField({ name: "description", title: "Descripción / Description", type: "localizedText" }),
             defineField({ name: "icon", title: "Emoji icon", type: "string" }),
+            defineField({
+              name: "image",
+              title: "Space Image",
+              type: "image",
+              options: { hotspot: true },
+              fields: [
+                defineField({ name: "alt", type: "string", title: "Alt text" }),
+              ],
+            }),
+            defineField({
+              name: "gallery",
+              title: "Gallery",
+              type: "array",
+              of: [
+                defineArrayMember({
+                  type: "image",
+                  options: { hotspot: true },
+                  fields: [
+                    defineField({ name: "alt", type: "string", title: "Alt text" }),
+                  ],
+                }),
+              ],
+            }),
           ],
           preview: {
             select: { title: "name.es", subtitle: "icon" },

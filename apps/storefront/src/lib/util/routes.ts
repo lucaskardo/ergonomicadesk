@@ -23,8 +23,10 @@ export function blogPath(slug: string): string {
   return `/blog/${slug}`
 }
 
-export function commercialPath(slug?: string): string {
-  return slug ? `/comercial/${slug}` : "/comercial"
+export function commercialPath(sectorSlug?: string, spaceSlug?: string): string {
+  if (sectorSlug && spaceSlug) return `/comercial/${sectorSlug}/${spaceSlug}`
+  if (sectorSlug) return `/comercial/${sectorSlug}`
+  return "/comercial"
 }
 
 // Static paths

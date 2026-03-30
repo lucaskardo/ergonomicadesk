@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { commercialPath } from "@lib/util/routes"
 
 const CONTENT = {
   es: {
@@ -15,24 +18,28 @@ const CONTENT = {
     viewAll: "Ver todos los sectores →",
     sectors: [
       {
+        slug: "oficinas",
         icon: "🏢",
         title: "Oficinas Corporativas",
         sub: "Espacios ergonómicos que impulsan productividad",
         tags: ["Estaciones de trabajo", "Salas de reuniones", "Recepción", "Lounge", "Cafetería"],
       },
       {
+        slug: "educacion",
         icon: "🎓",
         title: "Educación",
         sub: "Mobiliario que inspira el aprendizaje",
         tags: ["Aulas", "Laboratorios", "Bibliotecas", "Áreas comunes"],
       },
       {
+        slug: "horeca",
         icon: "🏨",
         title: "Horeca",
         sub: "Hotels, restaurants & cafés",
         tags: ["Lobby", "Restaurantes", "Cafeterías", "Eventos", "Lounge"],
       },
       {
+        slug: "salud",
         icon: "🏥",
         title: "Salud",
         sub: "Espacios clínicos cómodos y funcionales",
@@ -54,24 +61,28 @@ const CONTENT = {
     viewAll: "View all sectors →",
     sectors: [
       {
+        slug: "oficinas",
         icon: "🏢",
         title: "Corporate Offices",
         sub: "Ergonomic spaces that boost productivity",
         tags: ["Workstations", "Meeting rooms", "Reception", "Lounge", "Cafeteria"],
       },
       {
+        slug: "educacion",
         icon: "🎓",
         title: "Education",
         sub: "Furniture that inspires learning",
         tags: ["Classrooms", "Labs", "Libraries", "Common areas"],
       },
       {
+        slug: "horeca",
         icon: "🏨",
         title: "Horeca",
         sub: "Hotels, restaurants & cafés",
         tags: ["Lobby", "Restaurants", "Cafes", "Events", "Lounge"],
       },
       {
+        slug: "salud",
         icon: "🏥",
         title: "Healthcare",
         sub: "Comfortable and functional clinical spaces",
@@ -112,9 +123,10 @@ export default function CommercialPreview({
         {/* Sector cards 2×2 grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
           {c.sectors.map((sector) => (
-            <div
-              key={sector.title}
-              className="p-7 border transition-all duration-300 cursor-default group"
+            <Link
+              key={sector.slug}
+              href={`${base}${commercialPath(sector.slug)}`}
+              className="block p-7 border transition-all duration-300 group"
               style={{
                 background: "rgba(255,255,255,0.04)",
                 borderColor: "rgba(255,255,255,0.06)",
@@ -147,7 +159,7 @@ export default function CommercialPreview({
                   </span>
                 ))}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

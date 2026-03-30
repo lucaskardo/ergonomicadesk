@@ -118,7 +118,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Comercial pages
-  const commercialSlugs = ["oficinas", "educacion", "horeca", "salud"]
+  const commercialSectors: Record<string, string[]> = {
+    oficinas: ["workstations", "lounge-seating", "reuniones"],
+    educacion: [],
+    horeca: [],
+    salud: [],
+  }
   entries.push({
     url: `${SITE_URL}/pa/comercial`,
     lastModified: new Date(),
@@ -126,15 +131,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
     alternates: { languages: alternateUrls("pa", "/comercial") },
   })
-  for (const slug of commercialSlugs) {
-    const path = commercialPath(slug)
+  for (const [slug, spaces] of Object.entries(commercialSectors)) {
+    const sectorPath = commercialPath(slug)
     entries.push({
-      url: `${SITE_URL}/pa${path}`,
+      url: `${SITE_URL}/pa${sectorPath}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
-      alternates: { languages: alternateUrls("pa", path) },
+      alternates: { languages: alternateUrls("pa", sectorPath) },
     })
+    for (const spaceSlug of spaces) {
+      const spacePath = commercialPath(slug, spaceSlug)
+      entries.push({
+        url: `${SITE_URL}/pa${spacePath}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+        alternates: { languages: alternateUrls("pa", spacePath) },
+      })
+    }
   }
 
   // Blog posts — sourced from src/content/blog/posts.ts
