@@ -9,6 +9,14 @@ import { commercialPath, SITE_URL } from "@lib/util/routes"
 import { sanityFetch } from "@/sanity/lib/live"
 import { COMMERCIAL_SECTORS_QUERY } from "@/sanity/lib/queries"
 import { urlFor } from "@/sanity/lib/image"
+import {
+  IconFactoryDirect,
+  IconStandingDesk,
+  IconSkyline,
+  IconChat,
+  IconFloorPlan,
+  IconDelivery,
+} from "@modules/commercial/components/animated-icons"
 
 export async function generateMetadata(
   props: { params: Promise<{ countryCode: string }> }
@@ -292,6 +300,8 @@ export default async function ComercialPage(
             {[
               {
                 num: "01",
+                icon: <IconChat />,
+                key: "consult",
                 title: { es: "Consulta", en: "Consultation" },
                 desc: {
                   es: "Entendemos tu espacio, equipo y visión. Virtual o presencial, sin costo.",
@@ -300,6 +310,8 @@ export default async function ComercialPage(
               },
               {
                 num: "02",
+                icon: <IconFloorPlan />,
+                key: "design",
                 title: { es: "Diseño", en: "Design" },
                 desc: {
                   es: "Propuesta con layout, productos seleccionados y presupuesto a medida.",
@@ -308,6 +320,8 @@ export default async function ComercialPage(
               },
               {
                 num: "03",
+                icon: <IconDelivery />,
+                key: "install",
                 title: { es: "Instalación", en: "Installation" },
                 desc: {
                   es: "Entrega, ensamblaje y configuración. Tu equipo llega y trabaja.",
@@ -315,9 +329,12 @@ export default async function ComercialPage(
                 },
               },
             ].map((item, i, arr) => (
-              <div key={item.num} className="flex items-stretch gap-4">
+              <div key={item.key} className="flex items-stretch gap-4">
                 <div className="flex-1 bg-white p-7 border border-ergo-100">
-                  <span className="font-display font-extrabold text-[1.6rem] text-ergo-sky leading-none block mb-4">{item.num}</span>
+                  <div className="mb-4 flex items-center gap-3">
+                    {item.icon}
+                    <span className="font-display font-extrabold text-[1.6rem] text-ergo-sky leading-none">{item.num}</span>
+                  </div>
                   <h3 className="font-display font-bold text-ergo-950 text-[1rem] mb-2">
                     {lang === "en" ? item.title.en : item.title.es}
                   </h3>
@@ -351,7 +368,8 @@ export default async function ComercialPage(
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-ergo-200">
             {[
               {
-                symbol: "$",
+                icon: <IconFactoryDirect />,
+                key: "direct",
                 title: { es: "Precio directo", en: "Direct pricing" },
                 desc: {
                   es: "Sin intermediarios ni distribuidores. Trabajas directo con nosotros — mejor calidad, menos costo.",
@@ -359,7 +377,8 @@ export default async function ComercialPage(
                 },
               },
               {
-                symbol: "✦",
+                icon: <IconStandingDesk />,
+                key: "ergonomics",
                 title: { es: "Diseño + ergonomía", en: "Design + ergonomics" },
                 desc: {
                   es: "Cada producto elegido por cómo se ve Y cómo se siente. Tu oficina impresiona y tu equipo lo agradece.",
@@ -367,7 +386,8 @@ export default async function ComercialPage(
                 },
               },
               {
-                symbol: "★",
+                icon: <IconSkyline />,
+                key: "panama",
                 title: { es: "Expertise en Panamá", en: "Panama expertise" },
                 desc: {
                   es: "5+ años equipando empresas aquí. Conocemos los edificios, la logística y el mercado local.",
@@ -375,8 +395,8 @@ export default async function ComercialPage(
                 },
               },
             ].map((item) => (
-              <div key={item.symbol} className="px-8 py-8 md:py-0 first:pl-0 last:pr-0 text-center md:text-left">
-                <span className="text-ergo-sky text-[1.4rem] font-bold block mb-4">{item.symbol}</span>
+              <div key={item.key} className="px-8 py-8 md:py-0 first:pl-0 last:pr-0 text-center md:text-left">
+                <div className="mb-4">{item.icon}</div>
                 <h3 className="font-display font-bold text-ergo-950 text-[1rem] mb-3">
                   {lang === "en" ? item.title.en : item.title.es}
                 </h3>

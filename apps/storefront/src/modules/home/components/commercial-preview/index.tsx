@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { commercialPath } from "@lib/util/routes"
 import ScrollAnimate from "@modules/common/components/scroll-animate"
+import { IconSkyline, IconSpine, IconChat, IconShield } from "@modules/commercial/components/animated-icons"
 
 const CONTENT = {
   es: {
@@ -93,28 +94,11 @@ const CONTENT = {
   },
 }
 
-/* Placeholder sector icons — Task 3 will replace these with animated SVGs */
 const SECTOR_ICONS: Record<string, React.ReactNode> = {
-  office: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="1" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="9" y1="9" x2="21" y2="9" /><line x1="9" y1="15" x2="21" y2="15" />
-    </svg>
-  ),
-  education: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" />
-    </svg>
-  ),
-  horeca: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2z" /><path d="M9 22v-4h6v4" /><rect x="8" y="6" width="3" height="3" /><rect x="13" y="6" width="3" height="3" /><rect x="8" y="12" width="3" height="3" /><rect x="13" y="12" width="3" height="3" />
-    </svg>
-  ),
-  health: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2z" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
-    </svg>
-  ),
+  office: <IconSkyline />,
+  education: <IconSpine />,
+  horeca: <IconChat />,
+  health: <IconShield />,
 }
 
 export default function CommercialPreview({
