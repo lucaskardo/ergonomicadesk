@@ -55,7 +55,7 @@ export default function WhyErgonomica({ lang }: { lang: "es" | "en" }) {
   const c = CONTENT[lang]
 
   return (
-    <section className="bg-ergo-bg-warm py-16">
+    <section className="bg-ergo-bg-warm section-y-tight">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <div className="mb-10">

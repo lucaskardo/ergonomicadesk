@@ -58,8 +58,8 @@ export default function Newsletter({
   }
 
   return (
-    <section className="bg-white border-t border-b border-ergo-200/60">
-      <div className="max-w-[540px] mx-auto px-5 py-14 lg:py-16 flex flex-col items-center text-center">
+    <section className="bg-white border-t border-b border-ergo-200/60 section-y">
+      <div className="max-w-[540px] mx-auto px-5 flex flex-col items-center text-center">
         <h2
           className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
           style={{ fontSize: "clamp(1.4rem, 2.2vw, 1.8rem)", letterSpacing: "-0.02em" }}

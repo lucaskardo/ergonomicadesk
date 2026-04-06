@@ -144,7 +144,7 @@ export default async function FeaturedProductsHome({
   const c = CONTENT[typedLang]
 
   return (
-    <section className="bg-ergo-bg py-16">
+    <section className="bg-ergo-bg section-y">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section header */}
         <div className="flex items-end justify-between mb-9">

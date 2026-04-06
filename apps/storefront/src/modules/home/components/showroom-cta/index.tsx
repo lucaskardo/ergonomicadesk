@@ -29,7 +29,7 @@ export default function ShowroomCTA({ lang }: { lang: "es" | "en" }) {
   const c = CONTENT[lang]
 
   return (
-    <section className="bg-ergo-bg py-16">
+    <section className="bg-ergo-bg section-y">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Map placeholder */}

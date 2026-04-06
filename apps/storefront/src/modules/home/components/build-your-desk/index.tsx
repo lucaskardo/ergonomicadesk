@@ -306,7 +306,7 @@ export default function BuildYourDesk({
   const es = lang === "es"
 
   return (
-    <section className="bg-ergo-950" style={{ padding: "clamp(56px, 7vw, 96px) 0" }}>
+    <section className="bg-ergo-950 section-y">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Heading */}
         <div className="text-center mb-10">

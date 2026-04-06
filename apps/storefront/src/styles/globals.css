@@ -67,6 +67,37 @@ body {
   input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
   }
+
+  /* Vertical rhythm for homepage and landing sections.
+     Mobile: 64px, Tablet: 96px, Desktop: 128px
+     Matches Branch Furniture / Herman Miller / Vitra spacing. */
+  .section-y {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  @media (min-width: 640px) {
+    .section-y {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-y {
+      padding-top: 8rem;
+      padding-bottom: 8rem;
+    }
+  }
+  /* Tight version for dense sections like trust bars */
+  .section-y-tight {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+  @media (min-width: 1024px) {
+    .section-y-tight {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+  }
 }
 
 @layer components {
