@@ -110,15 +110,10 @@ export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooter
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Main footer grid */}
         <div
-          className="grid gap-8 py-14"
-          style={{
-            gridTemplateColumns: sanityColumns && sanityColumns.length > 0
-              ? `1.8fr ${sanityColumns.map(() => "1fr").join(" ")} 1.4fr`
-              : "1.8fr 1fr 1fr 1fr 1.4fr",
-          }}
+          className="grid gap-8 py-14 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
         >
           {/* Column 1: Brand */}
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-3.5 col-span-2 sm:col-span-3 lg:col-span-1">
             <LocalizedClientLink
               href="/"
               className="flex items-center gap-2.5 text-white hover:text-ergo-sky transition-colors"
