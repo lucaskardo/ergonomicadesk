@@ -39,6 +39,7 @@ module.exports = {
           100: "#EDEDE8",
           bg: "#F8F5F0",
           "bg-warm": "#F3EDE5",
+          clay: "#E8E0D5",
         },
         grey: {
           0: "#FFFFFF",
@@ -160,6 +161,18 @@ module.exports = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(0)" },
         },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
@@ -175,6 +188,9 @@ module.exports = {
         enter: "enter 200ms ease-out",
         "slide-in": "slide-in 1.2s cubic-bezier(.41,.73,.51,1.02)",
         leave: "leave 150ms ease-in forwards",
+        "fade-up": "fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "scale-in": "scale-in 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        marquee: "marquee 30s linear infinite",
       },
     },
   },

@@ -1,3 +1,5 @@
+import ScrollAnimate from "@modules/common/components/scroll-animate"
+
 const TruckIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
     <path d="M1 3h15v13H1z" />
@@ -65,42 +67,44 @@ export default function TrustBar({
       <div className="max-w-[1360px] mx-auto grid grid-cols-2 md:grid-cols-4">
         {useSanity
           ? sanityItems.map((item, i) => (
-              <div
-                key={item._key ?? i}
-                className={`group flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
-                  i < sanityItems.length - 1 ? "border-r border-ergo-200/60" : ""
-                }`}
-              >
-                <div className="w-10 h-10 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 text-[1.1rem] rounded-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-3 shadow-sm">
-                  {item.emoji}
+              <ScrollAnimate key={item._key ?? i} animation="fade-up" delay={i * 80}>
+                <div
+                  className={`group flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
+                    i < sanityItems.length - 1 ? "border-r border-ergo-200/60" : ""
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 text-[1.1rem] rounded-md transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-3 shadow-sm">
+                    {item.emoji}
+                  </div>
+                  <div>
+                    <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight">
+                      {item.title?.[lang]}
+                    </p>
+                    <p className="text-[0.68rem] text-ergo-400 mt-0.5">{item.subtitle?.[lang]}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight">
-                    {item.title?.[lang]}
-                  </p>
-                  <p className="text-[0.68rem] text-ergo-400 mt-0.5">{item.subtitle?.[lang]}</p>
-                </div>
-              </div>
+              </ScrollAnimate>
             ))
           : hardcodedItems.map(({ Icon, title, sub }, i) => (
-              <div
-                key={title}
-                className={`group flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
-                  i < hardcodedItems.length - 1 ? "border-r border-ergo-200/60" : ""
-                }`}
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-ergo-sky-light/80 to-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 rounded-md transition-all duration-300 ease-out group-hover:shadow-md group-hover:shadow-ergo-sky-light/50 ring-1 ring-black/5">
-                  <Icon />
+              <ScrollAnimate key={title} animation="fade-up" delay={i * 80}>
+                <div
+                  className={`group flex items-center gap-3 px-6 py-5 transition-colors duration-200 hover:bg-ergo-sky-50 cursor-default ${
+                    i < hardcodedItems.length - 1 ? "border-r border-ergo-200/60" : ""
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-ergo-sky-light/80 to-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 rounded-md transition-all duration-300 ease-out group-hover:shadow-md group-hover:shadow-ergo-sky-light/50 ring-1 ring-black/5">
+                    <Icon />
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight transition-transform duration-300 group-hover:translate-x-0.5">
+                      {title}
+                    </p>
+                    <p className="text-[0.68rem] text-ergo-400 mt-0.5 transition-transform duration-300 group-hover:translate-x-0.5 delay-75">
+                      {sub}
+                    </p>
+                  </div>
                 </div>
-                <div className="overflow-hidden">
-                  <p className="text-[0.77rem] font-semibold text-ergo-950 leading-tight transition-transform duration-300 group-hover:translate-x-0.5">
-                    {title}
-                  </p>
-                  <p className="text-[0.68rem] text-ergo-400 mt-0.5 transition-transform duration-300 group-hover:translate-x-0.5 delay-75">
-                    {sub}
-                  </p>
-                </div>
-              </div>
+              </ScrollAnimate>
             ))}
       </div>
     </div>

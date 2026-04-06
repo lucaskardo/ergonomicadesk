@@ -7,6 +7,7 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import { productPath } from "@lib/util/routes"
 import TrackViewList from "@modules/store/components/track-view-list"
 import TrackProductClick from "@modules/products/components/product-preview/track-click"
+import ScrollAnimate from "@modules/common/components/scroll-animate"
 
 const CURATED_HANDLES = [
   "frame-double-bl",
@@ -183,22 +184,23 @@ export default async function FeaturedProductsHome({
           style={{ gap: "3px" }}
         >
           {products.slice(0, 8).map((product, i) => (
-            <TrackProductClick
-              key={product.id}
-              product={{
-                id: product.id!,
-                title: product.title!,
-                variants: product.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
-              }}
-              listName="featured_products"
-              index={i}
-            >
-              <ProductCard
-                product={product}
-                lang={typedLang}
+            <ScrollAnimate key={product.id} animation="fade-up" delay={i * 120}>
+              <TrackProductClick
+                product={{
+                  id: product.id!,
+                  title: product.title!,
+                  variants: product.variants?.map((v) => ({ sku: v.sku ?? undefined, id: v.id })),
+                }}
+                listName="featured_products"
                 index={i}
-              />
-            </TrackProductClick>
+              >
+                <ProductCard
+                  product={product}
+                  lang={typedLang}
+                  index={i}
+                />
+              </TrackProductClick>
+            </ScrollAnimate>
           ))}
         </div>
       </div>

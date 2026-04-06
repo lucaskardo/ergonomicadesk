@@ -13,6 +13,7 @@ import ShowroomSection from "@modules/home/components/showroom-section"
 import B2BBanner from "@modules/home/components/b2b-banner"
 import CommercialPreview from "@modules/home/components/commercial-preview"
 import Newsletter from "@modules/home/components/newsletter"
+import Marquee from "@modules/home/components/marquee"
 import CtaImageSection from "@modules/home/components/cta-image-section"
 import { sanityFetch } from "@/sanity/lib/live"
 import { HOMEPAGE_QUERY } from "@/sanity/lib/queries"
@@ -148,6 +149,7 @@ export default async function Homepage({
         // Fallback: render current hardcoded homepage
         <>
           <Hero lang={lang} countryCode={countryCode} />
+          <Marquee lang={lang} />
           <TrustBar lang={lang} />
           <CategoryGrid lang={lang} countryCode={countryCode} />
           {region && <FeaturedProductsHome region={region} lang={lang} />}

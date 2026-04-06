@@ -1,4 +1,5 @@
 import Link from "next/link"
+import ScrollAnimate from "@modules/common/components/scroll-animate"
 
 const CONTENT = {
   es: {
@@ -103,10 +104,10 @@ export default function CategoryGrid({
           }}
         >
           {CATEGORIES.map((cat, i) => (
+            <ScrollAnimate key={cat.handle} animation="scale-in" delay={i * 100} className={i === 0 ? "lg:row-span-2" : ""}>
             <Link
-              key={cat.handle}
               href={`${base}/${catPath}/${cat.handle}`}
-              className={`relative overflow-hidden cursor-pointer group${i === 0 ? " lg:row-span-2" : ""}`}
+              className="relative overflow-hidden cursor-pointer group block h-full"
             >
               {/* Background */}
               <div
@@ -148,6 +149,7 @@ export default function CategoryGrid({
                 </svg>
               </div>
             </Link>
+            </ScrollAnimate>
           ))}
         </div>
       </div>

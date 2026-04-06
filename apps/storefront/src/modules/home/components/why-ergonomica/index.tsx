@@ -1,4 +1,5 @@
 // Renamed visually to WorkspaceInspiration but kept same filename/export for backward compat
+import ScrollAnimate from "@modules/common/components/scroll-animate"
 
 const CONTENT = {
   es: {
@@ -73,9 +74,9 @@ export default function WhyErgonomica({ lang }: { lang: "es" | "en" }) {
         <div className="grid grid-cols-1 lg:grid-cols-[5fr_4fr] gap-3">
           {/* Workspace cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {c.cards.map((card) => (
+            {c.cards.map((card, cardIdx) => (
+              <ScrollAnimate key={card.tag} animation="fade-up" delay={cardIdx * 100}>
               <div
-                key={card.tag}
                 className="relative overflow-hidden cursor-pointer group"
                 style={{ minHeight: 280, background: card.bg }}
               >
@@ -101,20 +102,20 @@ export default function WhyErgonomica({ lang }: { lang: "es" | "en" }) {
                   </svg>
                 </div>
               </div>
+              </ScrollAnimate>
             ))}
           </div>
 
           {/* Benefits column */}
           <div className="flex flex-col gap-3">
-            {c.benefits.map((b) => (
-              <div
-                key={b.title}
-                className="flex-1 bg-white border border-ergo-200/60 p-6 flex flex-col justify-center"
-              >
-                <div className="w-8 h-0.5 bg-ergo-sky mb-3" />
-                <h3 className="font-semibold text-ergo-950 text-[0.9rem]">{b.title}</h3>
-                <p className="text-[0.78rem] text-ergo-400 mt-1.5 leading-relaxed">{b.desc}</p>
-              </div>
+            {c.benefits.map((b, bIdx) => (
+              <ScrollAnimate key={b.title} animation="fade-up" delay={bIdx * 100}>
+                <div className="flex-1 bg-white border border-ergo-200/60 p-6 flex flex-col justify-center">
+                  <div className="w-8 h-0.5 bg-ergo-sky mb-3" />
+                  <h3 className="font-semibold text-ergo-950 text-[0.9rem]">{b.title}</h3>
+                  <p className="text-[0.78rem] text-ergo-400 mt-1.5 leading-relaxed">{b.desc}</p>
+                </div>
+              </ScrollAnimate>
             ))}
           </div>
         </div>

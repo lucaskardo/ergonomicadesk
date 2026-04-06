@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { commercialPath } from "@lib/util/routes"
+import ScrollAnimate from "@modules/common/components/scroll-animate"
 
 const CONTENT = {
   es: {
@@ -146,9 +147,9 @@ export default function CommercialPreview({
 
         {/* Sector cards 2×2 grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
-          {c.sectors.map((sector) => (
+          {c.sectors.map((sector, sIdx) => (
+            <ScrollAnimate key={sector.slug} animation="fade-up" delay={sIdx * 120}>
             <Link
-              key={sector.slug}
               href={`${base}${commercialPath(sector.slug)}`}
               className="block p-7 bg-white border border-ergo-200/60 transition-all duration-300 group hover:bg-ergo-bg-warm hover:border-ergo-sky/30"
             >
@@ -166,6 +167,7 @@ export default function CommercialPreview({
                 ))}
               </div>
             </Link>
+            </ScrollAnimate>
           ))}
         </div>
 

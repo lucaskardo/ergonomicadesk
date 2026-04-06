@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import ScrollAnimate from "@modules/common/components/scroll-animate"
 
 const CONTENT = {
   es: {
@@ -59,6 +60,7 @@ export default function Newsletter({
 
   return (
     <section className="bg-white border-t border-b border-ergo-200/60">
+      <ScrollAnimate animation="fade-up">
       <div className="max-w-[540px] mx-auto px-5 py-14 lg:py-16 flex flex-col items-center text-center">
         <h2
           className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
@@ -95,6 +97,7 @@ export default function Newsletter({
 
         <p className="mt-3 text-[0.72rem] text-ergo-400">{c.note}</p>
       </div>
+      </ScrollAnimate>
     </section>
   )
 }

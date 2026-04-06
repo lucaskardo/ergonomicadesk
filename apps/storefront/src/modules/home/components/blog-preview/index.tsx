@@ -1,3 +1,5 @@
+import ScrollAnimate from "@modules/common/components/scroll-animate"
+
 const CONTENT = {
   es: {
     heading: "Guías &",
@@ -58,9 +60,9 @@ export default function BlogPreview({ lang }: { lang: "es" | "en" }) {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
           style={{ gap: "3px" }}
         >
-          {c.posts.map((post) => (
+          {c.posts.map((post, pIdx) => (
+            <ScrollAnimate key={post.title} animation="scale-in" delay={pIdx * 100}>
             <div
-              key={post.title}
               className="flex flex-col p-7 cursor-pointer transition-transform duration-300 hover:-translate-y-1"
               style={{
                 background: "linear-gradient(135deg, #2E2E2B, #4A4A45)",
@@ -84,6 +86,7 @@ export default function BlogPreview({ lang }: { lang: "es" | "en" }) {
                 {post.read} {readLabel}
               </div>
             </div>
+            </ScrollAnimate>
           ))}
         </div>
       </div>

@@ -1,3 +1,6 @@
+import ScrollAnimate from "@modules/common/components/scroll-animate"
+import AnimatedCounter from "@modules/common/components/animated-counter"
+
 const StarIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1">
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -129,9 +132,9 @@ export default function SocialProof({
 
         {/* 3-column review cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {c.reviews.map((review) => (
+          {c.reviews.map((review, rIdx) => (
+            <ScrollAnimate key={review.author} animation="fade-up" delay={rIdx * 150}>
             <div
-              key={review.author}
               className="bg-white border border-ergo-200/60 p-6 flex flex-col gap-4"
             >
               {/* Stars */}
@@ -158,6 +161,7 @@ export default function SocialProof({
                 </div>
               </div>
             </div>
+            </ScrollAnimate>
           ))}
         </div>
 
@@ -172,7 +176,7 @@ export default function SocialProof({
                 className="font-display font-bold text-ergo-950"
                 style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)" }}
               >
-                {number}
+                <AnimatedCounter value={number} />
               </p>
               <p className="text-[0.68rem] uppercase tracking-[0.08em] mt-0.5 text-ergo-600">
                 {label}
