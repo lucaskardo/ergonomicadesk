@@ -46,7 +46,13 @@ export default async function CategoryTemplate({
   }
   getParents(category)
 
-  const subcategories = category.category_children ?? []
+  // If current category has children, show them.
+  // If not but it has a parent, show siblings (parent's children) so user can keep browsing.
+  const subcategories = category.category_children?.length
+    ? category.category_children
+    : (category.parent_category?.category_children ?? [])
+
+  const isShowingSiblings = !category.category_children?.length && !!category.parent_category
 
   return (
     <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
@@ -86,16 +92,38 @@ export default async function CategoryTemplate({
 
       {/* Subcategory pills */}
       {subcategories.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {subcategories.map((c) => (
+        <div className="flex flex-col gap-3">
+          {isShowingSiblings && category.parent_category && (
             <LocalizedClientLink
-              key={c.id}
-              href={categoryPath(c.handle)}
-              className="px-4 py-2 text-[0.82rem] font-semibold border border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950 transition-colors"
+              href={categoryPath(category.parent_category.handle)}
+              className="text-[0.78rem] text-ergo-400 hover:text-ergo-sky-dark transition-colors flex items-center gap-1 self-start"
             >
-              {c.name}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              {lang === "en" ? "Back to" : "Volver a"} {category.parent_category.name}
             </LocalizedClientLink>
-          ))}
+          )}
+          <div className="flex flex-wrap gap-2">
+            {subcategories
+              .sort((a: any, b: any) => (a.rank ?? 0) - (b.rank ?? 0))
+              .map((c) => {
+                const isActive = c.id === category.id
+                return (
+                  <LocalizedClientLink
+                    key={c.id}
+                    href={categoryPath(c.handle)}
+                    className={`px-4 py-2 text-[0.82rem] font-semibold border transition-colors ${
+                      isActive
+                        ? "bg-ergo-950 text-white border-ergo-950"
+                        : "border-ergo-200/80 text-ergo-600 hover:border-ergo-600 hover:text-ergo-950"
+                    }`}
+                  >
+                    {c.name}
+                  </LocalizedClientLink>
+                )
+              })}
+          </div>
         </div>
       )}
 
