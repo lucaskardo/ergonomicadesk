@@ -1,33 +1,22 @@
-import { Metadata } from "next"
 import Homepage from "@modules/home/templates/homepage"
 import { SITE_URL } from "@lib/util/routes"
+import { buildMetadata } from "@lib/util/metadata"
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ countryCode: string }>
-}): Promise<Metadata> {
+}) {
   const { countryCode } = await params
-  const baseUrl = `${SITE_URL}/${countryCode}`
-  return {
-    title: "Ergonómica — Your home office, elevated | Ergonomic Furniture Panama",
+  return buildMetadata({
+    title: "Your home office, elevated | Ergonomic Furniture Panama",
     description:
       "Standing desks, ergonomic chairs, and office accessories in Panama. Free delivery in Panama City. 1-5 year warranty.",
-    alternates: {
-      canonical: `${baseUrl}/en/`,
-      languages: {
-        es: `${baseUrl}/`,
-        en: `${baseUrl}/en/`,
-        "x-default": `${baseUrl}/`,
-      },
-    },
-    openGraph: {
-      title: "Ergonómica — Your home office, elevated | Ergonomic Furniture Panama",
-      description:
-        "Standing desks, ergonomic chairs, and office accessories in Panama. Free delivery in Panama City. 1-5 year warranty.",
-      images: [{ url: `${SITE_URL}/og-home.jpg`, width: 1200, height: 630 }],
-    },
-  }
+    countryCode,
+    lang: "en",
+    path: "/",
+    image: `${SITE_URL}/images/hero-homepage.png`,
+  })
 }
 
 export default async function HomeEn(props: {
