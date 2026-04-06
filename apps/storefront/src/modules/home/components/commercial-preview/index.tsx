@@ -19,28 +19,28 @@ const CONTENT = {
     sectors: [
       {
         slug: "oficinas",
-        icon: "🏢",
+        icon: "office",
         title: "Oficinas Corporativas",
         sub: "Espacios ergonómicos que impulsan productividad",
         tags: ["Estaciones de trabajo", "Salas de reuniones", "Recepción", "Lounge", "Cafetería"],
       },
       {
         slug: "educacion",
-        icon: "🎓",
+        icon: "education",
         title: "Educación",
         sub: "Mobiliario que inspira el aprendizaje",
         tags: ["Aulas", "Laboratorios", "Bibliotecas", "Áreas comunes"],
       },
       {
         slug: "horeca",
-        icon: "🏨",
+        icon: "horeca",
         title: "Horeca",
         sub: "Hotels, restaurants & cafés",
         tags: ["Lobby", "Restaurantes", "Cafeterías", "Eventos", "Lounge"],
       },
       {
         slug: "salud",
-        icon: "🏥",
+        icon: "health",
         title: "Salud",
         sub: "Espacios clínicos cómodos y funcionales",
         tags: ["Salas de espera", "Consultorios", "Áreas admin"],
@@ -62,34 +62,58 @@ const CONTENT = {
     sectors: [
       {
         slug: "oficinas",
-        icon: "🏢",
+        icon: "office",
         title: "Corporate Offices",
         sub: "Ergonomic spaces that boost productivity",
         tags: ["Workstations", "Meeting rooms", "Reception", "Lounge", "Cafeteria"],
       },
       {
         slug: "educacion",
-        icon: "🎓",
+        icon: "education",
         title: "Education",
         sub: "Furniture that inspires learning",
         tags: ["Classrooms", "Labs", "Libraries", "Common areas"],
       },
       {
         slug: "horeca",
-        icon: "🏨",
+        icon: "horeca",
         title: "Horeca",
         sub: "Hotels, restaurants & cafés",
         tags: ["Lobby", "Restaurants", "Cafes", "Events", "Lounge"],
       },
       {
         slug: "salud",
-        icon: "🏥",
+        icon: "health",
         title: "Healthcare",
         sub: "Comfortable and functional clinical spaces",
         tags: ["Waiting rooms", "Offices", "Admin areas"],
       },
     ],
   },
+}
+
+/* Placeholder sector icons — Task 3 will replace these with animated SVGs */
+const SECTOR_ICONS: Record<string, React.ReactNode> = {
+  office: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="1" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="9" y1="9" x2="21" y2="9" /><line x1="9" y1="15" x2="21" y2="15" />
+    </svg>
+  ),
+  education: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" />
+    </svg>
+  ),
+  horeca: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2z" /><path d="M9 22v-4h6v4" /><rect x="8" y="6" width="3" height="3" /><rect x="13" y="6" width="3" height="3" /><rect x="8" y="12" width="3" height="3" /><rect x="13" y="12" width="3" height="3" />
+    </svg>
+  ),
+  health: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a2a28" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2z" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
+    </svg>
+  ),
 }
 
 export default function CommercialPreview({
@@ -104,18 +128,18 @@ export default function CommercialPreview({
   const c = CONTENT[lang]
 
   return (
-    <section className="bg-ergo-950 py-20">
+    <section className="bg-ergo-bg py-20">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <div className="mb-12">
           <h2
-            className="font-display font-bold text-white leading-[1.1] tracking-tight"
+            className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
             style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
           >
             {c.heading}{" "}
             <span style={{ color: "#5BC0EB" }}>{c.headingAccent}</span>
           </h2>
-          <p className="text-[0.9rem] mt-3 max-w-[560px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+          <p className="text-[0.9rem] mt-3 max-w-[560px] text-ergo-400">
             {c.subtitle}
           </p>
         </div>
@@ -126,34 +150,16 @@ export default function CommercialPreview({
             <Link
               key={sector.slug}
               href={`${base}${commercialPath(sector.slug)}`}
-              className="block p-7 border transition-all duration-300 group"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                borderColor: "rgba(255,255,255,0.06)",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget
-                el.style.background = "rgba(255,255,255,0.08)"
-                el.style.borderColor = "rgba(91,192,235,0.3)"
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget
-                el.style.background = "rgba(255,255,255,0.04)"
-                el.style.borderColor = "rgba(255,255,255,0.06)"
-              }}
+              className="block p-7 bg-white border border-ergo-200/60 transition-all duration-300 group hover:bg-ergo-bg-warm hover:border-ergo-sky/30"
             >
-              <div className="text-3xl mb-4">{sector.icon}</div>
-              <h3 className="font-display font-bold text-white text-[1.05rem] mb-1">{sector.title}</h3>
-              <p className="text-[0.8rem] mb-4" style={{ color: "rgba(255,255,255,0.5)" }}>{sector.sub}</p>
+              <div className="text-3xl mb-4">{SECTOR_ICONS[sector.icon]}</div>
+              <h3 className="font-display font-bold text-ergo-950 text-[1.05rem] mb-1">{sector.title}</h3>
+              <p className="text-[0.8rem] mb-4 text-ergo-400">{sector.sub}</p>
               <div className="flex flex-wrap gap-1.5">
                 {sector.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[0.68rem] px-2.5 py-1 font-medium"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      color: "rgba(255,255,255,0.4)",
-                    }}
+                    className="text-[0.68rem] px-2.5 py-1 font-medium bg-ergo-100 text-ergo-600"
                   >
                     {tag}
                   </span>
@@ -177,8 +183,8 @@ export default function CommercialPreview({
                 >
                   {step.step}
                 </span>
-                <h4 className="font-semibold text-white text-[0.9rem] mt-2 mb-1">{step.title}</h4>
-                <p className="text-[0.78rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+                <h4 className="font-semibold text-ergo-950 text-[0.9rem] mt-2 mb-1">{step.title}</h4>
+                <p className="text-[0.78rem] leading-relaxed text-ergo-400">
                   {step.desc}
                 </p>
               </div>
@@ -202,8 +208,7 @@ export default function CommercialPreview({
           </a>
           <Link
             href={`${base}/comercial`}
-            className="text-[0.84rem] font-semibold transition-colors duration-200"
-            style={{ color: "rgba(255,255,255,0.5)" }}
+            className="text-[0.84rem] font-semibold transition-colors duration-200 text-ergo-400"
           >
             {c.viewAll}
           </Link>

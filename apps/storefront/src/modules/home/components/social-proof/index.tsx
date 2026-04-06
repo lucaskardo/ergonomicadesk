@@ -162,19 +162,19 @@ export default function SocialProof({
         </div>
 
         {/* Stats bar */}
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 bg-ergo-950">
+        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 bg-ergo-bg-warm">
           {c.stats.map(({ number, label }, i) => (
             <div
               key={label}
-              className={`text-center py-7 px-5 ${i < c.stats.length - 1 ? "border-r border-white/[0.06]" : ""}`}
+              className={`text-center py-7 px-5 ${i < c.stats.length - 1 ? "border-r border-ergo-200" : ""}`}
             >
               <p
-                className="font-display font-bold"
-                style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: "#5BC0EB" }}
+                className="font-display font-bold text-ergo-950"
+                style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)" }}
               >
                 {number}
               </p>
-              <p className="text-[0.68rem] uppercase tracking-[0.08em] mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className="text-[0.68rem] uppercase tracking-[0.08em] mt-0.5 text-ergo-600">
                 {label}
               </p>
             </div>

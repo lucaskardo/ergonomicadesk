@@ -340,15 +340,15 @@ export default async function ComercialPage(
       </section>
 
       {/* Sección 6 — Por qué Ergonómica */}
-      <section className="bg-ergo-950 py-20 px-4 sm:px-6 lg:px-10">
+      <section className="bg-ergo-bg-warm py-20 px-4 sm:px-6 lg:px-10">
         <div className="max-w-[1360px] mx-auto">
           <h2
-            className="font-display font-bold text-white tracking-tight text-center mb-14"
+            className="font-display font-bold text-ergo-950 tracking-tight text-center mb-14"
             style={{ fontSize: "clamp(1.4rem, 2.2vw, 2rem)" }}
           >
             {lang === "en" ? "Why Ergonómica" : "Por qué Ergonómica"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-ergo-200">
             {[
               {
                 symbol: "$",
@@ -377,10 +377,10 @@ export default async function ComercialPage(
             ].map((item) => (
               <div key={item.symbol} className="px-8 py-8 md:py-0 first:pl-0 last:pr-0 text-center md:text-left">
                 <span className="text-ergo-sky text-[1.4rem] font-bold block mb-4">{item.symbol}</span>
-                <h3 className="font-display font-bold text-white text-[1rem] mb-3">
+                <h3 className="font-display font-bold text-ergo-950 text-[1rem] mb-3">
                   {lang === "en" ? item.title.en : item.title.es}
                 </h3>
-                <p className="text-ergo-300 text-[0.82rem] leading-relaxed">
+                <p className="text-ergo-400 text-[0.82rem] leading-relaxed">
                   {lang === "en" ? item.desc.en : item.desc.es}
                 </p>
               </div>
