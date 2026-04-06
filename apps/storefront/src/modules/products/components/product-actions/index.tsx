@@ -313,8 +313,8 @@ export default function ProductActions({
                 </span>
                 <p className="text-[0.72rem] text-ergo-400 mt-0.5">
                   {lang === "en"
-                    ? "Extend your warranty by 5 additional years. Covers motor, electronics and structure."
-                    : "Extiende tu garantía a 5 años adicionales. Cubre motor, electrónica y estructura."}
+                    ? "Extend your warranty by 5 additional years. Full coverage included."
+                    : "Extiende tu garantía 5 años adicionales. Cobertura completa incluida."}
                 </p>
               </label>
             </div>
