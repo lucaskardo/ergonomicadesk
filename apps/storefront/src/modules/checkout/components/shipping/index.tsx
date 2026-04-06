@@ -6,7 +6,7 @@ import { calculatePriceForShippingOption } from "@lib/data/fulfillment"
 import { convertToLocale } from "@lib/util/money"
 import { CheckCircleSolid, Loader } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import { Button, clx, Heading, Text } from "@medusajs/ui"
+import { clx, Heading, Text } from "@medusajs/ui"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
@@ -384,16 +384,24 @@ const Shipping: React.FC<ShippingProps> = ({
               error={error}
               data-testid="delivery-option-error-message"
             />
-            <Button
-              size="large"
-              className="mt"
+            <button
+              type="button"
               onClick={handleSubmit}
-              isLoading={isLoading}
               disabled={!shippingMethodId || isLoading}
               data-testid="submit-delivery-option-button"
+              className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 mt-1 transition-colors"
             >
-              {t.checkout.continue_to_payment}
-            </Button>
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                    <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                </>
+              ) : (
+                t.checkout.continue_to_payment
+              )}
+            </button>
           </div>
         </>
       ) : (

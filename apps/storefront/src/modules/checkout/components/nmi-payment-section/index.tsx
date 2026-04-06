@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { Button } from "@medusajs/ui"
+// Button replaced with branded native button
 import { useState, useCallback, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
@@ -156,15 +156,25 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
       <ErrorMessage error={error} data-testid="nmi-payment-error" />
 
-      <Button
-        size="large"
+      <button
+        type="button"
         onClick={handleSubmit}
-        isLoading={submitting}
         disabled={!formComplete || submitting || notReady || chargeSucceeded}
         data-testid="nmi-submit-order-button"
+        className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 transition-colors"
       >
-        {isEnglish ? "Place Order" : "Realizar Pedido"}
-      </Button>
+        {submitting ? (
+          <>
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+              <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            {isEnglish ? "Processing..." : "Procesando..."}
+          </>
+        ) : (
+          isEnglish ? "Place Order" : "Realizar Pedido"
+        )}
+      </button>
     </div>
   )
 }

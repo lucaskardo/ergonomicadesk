@@ -4,7 +4,7 @@ import { RadioGroup } from "@headlessui/react"
 import { isStripeLike, isNmi, paymentInfoMap } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
-import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
+import { Container, Heading, Text, clx } from "@medusajs/ui"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import PaymentContainer, {
   StripeCardContainer,
@@ -307,11 +307,9 @@ const Payment = ({
             data-testid="payment-method-error-message"
           />
 
-          <Button
-            size="large"
-            className="mt-6"
+          <button
+            type="button"
             onClick={handleSubmit}
-            isLoading={isLoading}
             disabled={
               (isStripeLike(selectedPaymentMethod) && !cardComplete) ||
               (isNmi(selectedPaymentMethod) && !nmiToken) ||
@@ -320,17 +318,28 @@ const Payment = ({
               chargeSucceeded
             }
             data-testid="submit-payment-button"
+            className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 mt-6 transition-colors"
           >
-            {isNmi(selectedPaymentMethod)
-              ? (nmiToken
-                ? t.checkout.place_order
-                : t.checkout.enter_card_details)
-              : isStripeLike(selectedPaymentMethod)
-                ? (!activeSession
-                  ? t.checkout.enter_card_details
-                  : t.checkout.place_order)
-                : t.checkout.place_order}
-          </Button>
+            {isLoading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                  <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+                {lang === "en" ? "Processing..." : "Procesando..."}
+              </>
+            ) : (
+              isNmi(selectedPaymentMethod)
+                ? (nmiToken
+                  ? t.checkout.place_order
+                  : t.checkout.enter_card_details)
+                : isStripeLike(selectedPaymentMethod)
+                  ? (!activeSession
+                    ? t.checkout.enter_card_details
+                    : t.checkout.place_order)
+                  : t.checkout.place_order
+            )}
+          </button>
         </div>
 
         <div className={isOpen ? "hidden" : "block"}>

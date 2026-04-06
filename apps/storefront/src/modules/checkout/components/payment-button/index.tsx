@@ -3,7 +3,7 @@
 import { isManual, isStripeLike, isNmi } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@medusajs/ui"
+// Button replaced with branded native buttons
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useRef, useState } from "react"
 import ErrorMessage from "../error-message"
@@ -47,7 +47,11 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
     default:
-      return <Button disabled>{lang === "es" ? "Seleccionar método de pago" : "Select a payment method"}</Button>
+      return (
+        <button disabled className="w-full inline-flex items-center justify-center gap-2 bg-ergo-200 text-ergo-400 cursor-not-allowed font-semibold text-[0.92rem] py-4 px-6 transition-colors">
+          {lang === "es" ? "Seleccionar método de pago" : "Select a payment method"}
+        </button>
+      )
   }
 }
 
@@ -161,14 +165,24 @@ const NmiChargeButton = ({
         onVerify={(t) => { turnstileTokenRef.current = t }}
         onExpire={() => { turnstileTokenRef.current = null }}
       />
-      <Button
-        size="large"
+      <button
+        type="button"
         onClick={handleCharge}
-        isLoading={submitting}
         disabled={notReady || submitting}
+        className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 transition-colors"
       >
-        {isEnglish ? "Place Order" : "Realizar Pedido"}
-      </Button>
+        {submitting ? (
+          <>
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+              <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            {isEnglish ? "Processing..." : "Procesando..."}
+          </>
+        ) : (
+          isEnglish ? "Place Order" : "Realizar Pedido"
+        )}
+      </button>
       <ErrorMessage error={error} />
     </>
   )
@@ -269,15 +283,25 @@ const StripePaymentButton = ({
 
   return (
     <>
-      <Button
+      <button
+        type="button"
         disabled={disabled || notReady}
         onClick={handlePayment}
-        size="large"
-        isLoading={submitting}
         data-testid={dataTestId}
+        className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 transition-colors"
       >
-        {t.checkout.place_order}
-      </Button>
+        {submitting ? (
+          <>
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+              <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            {lang === "en" ? "Processing..." : "Procesando..."}
+          </>
+        ) : (
+          t.checkout.place_order
+        )}
+      </button>
       <ErrorMessage
         error={errorMessage}
         data-testid="stripe-payment-error-message"
@@ -314,15 +338,25 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
 
   return (
     <>
-      <Button
+      <button
+        type="button"
         disabled={notReady}
-        isLoading={submitting}
         onClick={handlePayment}
-        size="large"
         data-testid="submit-order-button"
+        className="w-full inline-flex items-center justify-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky disabled:bg-ergo-200 disabled:text-ergo-400 disabled:cursor-not-allowed text-white font-semibold text-[0.92rem] py-4 px-6 transition-colors"
       >
-        {t.checkout.place_order}
-      </Button>
+        {submitting ? (
+          <>
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+              <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            {lang === "en" ? "Processing..." : "Procesando..."}
+          </>
+        ) : (
+          t.checkout.place_order
+        )}
+      </button>
       <ErrorMessage
         error={errorMessage}
         data-testid="manual-payment-error-message"
