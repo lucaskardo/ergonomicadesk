@@ -69,6 +69,32 @@ All are legitimate operational warnings, not debug logs.
 - NEXT_PUBLIC_SENTRY_DSN in template but not used in code (Sentry uses its own config)
 
 ### Backend
-- Missing: `NMI_3DS_MODE` (used in nmi-charge route, defaults to "best_effort")
-- Missing: `TURNSTILE_SECRET_KEY` (used in nmi-charge route for server-side verification)
+- Missing: `NMI_3DS_MODE` (used in nmi-charge route, defaults to "best_effort") → **FIXED**
+- Missing: `TURNSTILE_SECRET_KEY` (used in nmi-charge route for server-side verification) → **FIXED**
 - All other vars present ✓
+
+---
+
+## Session S33A Results
+
+### Files modified
+- `PREFLIGHT_REPORT.md` — new (this file)
+- `apps/storefront/src/app/[countryCode]/(main)/page.tsx` — OG image fix + buildMetadata()
+- `apps/storefront/src/app/[countryCode]/en/(main)/page.tsx` — OG image fix + buildMetadata()
+- `apps/storefront/next.config.ts` — CSP connect-src R2 domains
+- `apps/storefront/.env.template` — restructured, rotation warning
+- `apps/backend/.env.template` — added NMI_3DS_MODE, TURNSTILE_SECRET_KEY
+
+### Files deleted
+- `apps/storefront/src/modules/checkout/components/nmi-payment-section/index.tsx` — unused dead code
+
+### Build result
+- `npx tsc --noEmit` — **0 errors** ✓
+- `npx next build` — fails with ECONNREFUSED (Medusa backend not running). This is expected in dev without backend. No new errors introduced by these changes.
+
+### Risks detected
+1. **Backend must be running for full build verification** — category pages do SSG fetches to localhost:9000. Cannot fully verify build without backend.
+2. **ESLint config broken** — pre-existing circular structure error in `.eslintrc.js` with Next.js 16 flat config migration. Should be fixed separately.
+3. **Blog hardcoded /pa/ paths** — `src/content/blog/posts.ts` has 6 hardcoded `/pa/` links in HTML blog content. Low risk (static content) but should be migrated to route helpers.
+4. **SANITY_API_READ_TOKEN rotation** — previous token was exposed. Must rotate before production deploy.
+5. **Backend TypeScript warnings** — `get-product-feed-items.ts` has 2 TS errors (type mismatch + unknown property `limit`). Pre-existing, not introduced by S33A.
