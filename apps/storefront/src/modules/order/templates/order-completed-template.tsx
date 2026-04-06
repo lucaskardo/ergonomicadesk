@@ -8,6 +8,7 @@ import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import { HttpTypes } from "@medusajs/types"
 import PurchaseTracker from "@modules/order/components/purchase-tracker"
+import { getLang } from "@lib/i18n"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
@@ -16,6 +17,8 @@ type OrderCompletedTemplateProps = {
 export default async function OrderCompletedTemplate({
   order,
 }: OrderCompletedTemplateProps) {
+  const lang = await getLang()
+
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">
       <PurchaseTracker order={order} />
@@ -28,18 +31,22 @@ export default async function OrderCompletedTemplate({
             level="h1"
             className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
           >
-            <span>Thank you!</span>
-            <span>Your order was placed successfully.</span>
+            <span>{lang === "en" ? "Thank you!" : "¡Gracias!"}</span>
+            <span>
+              {lang === "en"
+                ? "Your order was placed successfully."
+                : "Tu orden fue procesada exitosamente."}
+            </span>
           </Heading>
-          <OrderDetails order={order} />
+          <OrderDetails order={order} lang={lang} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
-            Summary
+            {lang === "en" ? "Summary" : "Resumen"}
           </Heading>
           <Items order={order} />
           <CartTotals totals={order} />
-          <ShippingDetails order={order} />
-          <PaymentDetails order={order} />
-          <Help />
+          <ShippingDetails order={order} lang={lang} />
+          <PaymentDetails order={order} lang={lang} />
+          <Help lang={lang} />
         </div>
       </div>
     </div>
