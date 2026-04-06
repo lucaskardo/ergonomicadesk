@@ -55,6 +55,7 @@ const Payment = ({
   const [nmiToken, setNmiToken] = useState<string | null>(null)
   const [chargeSucceeded, setChargeSucceeded] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [cardholderName, setCardholderName] = useState("")
   const cardFieldsRef = useRef<any>(null)
 
   const searchParams = useSearchParams()
@@ -270,6 +271,21 @@ const Payment = ({
               <p className="text-sm font-medium text-ui-fg-base mb-3">
                 {lang === "en" ? "Card Details" : "Datos de Tarjeta"}
               </p>
+              <div className="mb-4">
+                <label htmlFor="cardholder-name" className="block text-[0.82rem] font-medium text-ergo-950 mb-1">
+                  {lang === "en" ? "Name on card" : "Nombre en la tarjeta"}
+                </label>
+                <input
+                  id="cardholder-name"
+                  type="text"
+                  value={cardholderName}
+                  onChange={(e) => setCardholderName(e.target.value)}
+                  placeholder={lang === "en" ? "John Smith" : "Juan Pérez"}
+                  className="w-full border border-ergo-200 px-3 py-2.5 text-[0.92rem] text-ergo-950 focus:border-ergo-sky-dark focus:outline-none transition-colors"
+                  autoComplete="cc-name"
+                  required
+                />
+              </div>
               <div className="min-h-[120px]">
                 <NmiCardFields
                   ref={cardFieldsRef}
