@@ -2,14 +2,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* ── Global border-radius reset: all corners square ── */
-*, *::before, *::after {
-  border-radius: 0 !important;
-}
-/* Exception: explicit circular elements (color swatches, avatars) */
-.rounded-full-override {
-  border-radius: 9999px !important;
-}
+/* Border-radius is controlled per-component via Tailwind classes.
+   Tailwind defaults to no rounding so most elements stay square unless explicitly rounded.
+   This was previously a global !important reset that broke buttons, the WhatsApp icon, and cards. */
 
 /* ── Base styles ── */
 html {
