@@ -11,12 +11,12 @@ const Help = ({ lang = "es" }: { lang?: "es" | "en" }) => {
       <div className="text-base-regular my-2">
         <ul className="gap-y-2 flex flex-col">
           <li>
-            <LocalizedClientLink href="/contact">
-              {lang === "en" ? "Contact" : "Contacto"}
-            </LocalizedClientLink>
+            <a href="https://wa.me/50769533776" target="_blank" rel="noopener noreferrer">
+              {lang === "en" ? "Contact via WhatsApp" : "Contacto por WhatsApp"}
+            </a>
           </li>
           <li>
-            <LocalizedClientLink href="/devoluciones">
+            <LocalizedClientLink href="/returns">
               {lang === "en" ? "Returns & Exchanges" : "Devoluciones y cambios"}
             </LocalizedClientLink>
           </li>
