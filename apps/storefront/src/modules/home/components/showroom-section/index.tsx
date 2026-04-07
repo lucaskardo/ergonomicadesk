@@ -45,7 +45,7 @@ export default function ShowroomSection({ lang }: { lang: "es" | "en" }) {
   const c = CONTENT[lang]
 
   return (
-    <section className="section-y">
+    <section className="section-y bg-ergo-bg-warm">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-11 items-center">
           {/* Image side */}
