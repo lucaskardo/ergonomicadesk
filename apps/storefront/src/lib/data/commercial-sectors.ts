@@ -58,7 +58,7 @@ export const COMMERCIAL_SECTORS: Sector[] = [
       ],
     },
     ctaText: { es: "Solicitar cotizaci\u00F3n corporativa", en: "Request corporate quote" },
-    seoTitle: { es: "Mobiliario para Oficinas Corporativas en Panam\u00E1 | Ergon\u00F3mica", en: "Corporate Office Furniture in Panama | Ergon\u00F3mica" },
+    seoTitle: { es: "Mobiliario para Oficinas Corporativas en Panam\u00E1", en: "Corporate Office Furniture in Panama" },
     seoDescription: { es: "Equipamos oficinas corporativas en Panam\u00E1 con mobiliario ergon\u00F3mico contract-grade. Standing desks, sillas premium, salas de reuni\u00F3n.", en: "We equip corporate offices in Panama with ergonomic contract-grade furniture. Standing desks, premium chairs, meeting rooms." },
   },
   {
@@ -96,7 +96,7 @@ export const COMMERCIAL_SECTORS: Sector[] = [
       ],
     },
     ctaText: { es: "Cotizar proyecto educativo", en: "Quote education project" },
-    seoTitle: { es: "Mobiliario Escolar y Universitario en Panam\u00E1 | Ergon\u00F3mica", en: "School & University Furniture in Panama | Ergon\u00F3mica" },
+    seoTitle: { es: "Mobiliario Escolar y Universitario en Panam\u00E1", en: "School & University Furniture in Panama" },
     seoDescription: { es: "Mobiliario ergon\u00F3mico para colegios, universidades y centros de capacitaci\u00F3n en Panam\u00E1.", en: "Ergonomic furniture for schools, universities, and training centers in Panama." },
   },
   {
@@ -134,7 +134,7 @@ export const COMMERCIAL_SECTORS: Sector[] = [
       ],
     },
     ctaText: { es: "Cotizar proyecto de hospitalidad", en: "Quote hospitality project" },
-    seoTitle: { es: "Mobiliario para Hoteles y Restaurantes en Panam\u00E1 | Ergon\u00F3mica", en: "Hotel & Restaurant Furniture in Panama | Ergon\u00F3mica" },
+    seoTitle: { es: "Mobiliario para Hoteles y Restaurantes en Panam\u00E1", en: "Hotel & Restaurant Furniture in Panama" },
     seoDescription: { es: "Mobiliario contract-grade para hoteles, restaurantes, caf\u00E9s y espacios de hospitalidad en Panam\u00E1.", en: "Contract-grade furniture for hotels, restaurants, caf\u00E9s, and hospitality spaces in Panama." },
   },
   {
@@ -170,7 +170,7 @@ export const COMMERCIAL_SECTORS: Sector[] = [
       ],
     },
     ctaText: { es: "Cotizar para cl\u00EDnica", en: "Quote for clinic" },
-    seoTitle: { es: "Mobiliario M\u00E9dico y Cl\u00EDnico en Panam\u00E1 | Ergon\u00F3mica", en: "Medical & Clinical Furniture in Panama | Ergon\u00F3mica" },
+    seoTitle: { es: "Mobiliario M\u00E9dico y Cl\u00EDnico en Panam\u00E1", en: "Medical & Clinical Furniture in Panama" },
     seoDescription: { es: "Mobiliario ergon\u00F3mico para cl\u00EDnicas, consultorios y centros m\u00E9dicos en Panam\u00E1.", en: "Ergonomic furniture for clinics, consulting rooms, and medical centers in Panama." },
   },
 ]
