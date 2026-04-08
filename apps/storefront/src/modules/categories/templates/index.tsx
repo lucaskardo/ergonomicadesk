@@ -49,7 +49,7 @@ export default async function CategoryTemplate({
   const subcategories = category.category_children ?? []
 
   return (
-    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
+    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6 bg-white" data-testid="category-container">
       {/* Breadcrumb */}
       {parents.length > 0 && (
         <div className="flex items-center gap-1.5 text-[0.75rem] text-ergo-400">

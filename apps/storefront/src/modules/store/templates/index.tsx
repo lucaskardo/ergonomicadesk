@@ -68,7 +68,7 @@ const StoreTemplate = async ({
   }
 
   return (
-    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6" data-testid="category-container">
+    <div className="flex flex-col py-8 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10 gap-6 bg-white" data-testid="category-container">
       {/* Top row: heading */}
       <StoreHeading />
 

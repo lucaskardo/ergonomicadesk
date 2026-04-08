@@ -53,7 +53,7 @@ export default async function RelatedProducts({
   const isEn = countryCode === "en"
 
   return (
-    <div className="product-page-constraint">
+    <div className="product-page-constraint bg-white">
       <div className="flex flex-col items-center text-center mb-8">
         <p className="text-2xl-regular text-ui-fg-base max-w-lg">
           {isEn ? "You might also like" : "También te puede interesar"}

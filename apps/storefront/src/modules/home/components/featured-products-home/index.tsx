@@ -134,7 +134,7 @@ export default async function FeaturedProductsHome({
   const c = CONTENT[typedLang]
 
   return (
-    <section className="bg-ergo-bg-warm section-y">
+    <section className="bg-white border-t border-ergo-100 section-y">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section header */}
         <div className="flex items-end justify-between mb-9">

@@ -30,7 +30,7 @@ export default async function ProductRail({
   }
 
   return (
-    <div className="content-container section-y">
+    <div className="content-container section-y bg-white">
       <div className="flex justify-between mb-8">
         <Text className="txt-xlarge">{collection.title}</Text>
         <InteractiveLink href={collectionPath(collection.handle)}>
