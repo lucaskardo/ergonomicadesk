@@ -66,6 +66,11 @@ module.exports = {
         "8xl": "100rem",
       },
       screens: {
+        // Tailwind defaults — used by all new code from S37 onwards
+        // sm: 640, md: 768, lg: 1024, xl: 1280, 2xl: 1536 (inherited from preset)
+
+        // Legacy custom breakpoints — kept for backwards compat with existing components
+        // Will be migrated to defaults incrementally. Do NOT add new instances.
         "2xsmall": "320px",
         xsmall: "512px",
         small: "1024px",

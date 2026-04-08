@@ -76,8 +76,8 @@ export default async function Nav() {
 
           {/* Left: Burger (mobile) + Logo + Desktop links */}
           <div className="flex items-center gap-x-3 h-full">
-            {/* Mobile burger */}
-            <div className="large:hidden h-full">
+            {/* Mobile burger — visible below 1024px */}
+            <div className="lg:hidden h-full">
               <SideMenu
                 regions={regions}
                 locales={locales}
@@ -98,46 +98,79 @@ export default async function Nav() {
               </span>
             </LocalizedClientLink>
 
-            {/* Desktop category links — centered */}
-            <div className="hidden large:flex items-center gap-x-8 h-full ml-8">
-              {navCategories.map((cat) => (
-                <LocalizedClientLink
-                  key={cat.handle ?? cat._key}
-                  href={cat.handle ? categoryPath(cat.handle) : "#"}
-                  className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
+            {/* Desktop nav — 4 items + CTA, visible from 1024px */}
+            <div className="hidden lg:flex items-center gap-x-1 h-full ml-8">
+              {/* Productos with hover dropdown */}
+              <div className="relative h-full flex items-center group">
+                <button
+                  className="flex items-center gap-1 px-4 h-full text-[0.85rem] font-medium text-ergo-700 hover:text-ergo-950 transition-colors"
+                  aria-haspopup="true"
+                  data-testid="nav-productos-button"
                 >
-                  {lang === "en" ? (cat.labelEn ?? cat.labelEs ?? "") : (cat.labelEs ?? "")}
-                  <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
-                </LocalizedClientLink>
-              ))}
-              <LocalizedClientLink
-                href="/store"
-                className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
-              >
-                {lang === "en" ? "Collections" : "Colecciones"}
-                <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
-              </LocalizedClientLink>
+                  {lang === "en" ? "Products" : "Productos"}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  className="absolute top-full left-0 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 bg-white shadow-2xl border border-ergo-100 min-w-[260px] py-3 z-50"
+                  data-testid="nav-productos-dropdown"
+                >
+                  {navCategories.map((cat) => (
+                    <LocalizedClientLink
+                      key={cat.handle ?? cat._key}
+                      href={cat.handle ? categoryPath(cat.handle) : "#"}
+                      className="flex items-center px-5 py-2.5 text-[0.88rem] text-ergo-700 hover:text-ergo-950 hover:bg-ergo-bg transition-colors min-h-[40px]"
+                    >
+                      {lang === "en" ? (cat.labelEn ?? cat.labelEs ?? "") : (cat.labelEs ?? "")}
+                    </LocalizedClientLink>
+                  ))}
+                  <div className="border-t border-ergo-100 mt-2 pt-2">
+                    <LocalizedClientLink
+                      href="/store"
+                      className="flex items-center px-5 py-2.5 text-[0.88rem] font-semibold text-ergo-sky-dark hover:text-ergo-sky transition-colors min-h-[40px]"
+                    >
+                      {lang === "en" ? "View all products →" : "Ver tienda completa →"}
+                    </LocalizedClientLink>
+                  </div>
+                </div>
+              </div>
+
               <LocalizedClientLink
                 href="/comercial"
-                className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
+                className="flex items-center px-4 h-full text-[0.85rem] font-medium text-ergo-700 hover:text-ergo-950 transition-colors"
+                data-testid="nav-link-comercial"
               >
                 {lang === "en" ? "Commercial" : "Comercial"}
-                <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
               </LocalizedClientLink>
+
               <LocalizedClientLink
-                href="/blog"
-                className="relative text-[0.82rem] font-medium text-ergo-400 hover:text-ergo-950 transition-colors whitespace-nowrap group"
+                href="/showroom"
+                className="flex items-center px-4 h-full text-[0.85rem] font-medium text-ergo-700 hover:text-ergo-950 transition-colors"
+                data-testid="nav-link-showroom"
               >
-                Blog
-                <span className="absolute -bottom-[1px] left-0 w-0 h-[1.5px] bg-ergo-sky group-hover:w-full transition-all duration-300" />
+                Showroom
               </LocalizedClientLink>
+
+              <a
+                href={"https://wa.me/50769533776?text=" + encodeURIComponent(lang === "en" ? "Hi! I'd like to know more about Ergonómica." : "¡Hola! Me gustaría saber más sobre Ergonómica.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-3 inline-flex items-center gap-2 bg-ergo-sky-dark hover:bg-ergo-sky text-white font-semibold text-[0.82rem] px-5 py-2.5 transition-colors min-h-[40px]"
+                data-testid="nav-cotizar-cta"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                </svg>
+                {lang === "en" ? "Quote" : "Cotizar"}
+              </a>
             </div>
           </div>
 
           {/* Right: Search + Language + Cart */}
           <div className="flex items-center gap-x-1 h-full">
             <SearchButton />
-            <div className="hidden small:flex items-center h-full">
+            <div className="hidden lg:flex items-center h-full">
               <LanguageSwitcher />
             </div>
             <Suspense
