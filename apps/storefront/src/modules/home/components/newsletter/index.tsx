@@ -59,7 +59,7 @@ export default function Newsletter({
 
   return (
     <section className="bg-white border-t border-b border-ergo-200/60 section-y">
-      <div className="max-w-[540px] mx-auto px-5 flex flex-col items-center text-center">
+      <div className="max-w-[540px] mx-auto px-4 sm:px-5 flex flex-col items-center text-center">
         <h2
           className="font-display font-bold text-ergo-950 leading-[1.1] tracking-tight"
           style={{ fontSize: "clamp(1.4rem, 2.2vw, 1.8rem)", letterSpacing: "-0.02em" }}
@@ -74,7 +74,7 @@ export default function Newsletter({
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="mt-5 flex w-full gap-2"
+            className="mt-5 flex flex-col sm:flex-row w-full gap-2"
           >
             <input
               type="email"
@@ -82,11 +82,11 @@ export default function Newsletter({
               onChange={(e) => setEmail(e.target.value)}
               placeholder={c.placeholder}
               required
-              className="flex-1 px-5 py-3.5 border border-ergo-200 text-ergo-950 text-[0.84rem] placeholder-ergo-300 focus:outline-none focus:border-ergo-sky transition-colors bg-ergo-bg"
+              className="flex-1 px-5 py-3.5 border border-ergo-200 text-ergo-950 text-base sm:text-[0.84rem] placeholder-ergo-300 focus:outline-none focus:border-ergo-sky transition-colors bg-ergo-bg min-h-[48px]"
             />
             <button
               type="submit"
-              className="px-7 py-3.5 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] hover:bg-ergo-sky transition-colors duration-300 flex-shrink-0"
+              className="px-7 py-3.5 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] hover:bg-ergo-sky transition-colors duration-300 flex-shrink-0 min-h-[48px]"
             >
               {c.cta}
             </button>
