@@ -413,7 +413,7 @@ export default function BuildYourDesk({
               <div className="flex gap-2 mt-2">
                 {FRAME_COLORS.map((c) => (
                   <button key={c.id} onClick={() => setFrameColor(c.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[0.75rem] font-medium border transition-all duration-150 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[0.75rem] font-medium border transition-all duration-150 min-h-[44px] ${
                       frameColor === c.id ? "border-ergo-sky text-white" : "border-ergo-800 text-ergo-400 hover:border-ergo-500"
                     }`}>
                     <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: c.hex }} />
@@ -496,7 +496,7 @@ export default function BuildYourDesk({
                 <div className="flex flex-col gap-1.5">
                   <button
                     onClick={() => setArmChoice(null)}
-                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors min-h-[44px] ${
                       !armChoice ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
                     }`}
                   >
@@ -507,7 +507,7 @@ export default function BuildYourDesk({
                     <button
                       key={arm.id}
                       onClick={() => setArmChoice(arm.id)}
-                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors min-h-[44px] ${
                         armChoice === arm.id ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
                       }`}
                     >
@@ -523,7 +523,7 @@ export default function BuildYourDesk({
                       <button
                         key={c.id}
                         onClick={() => setArmColor(c.id)}
-                        className={`w-6 h-6 rounded-full border-2 transition-all ${
+                        className={`w-9 h-9 rounded-full border-2 transition-all ${
                           armColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
                         }`}
                         style={{ background: c.hex }}
@@ -542,7 +542,7 @@ export default function BuildYourDesk({
                 <div className="flex flex-col gap-1.5">
                   <button
                     onClick={() => setCabinetChoice(null)}
-                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors min-h-[44px] ${
                       !cabinetChoice ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
                     }`}
                   >
@@ -553,7 +553,7 @@ export default function BuildYourDesk({
                     <button
                       key={cab.id}
                       onClick={() => setCabinetChoice(cab.id)}
-                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors min-h-[44px] ${
                         cabinetChoice === cab.id ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
                       }`}
                     >
@@ -569,7 +569,7 @@ export default function BuildYourDesk({
                       <button
                         key={c.id}
                         onClick={() => setCabinetColor(c.id)}
-                        className={`w-6 h-6 rounded-full border-2 transition-all ${
+                        className={`w-9 h-9 rounded-full border-2 transition-all ${
                           cabinetColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
                         }`}
                         style={{ background: c.hex }}
@@ -589,7 +589,7 @@ export default function BuildYourDesk({
                   {STAND_OPTIONS.map((s) => {
                     const isActive = stands.includes(s.id)
                     return (
-                      <div key={s.id} className="flex items-center justify-between py-2 px-1 border-b border-ergo-900/60">
+                      <div key={s.id} className="flex items-center justify-between py-2 px-1 border-b border-ergo-900/60 min-h-[44px]">
                         <span className="text-[0.8rem] text-ergo-300">
                           {es ? s.label.es : s.label.en}
                           <span className="text-ergo-500 ml-1.5">+${s.price}</span>
@@ -615,7 +615,7 @@ export default function BuildYourDesk({
                 <div className="text-2xl font-bold text-white font-display">${total}</div>
               </div>
               <button onClick={handleAddToCart} disabled={isAdding}
-                className={`inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[0.84rem] transition-all duration-200 ${
+                className={`inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[0.84rem] transition-all duration-200 min-h-[48px] ${
                   addedFeedback ? "bg-emerald-600 text-white" : "bg-ergo-sky-dark text-white hover:bg-ergo-sky"
                 } disabled:opacity-60`}>
                 {isAdding ? (
