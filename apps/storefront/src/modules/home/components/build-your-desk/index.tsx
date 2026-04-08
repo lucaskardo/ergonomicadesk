@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useTransition } from "react"
 import { addToCart } from "@lib/data/cart"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 
 /* ─── FRAMES ─── */
 const FRAMES = [
@@ -44,36 +44,48 @@ const WOOD_TYPES = [
 
 const WOOD_PRICE: Record<string, number> = { "120": 249, "150": 299, "180": 349 }
 
-/* ─── ACCESSORIES ─── */
-const ACCESSORIES = [
-  { id: "arm-single",       label: "Brazo monitor single",       labelEn: "Single monitor arm",      sku: "stand-arm-single-bl",         price: 69 },
-  { id: "arm-double",       label: "Brazo monitor doble",        labelEn: "Dual monitor arm",        sku: "stand-arm-double-bl",         price: 129 },
-  { id: "arm-heavy",        label: "Brazo monitor heavy duty",   labelEn: "Heavy duty monitor arm",  sku: "stand-arm-heavy-single-bl",   price: 89 },
-  { id: "cabinet-slim-bl",  label: "Archivador slim negro",      labelEn: "Slim cabinet black",      sku: "cabinet-3drawer-slim-bl",     price: 179 },
-  { id: "cabinet-slim-wh",  label: "Archivador slim blanco",     labelEn: "Slim cabinet white",      sku: "cabinet-3drawer-slim-wh",     price: 179 },
-  { id: "cabinet-comp-bl",  label: "Archivador compacto negro",  labelEn: "Compact cabinet black",   sku: "cabinet-3drawer-comp-bl",     price: 149 },
-  { id: "cabinet-comp-wh",  label: "Archivador compacto blanco", labelEn: "Compact cabinet white",   sku: "cabinet-3drawer-comp-wh",     price: 149 },
-  { id: "laptop-stand",     label: "Soporte laptop ajustable",   labelEn: "Adjustable laptop stand", sku: "stand-laptop-adjus-sl",       price: 39 },
-  { id: "tablet-stand",     label: "Soporte tablet grande",      labelEn: "Large tablet stand",      sku: "stand-tablet-adjus-large-bl", price: 35 },
-  { id: "desk-pad",         label: "Desk pad eco leather",       labelEn: "Eco leather desk pad",    sku: "pad-ecoleather-80x40-bl",     price: 29 },
+/* ─── ACCESSORIES (categorized) ─── */
+const MONITOR_ARM_OPTIONS = [
+  { id: "single", label: { es: "Brazo single", en: "Single arm" }, price: 69, skuBase: "stand-arm-single" },
+  { id: "double", label: { es: "Brazo doble", en: "Dual arm" }, price: 129, skuBase: "stand-arm-double" },
+  { id: "heavy",  label: { es: "Brazo heavy duty", en: "Heavy duty arm" }, price: 89, skuBase: "stand-arm-heavy-single" },
 ] as const
 
-// Monitor arms are mutually exclusive (you pick one type or none)
-const MONITOR_ARM_IDS = ["arm-single", "arm-double", "arm-heavy"]
-// Cabinets are mutually exclusive (pick one or none)
-const CABINET_IDS = ["cabinet-slim-bl", "cabinet-slim-wh", "cabinet-comp-bl", "cabinet-comp-wh"]
+const CABINET_OPTIONS = [
+  { id: "slim",    label: { es: "Archivador slim", en: "Slim cabinet" }, price: 179, skuBase: "cabinet-3drawer-slim" },
+  { id: "compact", label: { es: "Archivador compacto", en: "Compact cabinet" }, price: 149, skuBase: "cabinet-3drawer-comp" },
+] as const
+
+const ACC_COLORS = [
+  { id: "bl", label: { es: "Negro", en: "Black" }, hex: "#2A2A2A" },
+  { id: "wh", label: { es: "Blanco", en: "White" }, hex: "#D8D8D8" },
+] as const
+
+const STAND_OPTIONS = [
+  { id: "laptop-stand", label: { es: "Soporte laptop ajustable", en: "Adjustable laptop stand" }, price: 39, sku: "stand-laptop-adjus-sl" },
+  { id: "tablet-stand", label: { es: "Soporte tablet grande", en: "Large tablet stand" }, price: 35, sku: "stand-tablet-adjus-large-bl" },
+  { id: "desk-pad",     label: { es: "Desk pad eco leather", en: "Eco leather desk pad" }, price: 29, sku: "pad-ecoleather-80x40-bl" },
+] as const
 
 /* ─── SVG DESK SCENE ─── */
 function DeskScene({
   topSizeIdx,
   topHex,
   frameHex,
-  accs,
+  hasMonArm,
+  hasDualMon,
+  hasCabinet,
+  hasLaptop,
+  hasDeskPad,
 }: {
   topSizeIdx: number
   topHex: string
   frameHex: string
-  accs: string[]
+  hasMonArm: boolean
+  hasDualMon: boolean
+  hasCabinet: boolean
+  hasLaptop: boolean
+  hasDeskPad: boolean
 }) {
   const top = TOP_SIZES[topSizeIdx]
   const maxW = 320
@@ -84,12 +96,6 @@ function DeskScene({
   const deskY = 228
   const legL = deskX + 10
   const legR = deskX + deskW - 15
-
-  const hasMonArm = accs.some((a) => MONITOR_ARM_IDS.includes(a))
-  const hasDualMon = accs.includes("arm-double")
-  const hasCabinet = accs.some((a) => CABINET_IDS.includes(a))
-  const hasLaptop = accs.includes("laptop-stand")
-  const hasDeskPad = accs.includes("desk-pad")
 
   return (
     <svg viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg" className="w-full"
@@ -164,6 +170,8 @@ export default function BuildYourDesk({
 }) {
   const params = useParams()
   const countryCode = (params.countryCode as string) || _countryCode
+  const router = useRouter()
+  const [, startTransition] = useTransition()
   // Top type: "melamina" | "madera"
   const [topType, setTopType] = useState<"melamina" | "madera">("melamina")
   const [topSizeIdx, setTopSizeIdx] = useState(1) // 150×75 default
@@ -171,7 +179,11 @@ export default function BuildYourDesk({
   const [woodType, setWoodType] = useState("teca")
   const [frameIdx, setFrameIdx] = useState(0) // single motor
   const [frameColor, setFrameColor] = useState("bl")
-  const [accs, setAccs] = useState<string[]>([])
+  const [armChoice, setArmChoice] = useState<string | null>(null)
+  const [armColor, setArmColor] = useState<"bl" | "wh">("bl")
+  const [cabinetChoice, setCabinetChoice] = useState<string | null>(null)
+  const [cabinetColor, setCabinetColor] = useState<"bl" | "wh">("bl")
+  const [stands, setStands] = useState<string[]>([])
   const [isAdding, setIsAdding] = useState(false)
   const [addedFeedback, setAddedFeedback] = useState(false)
 
@@ -187,42 +199,28 @@ export default function BuildYourDesk({
 
   const frameHex = FRAME_COLORS.find((c) => c.id === frameColor)?.hex ?? "#2A2A2A"
 
-  const accTotal = accs.reduce((sum, id) => {
-    const a = ACCESSORIES.find((x) => x.id === id)
-    return sum + (a?.price ?? 0)
-  }, 0)
+  const accTotal = useMemo(() => {
+    let total = 0
+    if (armChoice) total += MONITOR_ARM_OPTIONS.find((a) => a.id === armChoice)?.price ?? 0
+    if (cabinetChoice) total += CABINET_OPTIONS.find((c) => c.id === cabinetChoice)?.price ?? 0
+    stands.forEach((id) => {
+      const s = STAND_OPTIONS.find((x) => x.id === id)
+      if (s) total += s.price
+    })
+    return total
+  }, [armChoice, cabinetChoice, stands])
   const total = frame.price + topPrice + accTotal
-
-  const toggleAcc = (id: string) => {
-    // Monitor arms mutually exclusive
-    if (MONITOR_ARM_IDS.includes(id)) {
-      setAccs((prev) => {
-        const without = prev.filter((a) => !MONITOR_ARM_IDS.includes(a))
-        return prev.includes(id) ? without : [...without, id]
-      })
-    // Cabinets mutually exclusive
-    } else if (CABINET_IDS.includes(id)) {
-      setAccs((prev) => {
-        const without = prev.filter((a) => !CABINET_IDS.includes(a))
-        return prev.includes(id) ? without : [...without, id]
-      })
-    } else {
-      setAccs((prev) =>
-        prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
-      )
-    }
-  }
 
   // Build SKU list for cart
   const cartSkus = useMemo(() => {
-    const items: { sku: string; name: string; nameEn: string; price: number }[] = []
-    const fc = FRAME_COLORS.find((c) => c.id === frameColor)!
+    const items: Array<{ sku: string; name: string; nameEn: string; price: number }> = []
 
     // Frame
+    const fcol = FRAME_COLORS.find((c) => c.id === frameColor)!
     items.push({
       sku: `${frame.skuPrefix}-${frameColor}`,
-      name: `${frame.label} ${fc.label}`,
-      nameEn: `${frame.labelEn} ${fc.labelEn}`,
+      name: `${frame.label} ${fcol.label}`,
+      nameEn: `${frame.labelEn} ${fcol.labelEn}`,
       price: frame.price,
     })
 
@@ -245,19 +243,48 @@ export default function BuildYourDesk({
       })
     }
 
-    // Accessories
-    accs.forEach((id) => {
-      const a = ACCESSORIES.find((x) => x.id === id)!
-      items.push({ sku: a.sku, name: a.label, nameEn: a.labelEn, price: a.price })
+    // Monitor arm
+    if (armChoice) {
+      const arm = MONITOR_ARM_OPTIONS.find((a) => a.id === armChoice)!
+      const ac = ACC_COLORS.find((c) => c.id === armColor)!
+      items.push({
+        sku: `${arm.skuBase}-${armColor}`,
+        name: `${arm.label.es} ${ac.label.es}`,
+        nameEn: `${arm.label.en} ${ac.label.en}`,
+        price: arm.price,
+      })
+    }
+
+    // Cabinet
+    if (cabinetChoice) {
+      const cab = CABINET_OPTIONS.find((c) => c.id === cabinetChoice)!
+      const ac = ACC_COLORS.find((c) => c.id === cabinetColor)!
+      items.push({
+        sku: `${cab.skuBase}-${cabinetColor}`,
+        name: `${cab.label.es} ${ac.label.es}`,
+        nameEn: `${cab.label.en} ${ac.label.en}`,
+        price: cab.price,
+      })
+    }
+
+    // Stands (multi-select)
+    stands.forEach((id) => {
+      const s = STAND_OPTIONS.find((x) => x.id === id)
+      if (s) items.push({ sku: s.sku, name: s.label.es, nameEn: s.label.en, price: s.price })
     })
 
     return items
-  }, [frameIdx, frameColor, topType, topSizeIdx, melaColor, woodType, accs, frame, topSize, topPrice])
+  }, [frame, frameColor, topType, topSize, topPrice, melaColor, woodType, armChoice, armColor, cabinetChoice, cabinetColor, stands])
 
-  // Add each SKU to cart individually
+  // Add each SKU to cart individually (matches product-actions pattern)
   const handleAddToCart = async () => {
     setIsAdding(true)
     setAddedFeedback(false)
+
+    // Open cart drawer immediately — don't wait for backend (matches product-actions pattern)
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("ergo:cart:added"))
+    }
 
     try {
       // Fetch all products to find variant IDs by SKU
@@ -282,14 +309,25 @@ export default function BuildYourDesk({
         }
       }
 
-      // Add each item to cart
+      // Add each item. Wrap each call in try/catch so one failure doesn't kill the loop.
+      const failedSkus: string[] = []
       for (const item of cartSkus) {
         const variantId = skuMap.get(item.sku)
-        if (variantId) {
-          await addToCart({ variantId, quantity: 1, countryCode })
-        } else {
-          console.warn(`SKU not found in Medusa: ${item.sku}`)
+        if (!variantId) {
+          failedSkus.push(item.sku)
+          console.warn(`[build-your-desk] SKU not found in Medusa: ${item.sku}`)
+          continue
         }
+        try {
+          await addToCart({ variantId, quantity: 1, countryCode })
+        } catch (err) {
+          failedSkus.push(item.sku)
+          console.error(`[build-your-desk] Failed to add ${item.sku}:`, err)
+        }
+      }
+
+      if (failedSkus.length > 0) {
+        console.warn(`[build-your-desk] ${failedSkus.length} items failed:`, failedSkus)
       }
 
       setAddedFeedback(true)
@@ -298,8 +336,8 @@ export default function BuildYourDesk({
       console.error("Failed to add desk config to cart:", error)
     } finally {
       setIsAdding(false)
-      // revalidateTag(carts) inside addToCart handles the re-render —
-      // no router.refresh() needed
+      // Refresh server components (cart counter, etc) in background without blocking.
+      startTransition(() => router.refresh())
     }
   }
 
@@ -322,7 +360,16 @@ export default function BuildYourDesk({
         <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-8 items-start lg:gap-10">
           {/* LEFT — SVG + summary */}
           <div className="relative">
-            <DeskScene topSizeIdx={topSizeIdx} topHex={topHex} frameHex={frameHex} accs={accs} />
+            <DeskScene
+              topSizeIdx={topSizeIdx}
+              topHex={topHex}
+              frameHex={frameHex}
+              hasMonArm={!!armChoice}
+              hasDualMon={armChoice === "double"}
+              hasCabinet={!!cabinetChoice}
+              hasLaptop={stands.includes("laptop-stand")}
+              hasDeskPad={stands.includes("desk-pad")}
+            />
             {/* Price badge */}
             <div className="absolute top-4 right-4 px-4 py-3 text-center" style={{ background: "rgba(91,192,235,.12)", backdropFilter: "blur(4px)" }}>
               <div className="text-[0.65rem] font-semibold text-ergo-400 uppercase tracking-widest">Total</div>
@@ -439,26 +486,125 @@ export default function BuildYourDesk({
               </div>
             </div>
 
-            {/* Accessories */}
-            <div>
-              <div className="text-[0.72rem] font-semibold text-ergo-400 uppercase tracking-widest mb-2">{es ? "Accesorios" : "Accessories"}</div>
-              <div className="flex flex-col gap-1">
-                {ACCESSORIES.map((a) => {
-                  const isActive = accs.includes(a.id)
-                  return (
-                    <div key={a.id} className="flex items-center justify-between py-2 px-1 border-b border-ergo-900/60">
-                      <span className="text-[0.8rem] text-ergo-300">
-                        {es ? a.label : a.labelEn}
-                        <span className="text-ergo-500 ml-1.5">+${a.price}</span>
-                      </span>
-                      <button onClick={() => toggleAcc(a.id)}
-                        className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none ${isActive ? "bg-ergo-sky-dark" : "bg-ergo-800"}`}
-                        aria-pressed={isActive}>
-                        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isActive ? "translate-x-5" : "translate-x-0"}`} />
-                      </button>
-                    </div>
-                  )
-                })}
+            {/* Accessories — categorized */}
+            <div className="space-y-5">
+              {/* Monitor arms */}
+              <div>
+                <div className="text-[0.72rem] font-semibold text-ergo-400 uppercase tracking-widest mb-2">
+                  {es ? "Brazos para monitor" : "Monitor arms"}
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    onClick={() => setArmChoice(null)}
+                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                      !armChoice ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
+                    }`}
+                  >
+                    <span>{es ? "Ninguno" : "None"}</span>
+                    <span className="text-[0.7rem] opacity-60">+$0</span>
+                  </button>
+                  {MONITOR_ARM_OPTIONS.map((arm) => (
+                    <button
+                      key={arm.id}
+                      onClick={() => setArmChoice(arm.id)}
+                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                        armChoice === arm.id ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
+                      }`}
+                    >
+                      <span>{es ? arm.label.es : arm.label.en}</span>
+                      <span className="text-[0.7rem] opacity-80">+${arm.price}</span>
+                    </button>
+                  ))}
+                </div>
+                {armChoice && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[0.7rem] text-ergo-400">{es ? "Color:" : "Color:"}</span>
+                    {ACC_COLORS.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => setArmColor(c.id)}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${
+                          armColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
+                        }`}
+                        style={{ background: c.hex }}
+                        aria-label={es ? c.label.es : c.label.en}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Cabinets */}
+              <div>
+                <div className="text-[0.72rem] font-semibold text-ergo-400 uppercase tracking-widest mb-2">
+                  {es ? "Archivadores" : "Cabinets"}
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    onClick={() => setCabinetChoice(null)}
+                    className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                      !cabinetChoice ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
+                    }`}
+                  >
+                    <span>{es ? "Ninguno" : "None"}</span>
+                    <span className="text-[0.7rem] opacity-60">+$0</span>
+                  </button>
+                  {CABINET_OPTIONS.map((cab) => (
+                    <button
+                      key={cab.id}
+                      onClick={() => setCabinetChoice(cab.id)}
+                      className={`flex items-center justify-between py-2 px-3 text-[0.8rem] transition-colors ${
+                        cabinetChoice === cab.id ? "bg-ergo-sky-dark text-white" : "bg-ergo-900/40 text-ergo-300 hover:bg-ergo-900/70"
+                      }`}
+                    >
+                      <span>{es ? cab.label.es : cab.label.en}</span>
+                      <span className="text-[0.7rem] opacity-80">+${cab.price}</span>
+                    </button>
+                  ))}
+                </div>
+                {cabinetChoice && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[0.7rem] text-ergo-400">{es ? "Color:" : "Color:"}</span>
+                    {ACC_COLORS.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => setCabinetColor(c.id)}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${
+                          cabinetColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
+                        }`}
+                        style={{ background: c.hex }}
+                        aria-label={es ? c.label.es : c.label.en}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Stands */}
+              <div>
+                <div className="text-[0.72rem] font-semibold text-ergo-400 uppercase tracking-widest mb-2">
+                  {es ? "Soportes y accesorios" : "Stands & accessories"}
+                </div>
+                <div className="flex flex-col gap-1">
+                  {STAND_OPTIONS.map((s) => {
+                    const isActive = stands.includes(s.id)
+                    return (
+                      <div key={s.id} className="flex items-center justify-between py-2 px-1 border-b border-ergo-900/60">
+                        <span className="text-[0.8rem] text-ergo-300">
+                          {es ? s.label.es : s.label.en}
+                          <span className="text-ergo-500 ml-1.5">+${s.price}</span>
+                        </span>
+                        <button
+                          onClick={() => setStands(prev => prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id])}
+                          className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none ${isActive ? "bg-ergo-sky-dark" : "bg-ergo-800"}`}
+                          aria-pressed={isActive}
+                        >
+                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isActive ? "translate-x-5" : "translate-x-0"}`} />
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 

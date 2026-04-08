@@ -70,7 +70,7 @@ export default function CategoryGrid({
   const c = CONTENT[lang]
 
   return (
-    <section className="bg-ergo-bg section-y">
+    <section className="bg-white border-t border-ergo-100 section-y">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section header */}
         <div className="flex items-end justify-between mb-9">
@@ -94,9 +94,47 @@ export default function CategoryGrid({
           </Link>
         </div>
 
-        {/* CSS Grid — first item spans 2 rows, 3px gaps */}
+        {/* Mobile: 2×2 square grid with first 4 categories */}
+        <div className="lg:hidden grid grid-cols-2 gap-3">
+          {CATEGORIES.slice(0, 4).map((cat) => (
+            <Link
+              key={cat.handle}
+              href={`${base}/${catPath}/${cat.handle}`}
+              className="relative overflow-hidden cursor-pointer group aspect-square"
+            >
+              <div
+                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                style={{ background: cat.bg }}
+              />
+              <div
+                className="absolute inset-0 z-10"
+                style={{ background: "linear-gradient(to top, rgba(12,18,34,0.55) 0%, transparent 55%)" }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 z-20 p-4">
+                <h3 className="font-display font-bold text-white text-[1.05rem] leading-tight">
+                  {lang === "en" ? cat.en : cat.es}
+                </h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Mobile: link to see all categories */}
+        <div className="lg:hidden mt-4 text-center">
+          <Link
+            href={`${base}/${catPath}`}
+            className="inline-flex items-center gap-2 text-[0.9rem] font-semibold text-ergo-sky-dark hover:text-ergo-sky transition-colors"
+          >
+            {lang === "en" ? "See all categories" : "Ver todas las categorías"}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+
+        {/* Desktop: original asymmetric grid */}
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-3"
+          className="hidden lg:grid lg:grid-cols-[1.4fr_1fr_1fr] gap-3"
           style={{
             gridTemplateRows: "1fr 1fr",
             height: "clamp(380px, 45vw, 520px)",
