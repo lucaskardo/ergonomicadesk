@@ -2,10 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* ── Global border-radius reset: all corners square ── */
-*, *::before, *::after {
-  border-radius: 0 !important;
-}
 /* Exception: explicit circular elements (color swatches, avatars) */
 .rounded-full-override {
   border-radius: 9999px !important;
@@ -97,6 +93,36 @@ body {
       padding-top: 4rem;
       padding-bottom: 4rem;
     }
+  }
+
+  /* Branded override for Medusa UI Button in cart/checkout flow.
+     Keeps Medusa UI logic (useFormStatus, isLoading, disabled chains,
+     NMI/Stripe integration) intact while forcing the visual style. */
+  .ergo-checkout-btn {
+    background-color: #2A8BBF !important;
+    color: #ffffff !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    font-weight: 600 !important;
+    font-size: 0.92rem !important;
+    min-height: 56px !important;
+    width: 100% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background-color 0.2s !important;
+  }
+  .ergo-checkout-btn:hover:not(:disabled):not([data-disabled]) {
+    background-color: #5BC0EB !important;
+  }
+  .ergo-checkout-btn:disabled,
+  .ergo-checkout-btn[data-disabled],
+  .ergo-checkout-btn[aria-disabled="true"] {
+    background-color: #D6D2CB !important;
+    color: #8A8A82 !important;
+    cursor: not-allowed !important;
   }
 }
 
