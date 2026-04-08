@@ -386,7 +386,7 @@ const Shipping: React.FC<ShippingProps> = ({
             />
             <Button
               size="large"
-              className="mt"
+              className="ergo-checkout-btn mt"
               onClick={handleSubmit}
               isLoading={isLoading}
               disabled={!shippingMethodId || isLoading}

@@ -158,6 +158,7 @@ export default function NmiPaymentSection({ cart, session, notReady }: Props) {
 
       <Button
         size="large"
+        className="ergo-checkout-btn"
         onClick={handleSubmit}
         isLoading={submitting}
         disabled={!formComplete || submitting || notReady || chargeSucceeded}

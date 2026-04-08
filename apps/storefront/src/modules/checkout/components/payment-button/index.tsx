@@ -163,6 +163,7 @@ const NmiChargeButton = ({
       />
       <Button
         size="large"
+        className="ergo-checkout-btn"
         onClick={handleCharge}
         isLoading={submitting}
         disabled={notReady || submitting}
@@ -273,6 +274,7 @@ const StripePaymentButton = ({
         disabled={disabled || notReady}
         onClick={handlePayment}
         size="large"
+        className="ergo-checkout-btn"
         isLoading={submitting}
         data-testid={dataTestId}
       >
@@ -319,6 +321,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         isLoading={submitting}
         onClick={handlePayment}
         size="large"
+        className="ergo-checkout-btn"
         data-testid="submit-order-button"
       >
         {t.checkout.place_order}

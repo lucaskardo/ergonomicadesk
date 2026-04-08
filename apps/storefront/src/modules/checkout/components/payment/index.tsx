@@ -309,7 +309,7 @@ const Payment = ({
 
           <Button
             size="large"
-            className="mt-6"
+            className="ergo-checkout-btn mt-6"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
