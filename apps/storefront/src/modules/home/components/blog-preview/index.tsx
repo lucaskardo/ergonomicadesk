@@ -37,7 +37,7 @@ export default function BlogPreview({ lang }: { lang: "es" | "en" }) {
   const readLabel = lang === "en" ? "read" : "lectura"
 
   return (
-    <section className="py-14 lg:py-24 bg-ergo-bg">
+    <section className="section-y bg-ergo-bg">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <div className="flex items-end justify-between mb-9">

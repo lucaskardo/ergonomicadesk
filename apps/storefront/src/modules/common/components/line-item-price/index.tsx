@@ -14,9 +14,12 @@ const LineItemPrice = ({
   style = "default",
   currencyCode,
 }: LineItemPriceProps) => {
-  const { total, original_total } = item
-  const originalPrice = original_total ?? 0
-  const currentPrice = total ?? 0
+  // Use subtotal (excludes ITBMS) — not total (which includes tax for Panama).
+  // ITBMS is shown as a separate line in cart-totals.
+  const subtotal = (item as any).subtotal ?? 0
+  const originalSubtotal = (item as any).original_subtotal ?? subtotal
+  const originalPrice = originalSubtotal
+  const currentPrice = subtotal
   const hasReducedPrice = currentPrice < originalPrice
 
   return (

@@ -31,7 +31,7 @@ import { cookies, headers as getRequestHeaders } from "next/headers"
 export async function retrieveCart(cartId?: string, fields?: string) {
   const id = cartId || (await getCartId())
   fields ??=
-    "*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, +total, +subtotal, +item_subtotal, +shipping_subtotal, +tax_total, +discount_subtotal, *payment_collection, *payment_collection.payment_sessions"
+    "*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.subtotal, +items.total, +items.original_subtotal, +items.original_total, +items.tax_total, +items.discount_total, *promotions, +shipping_methods.name, +total, +subtotal, +item_subtotal, +shipping_subtotal, +tax_total, +discount_subtotal, *payment_collection, *payment_collection.payment_sessions"
 
   if (!id) {
     return null

@@ -61,7 +61,7 @@ export default function TrustBar({
   const hardcodedItems = CONTENT[lang]
 
   return (
-    <div className="bg-white border-b border-ergo-200/60 overflow-hidden">
+    <div className="bg-white border-b border-ergo-200/60 overflow-hidden section-y-tight">
       <div className="max-w-[1360px] mx-auto grid grid-cols-2 md:grid-cols-4">
         {useSanity
           ? sanityItems.map((item, i) => (

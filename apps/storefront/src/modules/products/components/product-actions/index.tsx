@@ -311,11 +311,24 @@ export default function ProductActions({
                     <span className="text-ergo-sky-dark ml-1">(+${warrantySurcharge})</span>
                   )}
                 </span>
-                <p className="text-[0.72rem] text-ergo-400 mt-0.5">
-                  {lang === "en"
-                    ? "Extend your warranty by 5 additional years. Covers motor, electronics and structure."
-                    : "Extiende tu garantía a 5 años adicionales. Cubre motor, electrónica y estructura."}
-                </p>
+                {(() => {
+                  const categories = (product as any).categories || []
+                  const catHandles = categories.map((c: any) => (c.handle || "").toLowerCase()).join(" ")
+                  let baseYears = 2
+                  let extendYears = 3
+                  if (/accessor|accesori/.test(catHandles)) {
+                    baseYears = 1
+                    extendYears = 2
+                  }
+                  const totalYears = baseYears + extendYears
+                  return (
+                    <p className="text-[0.72rem] text-ergo-400 mt-0.5">
+                      {lang === "en"
+                        ? `Extend your warranty by ${extendYears} additional years for a total of ${totalYears} years of coverage.`
+                        : `Extiende tu garantía por ${extendYears} años adicionales para un total de ${totalYears} años de garantía.`}
+                    </p>
+                  )
+                })()}
               </label>
             </div>
           )

@@ -9,6 +9,7 @@ import { commercialPath, SITE_URL } from "@lib/util/routes"
 import { sanityFetch } from "@/sanity/lib/live"
 import { COMMERCIAL_SECTOR_QUERY, COMMERCIAL_SECTORS_QUERY } from "@/sanity/lib/queries"
 import { urlFor } from "@/sanity/lib/image"
+import { getSectorBySlug, COMMERCIAL_SECTORS } from "@lib/data/commercial-sectors"
 
 // ─── Hardcoded product types per space ───────────────────────────────────────
 
@@ -38,6 +39,92 @@ const SPACE_PRODUCT_TYPES: Record<string, Record<string, ProductType[]>> = {
       { name: { es: "Tecnología AV", en: "AV technology" }, desc: { es: "Bases de alimentación, pantallas y soporte para video.", en: "Power bases, screens and video conferencing support." } },
     ],
   },
+  educacion: {
+    aulas: [
+      { name: { es: "Pupitres ergonómicos", en: "Ergonomic desks" }, desc: { es: "Adaptables a diferentes edades. Altura ajustable.", en: "Adaptable to different ages. Adjustable height." } },
+      { name: { es: "Sillas para estudiantes", en: "Student chairs" }, desc: { es: "Apilables, ligeras, resistentes al uso diario.", en: "Stackable, light, resistant to daily use." } },
+      { name: { es: "Pizarras y paneles", en: "Boards and panels" }, desc: { es: "Pizarras blancas, corcho y exhibición.", en: "Whiteboards, cork, and display." } },
+      { name: { es: "Almacenamiento", en: "Storage" }, desc: { es: "Lockers y archivadores para materiales.", en: "Lockers and filing for materials." } },
+    ],
+    labs: [
+      { name: { es: "Mesas de laboratorio", en: "Lab tables" }, desc: { es: "Resistentes a químicos, altura de trabajo.", en: "Chemical-resistant, work height." } },
+      { name: { es: "Bancos de laboratorio", en: "Lab stools" }, desc: { es: "Altura ajustable, base estable.", en: "Adjustable height, stable base." } },
+      { name: { es: "Estanterías", en: "Shelving" }, desc: { es: "Para almacenar equipos y materiales.", en: "For storing equipment and materials." } },
+    ],
+    bibliotecas: [
+      { name: { es: "Mesas de estudio", en: "Study tables" }, desc: { es: "Individuales y grupales, sólidas y silenciosas.", en: "Individual and group, solid and quiet." } },
+      { name: { es: "Sillas de lectura", en: "Reading chairs" }, desc: { es: "Cómodas para sesiones largas.", en: "Comfortable for long sessions." } },
+      { name: { es: "Estanterías", en: "Bookshelves" }, desc: { es: "Modulares y personalizables.", en: "Modular and customizable." } },
+    ],
+    auditorios: [
+      { name: { es: "Sillas plegables", en: "Folding chairs" }, desc: { es: "Apilables y livianas para eventos.", en: "Stackable and lightweight for events." } },
+      { name: { es: "Mesas modulares", en: "Modular tables" }, desc: { es: "Configuraciones flexibles para conferencias.", en: "Flexible configurations for conferences." } },
+    ],
+    profesores: [
+      { name: { es: "Escritorios", en: "Desks" }, desc: { es: "Estaciones de trabajo para el profesorado.", en: "Workstations for faculty." } },
+      { name: { es: "Sillas ergonómicas", en: "Ergonomic chairs" }, desc: { es: "Confort para jornadas largas.", en: "Comfort for long shifts." } },
+    ],
+    admin: [
+      { name: { es: "Escritorios administrativos", en: "Admin desks" }, desc: { es: "Para secretaría y dirección.", en: "For secretarial and direction." } },
+      { name: { es: "Sillas de oficina", en: "Office chairs" }, desc: { es: "Ergonómicas para uso diario.", en: "Ergonomic for daily use." } },
+      { name: { es: "Almacenamiento", en: "Storage" }, desc: { es: "Archivadores y estanterías.", en: "Filing and shelving." } },
+    ],
+  },
+  horeca: {
+    lobby: [
+      { name: { es: "Sofás", en: "Sofas" }, desc: { es: "Tapizado contract-grade resistente a alto tráfico.", en: "Contract-grade upholstery resistant to high traffic." } },
+      { name: { es: "Sillones", en: "Armchairs" }, desc: { es: "Asientos individuales para zonas de espera.", en: "Individual seats for waiting areas." } },
+      { name: { es: "Mesas de centro", en: "Coffee tables" }, desc: { es: "Madera, metal o vidrio.", en: "Wood, metal, or glass." } },
+      { name: { es: "Mesas auxiliares", en: "Side tables" }, desc: { es: "Para junto a sofás y sillones.", en: "Next to sofas and armchairs." } },
+    ],
+    restaurantes: [
+      { name: { es: "Sillas de restaurante", en: "Restaurant chairs" }, desc: { es: "Resistentes al uso diario en F&B.", en: "Resistant to daily F&B use." } },
+      { name: { es: "Mesas de restaurante", en: "Restaurant tables" }, desc: { es: "De 2, 4 y 6 personas.", en: "For 2, 4, and 6 people." } },
+      { name: { es: "Banquetas y taburetes", en: "Stools" }, desc: { es: "Para barras y mesas altas.", en: "For bars and high tables." } },
+      { name: { es: "Booths y reservados", en: "Booths" }, desc: { es: "Mobiliario fijo para mayor capacidad.", en: "Fixed furniture for greater capacity." } },
+    ],
+    cafes: [
+      { name: { es: "Sillas de café", en: "Café chairs" }, desc: { es: "Cómodas para clientes que trabajan desde el café.", en: "Comfortable for guests working from the café." } },
+      { name: { es: "Mesas pequeñas", en: "Small tables" }, desc: { es: "Para 1-2 personas con laptop.", en: "For 1-2 people with laptop." } },
+      { name: { es: "Mesas comunales", en: "Communal tables" }, desc: { es: "Largas, para varios clientes.", en: "Long, for multiple guests." } },
+    ],
+    terrazas: [
+      { name: { es: "Sillas outdoor", en: "Outdoor chairs" }, desc: { es: "Resistentes al clima tropical.", en: "Resistant to tropical climate." } },
+      { name: { es: "Mesas outdoor", en: "Outdoor tables" }, desc: { es: "Materiales tratados para exteriores.", en: "Materials treated for outdoor use." } },
+      { name: { es: "Sombrillas y paraguas", en: "Umbrellas and shades" }, desc: { es: "Protección solar y de lluvia.", en: "Sun and rain protection." } },
+    ],
+    eventos: [
+      { name: { es: "Sillas apilables", en: "Stackable chairs" }, desc: { es: "Fáciles de almacenar entre eventos.", en: "Easy to store between events." } },
+      { name: { es: "Mesas modulares", en: "Modular tables" }, desc: { es: "Configurables para banquetes y conferencias.", en: "Configurable for banquets and conferences." } },
+      { name: { es: "Tarimas y estructuras", en: "Stages and structures" }, desc: { es: "Para escenarios y áreas elevadas.", en: "For stages and elevated areas." } },
+    ],
+    "back-office": [
+      { name: { es: "Estaciones de trabajo", en: "Workstations" }, desc: { es: "Standing desks y escritorios para staff.", en: "Standing desks and workstations for staff." } },
+      { name: { es: "Sillas ergonómicas", en: "Ergonomic chairs" }, desc: { es: "Para uso administrativo.", en: "For administrative use." } },
+    ],
+  },
+  salud: {
+    espera: [
+      { name: { es: "Sillas de espera", en: "Waiting chairs" }, desc: { es: "Cómodas, resistentes, fáciles de limpiar.", en: "Comfortable, resistant, easy to clean." } },
+      { name: { es: "Bancos modulares", en: "Modular benches" }, desc: { es: "Para áreas de espera grandes.", en: "For large waiting areas." } },
+      { name: { es: "Mesas auxiliares", en: "Side tables" }, desc: { es: "Para revistas y materiales de información.", en: "For magazines and information materials." } },
+    ],
+    consultorios: [
+      { name: { es: "Sillas de médico", en: "Doctor chairs" }, desc: { es: "Soporte lumbar de grado clínico.", en: "Clinical-grade lumbar support." } },
+      { name: { es: "Escritorios médicos", en: "Medical desks" }, desc: { es: "Altura ajustable para consultas.", en: "Adjustable height for consultations." } },
+      { name: { es: "Sillas para pacientes", en: "Patient chairs" }, desc: { es: "Cómodas y fáciles de desinfectar.", en: "Comfortable and easy to disinfect." } },
+      { name: { es: "Almacenamiento clínico", en: "Clinical storage" }, desc: { es: "Gabinetes para suministros médicos.", en: "Cabinets for medical supplies." } },
+    ],
+    recepcion: [
+      { name: { es: "Mostradores", en: "Counters" }, desc: { es: "Para admisión y recepción de pacientes.", en: "For patient admission and reception." } },
+      { name: { es: "Sillas de personal", en: "Staff chairs" }, desc: { es: "Ergonómicas para uso prolongado.", en: "Ergonomic for prolonged use." } },
+    ],
+    admin: [
+      { name: { es: "Escritorios", en: "Desks" }, desc: { es: "Para personal administrativo de la clínica.", en: "For clinic administrative staff." } },
+      { name: { es: "Sillas de oficina", en: "Office chairs" }, desc: { es: "Ergonómicas con soporte lumbar.", en: "Ergonomic with lumbar support." } },
+      { name: { es: "Almacenamiento", en: "Storage" }, desc: { es: "Archivadores y gabinetes.", en: "Filing and cabinets." } },
+    ],
+  },
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -62,37 +149,25 @@ type SectorData = {
 // ─── Static params ────────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
-  try {
-    const result = await sanityFetch({ query: COMMERCIAL_SECTORS_QUERY })
-    const sectors = result?.data as Array<{ slug: string }> | null
-    if (!sectors) return []
-    const params: Array<{ slug: string; space: string }> = []
-    for (const sector of sectors) {
-      const sectorResult = await sanityFetch({ query: COMMERCIAL_SECTOR_QUERY, params: { slug: sector.slug } })
-      const sectorData = sectorResult?.data as SectorData | null
-      if (sectorData?.spaces) {
-        for (const sp of sectorData.spaces) {
-          if (sp.slug) params.push({ slug: sector.slug, space: sp.slug })
-        }
-      }
-      // Also include hardcoded space slugs
-      const hardcodedSpaces = Object.keys(SPACE_PRODUCT_TYPES[sector.slug] ?? {})
-      for (const spaceSlug of hardcodedSpaces) {
-        if (!params.some((p) => p.slug === sector.slug && p.space === spaceSlug)) {
-          params.push({ slug: sector.slug, space: spaceSlug })
-        }
-      }
+  // Build complete list from hardcoded data + Sanity
+  const params: Array<{ slug: string; space: string }> = []
+
+  // Start with all hardcoded spaces (always available)
+  for (const [sector, spaces] of Object.entries(SPACE_PRODUCT_TYPES)) {
+    for (const space of Object.keys(spaces)) {
+      params.push({ slug: sector, space })
     }
-    return params
-  } catch {
-    const fallback: Array<{ slug: string; space: string }> = []
-    for (const [sector, spaces] of Object.entries(SPACE_PRODUCT_TYPES)) {
-      for (const space of Object.keys(spaces)) {
-        fallback.push({ slug: sector, space })
-      }
-    }
-    return fallback
   }
+  // Also include spaces from COMMERCIAL_SECTORS fallback that may not be in SPACE_PRODUCT_TYPES
+  for (const sector of COMMERCIAL_SECTORS) {
+    for (const sp of sector.spaces) {
+      if (!params.some((p) => p.slug === sector.slug && p.space === sp.key)) {
+        params.push({ slug: sector.slug, space: sp.key })
+      }
+    }
+  }
+
+  return params
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -104,15 +179,17 @@ export async function generateMetadata(
   const lang = await getLang()
 
   const result = await sanityFetch({ query: COMMERCIAL_SECTOR_QUERY, params: { slug } }).catch(() => ({ data: null }))
-  const sector = result?.data as SectorData | null
-  const spaceData = sector?.spaces?.find((s) => s.slug === space)
+  const sanitySector = result?.data as SectorData | null
+  const fallback = getSectorBySlug(slug)
+  const spaceData = sanitySector?.spaces?.find((s) => s.slug === space)
+  const fallbackSpace = fallback?.spaces.find((s) => s.key === space)
 
-  const sectorTitle = sector
-    ? (lang === "en" ? (sector.title.en ?? sector.title.es ?? "") : (sector.title.es ?? ""))
-    : slug
+  const sectorTitle = sanitySector
+    ? (lang === "en" ? (sanitySector.title.en ?? sanitySector.title.es ?? "") : (sanitySector.title.es ?? ""))
+    : (fallback ? (lang === "en" ? fallback.title.en : fallback.title.es) : slug)
   const spaceName = spaceData
     ? (lang === "en" ? (spaceData.name.en ?? spaceData.name.es ?? "") : (spaceData.name.es ?? ""))
-    : space.replace(/-/g, " ")
+    : (fallbackSpace ? (lang === "en" ? fallbackSpace.name.en : fallbackSpace.name.es) : space.replace(/-/g, " "))
 
   return buildMetadata({
     title: lang === "en"
@@ -136,9 +213,22 @@ export default async function CommercialSpacePage(
   const lang = await getLang()
 
   const result = await sanityFetch({ query: COMMERCIAL_SECTOR_QUERY, params: { slug } }).catch(() => ({ data: null }))
-  const sector = result?.data as SectorData | null
+  const sanitySector = result?.data as SectorData | null
+  const fallbackSector = getSectorBySlug(slug)
 
-  if (!sector) notFound()
+  if (!sanitySector && !fallbackSector) notFound()
+
+  const sector: SectorData = sanitySector ?? {
+    _id: `fallback-${slug}`,
+    slug: fallbackSector!.slug,
+    title: fallbackSector!.title,
+    spaces: fallbackSector!.spaces.map((s) => ({
+      _key: s.key,
+      name: s.name,
+      slug: s.key,
+      description: s.description,
+    })),
+  }
 
   const sectorTitle = lang === "en" ? (sector.title.en ?? sector.title.es ?? "") : (sector.title.es ?? "")
   const spaceData = sector.spaces?.find((s) => s.slug === space)

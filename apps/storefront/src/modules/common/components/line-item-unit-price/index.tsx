@@ -13,12 +13,13 @@ const LineItemUnitPrice = ({
   style = "default",
   currencyCode,
 }: LineItemUnitPriceProps) => {
-  const total = item.total ?? 0
-  const original_total = item.original_total ?? 0
-  const hasReducedPrice = total < original_total
+  // Use subtotal (excludes ITBMS) — not total (which includes tax for Panama).
+  const subtotal = (item as any).subtotal ?? 0
+  const originalSubtotal = (item as any).original_subtotal ?? subtotal
+  const hasReducedPrice = subtotal < originalSubtotal
 
   const percentage_diff = Math.round(
-    ((original_total - total) / original_total) * 100
+    ((originalSubtotal - subtotal) / originalSubtotal) * 100
   )
 
   return (
@@ -34,7 +35,7 @@ const LineItemUnitPrice = ({
               data-testid="product-unit-original-price"
             >
               {convertToLocale({
-                amount: (item.original_total ?? 0) / item.quantity,
+                amount: originalSubtotal / item.quantity,
                 currency_code: currencyCode,
               })}
             </span>
@@ -51,7 +52,7 @@ const LineItemUnitPrice = ({
         data-testid="product-unit-price"
       >
         {convertToLocale({
-          amount: (item.total ?? 0) / item.quantity,
+          amount: subtotal / item.quantity,
           currency_code: currencyCode,
         })}
       </span>

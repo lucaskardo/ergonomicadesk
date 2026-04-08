@@ -34,7 +34,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
         }
 
   return (
-    <section className="py-16 px-4 md:px-8">
+    <section className="section-y px-4 md:px-8">
       <div className="max-w-[1360px] mx-auto overflow-hidden rounded-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[440px]">
           {/* Content side */}

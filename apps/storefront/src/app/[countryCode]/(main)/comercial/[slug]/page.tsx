@@ -11,6 +11,7 @@ import { commercialPath, SITE_URL } from "@lib/util/routes"
 import { sanityFetch } from "@/sanity/lib/live"
 import { COMMERCIAL_SECTOR_QUERY, COMMERCIAL_SECTORS_QUERY } from "@/sanity/lib/queries"
 import { urlFor } from "@/sanity/lib/image"
+import { getSectorBySlug, COMMERCIAL_SECTORS } from "@lib/data/commercial-sectors"
 
 type SpaceImage = { asset?: { _id: string; url: string }; alt?: string; hotspot?: unknown; crop?: unknown }
 
@@ -45,19 +46,9 @@ type SectorData = {
 }
 
 export async function generateStaticParams() {
-  try {
-    const result = await sanityFetch({ query: COMMERCIAL_SECTORS_QUERY })
-    const sectors = result?.data as Array<{ slug: string }> | null
-    if (!sectors) return []
-    return sectors.map((s) => ({ slug: s.slug }))
-  } catch {
-    return [
-      { slug: "oficinas" },
-      { slug: "educacion" },
-      { slug: "horeca" },
-      { slug: "salud" },
-    ]
-  }
+  // Always pre-render all 4 sectors statically using hardcoded fallback.
+  // Sanity data (when present) is fetched at request time and overrides fallback.
+  return COMMERCIAL_SECTORS.map((s) => ({ slug: s.slug }))
 }
 
 export async function generateMetadata(
@@ -67,15 +58,16 @@ export async function generateMetadata(
   const lang = await getLang()
 
   const result = await sanityFetch({ query: COMMERCIAL_SECTOR_QUERY, params: { slug } }).catch(() => ({ data: null }))
-  const sector = result?.data as SectorData | null
+  const sanitySector = result?.data as SectorData | null
+  const fallback = getSectorBySlug(slug)
 
-  const title = sector
-    ? (lang === "en" ? (sector.seoTitle?.en ?? sector.seoTitle?.es ?? sector.title.en ?? sector.title.es ?? "") : (sector.seoTitle?.es ?? sector.title.es ?? ""))
-    : slug
+  const title = sanitySector
+    ? (lang === "en" ? (sanitySector.seoTitle?.en ?? sanitySector.seoTitle?.es ?? sanitySector.title.en ?? sanitySector.title.es ?? "") : (sanitySector.seoTitle?.es ?? sanitySector.title.es ?? ""))
+    : (fallback ? (lang === "en" ? fallback.seoTitle.en : fallback.seoTitle.es) : slug)
 
-  const description = sector
-    ? (lang === "en" ? (sector.seoDescription?.en ?? sector.seoDescription?.es ?? sector.subtitle?.en ?? sector.subtitle?.es ?? "") : (sector.seoDescription?.es ?? sector.subtitle?.es ?? ""))
-    : ""
+  const description = sanitySector
+    ? (lang === "en" ? (sanitySector.seoDescription?.en ?? sanitySector.seoDescription?.es ?? sanitySector.subtitle?.en ?? sanitySector.subtitle?.es ?? "") : (sanitySector.seoDescription?.es ?? sanitySector.subtitle?.es ?? ""))
+    : (fallback ? (lang === "en" ? fallback.seoDescription.en : fallback.seoDescription.es) : "")
 
   return buildMetadata({
     title,
@@ -83,7 +75,7 @@ export async function generateMetadata(
     countryCode,
     lang,
     path: commercialPath(slug),
-    keywords: sector?.keywords,
+    keywords: sanitySector?.keywords,
   })
 }
 
@@ -94,10 +86,30 @@ export default async function CommercialSectorPage(
   const lang = await getLang()
 
   const result = await sanityFetch({ query: COMMERCIAL_SECTOR_QUERY, params: { slug } }).catch(() => ({ data: null }))
-  const sector = result?.data as SectorData | null
+  const sanitySector = result?.data as SectorData | null
+  const fallbackSector = getSectorBySlug(slug)
 
-  if (!sector) {
+  if (!sanitySector && !fallbackSector) {
     notFound()
+  }
+
+  // Build the sector object: Sanity wins where present, fallback fills gaps.
+  const sector: SectorData = sanitySector ?? {
+    _id: `fallback-${slug}`,
+    slug: fallbackSector!.slug,
+    title: fallbackSector!.title,
+    subtitle: fallbackSector!.subtitle,
+    description: fallbackSector!.description,
+    spaces: fallbackSector!.spaces.map((s) => ({
+      _key: s.key,
+      name: s.name,
+      slug: s.key,
+      description: s.description,
+      icon: s.icon,
+    })),
+    ctaText: fallbackSector!.ctaText,
+    seoTitle: fallbackSector!.seoTitle,
+    seoDescription: fallbackSector!.seoDescription,
   }
 
   const title = lang === "en" ? (sector.title.en ?? sector.title.es ?? "") : (sector.title.es ?? "")

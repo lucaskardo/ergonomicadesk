@@ -57,9 +57,12 @@ export default function Hero({
     ctaPrimary: sanityData?.ctaPrimary?.text?.[lang] ?? defaults.ctaPrimary,
     ctaPrimaryHref: sanityData?.ctaPrimary?.href ?? `${base}/store`,
     ctaSecondary: sanityData?.ctaSecondary?.text?.[lang] ?? defaults.ctaSecondary,
-    ctaSecondaryHref:
-      sanityData?.ctaSecondary?.href ??
-      "https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z",
+    ctaSecondaryHref: (() => {
+      const MAPS_URL = "https://www.google.com/maps/place/Ergonomica+Home+Office/@8.9936175,-79.499793,17z"
+      const href = sanityData?.ctaSecondary?.href ?? MAPS_URL
+      // Sanity may have stale wa.me links — coerce showroom CTAs to Google Maps
+      return href.includes("wa.me") ? MAPS_URL : href
+    })(),
   }
 
   const heroImageUrl =
