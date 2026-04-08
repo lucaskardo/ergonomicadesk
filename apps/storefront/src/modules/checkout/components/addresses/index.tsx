@@ -99,7 +99,7 @@ const Addresses = ({
                 <BillingAddress cart={cart} />
               </div>
             )}
-            <SubmitButton className="mt-6" data-testid="submit-address-button">
+            <SubmitButton className="ergo-checkout-btn mt-6" data-testid="submit-address-button">
               {t.checkout.continue_to_delivery}
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
