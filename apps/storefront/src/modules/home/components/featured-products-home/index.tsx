@@ -77,25 +77,15 @@ function ProductCard({
         </button>
       </div>
       {/* Body */}
-      <div className="px-4 pt-3 pb-4">
-        <p className="text-[0.66rem] font-semibold uppercase tracking-[0.07em] text-ergo-sky-dark">
-          {product.categories?.[0]?.name ?? ""}
-        </p>
-        <p className="text-[0.88rem] font-semibold mt-0.5 leading-[1.3] text-ergo-950 line-clamp-2">
+      <div className="px-4 pt-4 pb-5">
+        <h3 className="text-[0.95rem] font-semibold leading-[1.3] text-ergo-950 line-clamp-2 mb-2">
           {product.title}
-        </p>
-        {product.description && (
-          <p className="text-[0.75rem] text-ergo-400 mt-0.5 line-clamp-1">
-            {product.description}
-          </p>
+        </h3>
+        {cheapestPrice && (
+          <span className="text-[1.05rem] font-bold text-ergo-950">
+            {c.from} {cheapestPrice.calculated_price}
+          </span>
         )}
-        <div className="flex items-center justify-between mt-3">
-          {cheapestPrice && (
-            <span className="text-[1.05rem] font-bold text-ergo-950">
-              {c.from} {cheapestPrice.calculated_price}
-            </span>
-          )}
-        </div>
       </div>
     </LocalizedClientLink>
   )
