@@ -287,49 +287,6 @@ export async function applyPromotions(codes: string[]) {
     .catch(medusaError)
 }
 
-export async function applyGiftCard(code: string) {
-  //   const cartId = getCartId()
-  //   if (!cartId) return "No cartId cookie found"
-  //   try {
-  //     await updateCart(cartId, { gift_cards: [{ code }] }).then(() => {
-  //       revalidateTag("cart")
-  //     })
-  //   } catch (error: any) {
-  //     throw error
-  //   }
-}
-
-export async function removeDiscount(code: string) {
-  // const cartId = getCartId()
-  // if (!cartId) return "No cartId cookie found"
-  // try {
-  //   await deleteDiscount(cartId, code)
-  //   revalidateTag("cart")
-  // } catch (error: any) {
-  //   throw error
-  // }
-}
-
-export async function removeGiftCard(
-  codeToRemove: string,
-  giftCards: any[]
-  // giftCards: GiftCard[]
-) {
-  //   const cartId = getCartId()
-  //   if (!cartId) return "No cartId cookie found"
-  //   try {
-  //     await updateCart(cartId, {
-  //       gift_cards: [...giftCards]
-  //         .filter((gc) => gc.code !== codeToRemove)
-  //         .map((gc) => ({ code: gc.code })),
-  //     }).then(() => {
-  //       revalidateTag("cart")
-  //     })
-  //   } catch (error: any) {
-  //     throw error
-  //   }
-}
-
 export async function submitPromotionForm(
   currentState: unknown,
   formData: FormData
@@ -342,7 +299,26 @@ export async function submitPromotionForm(
   }
 }
 
-// Secure helper to parse and truncate strings from FormData
+const safeStr = (val: FormDataEntryValue | null, maxLen = 100) =>
+  val ? String(val).slice(0, maxLen).trim() : ""
+
+type AddressPayload = NonNullable<HttpTypes.StoreUpdateCart["shipping_address"]>
+
+function parseAddress(formData: FormData, prefix: "shipping_address" | "billing_address"): AddressPayload {
+  return {
+    first_name: safeStr(formData.get(`${prefix}.first_name`), 50),
+    last_name: safeStr(formData.get(`${prefix}.last_name`), 50),
+    address_1: safeStr(formData.get(`${prefix}.address_1`), 250),
+    address_2: "",
+    company: safeStr(formData.get(`${prefix}.company`), 100),
+    postal_code: safeStr(formData.get(`${prefix}.postal_code`), 20),
+    city: safeStr(formData.get(`${prefix}.city`), 100),
+    country_code: safeStr(formData.get(`${prefix}.country_code`), 10),
+    province: safeStr(formData.get(`${prefix}.province`), 50),
+    phone: safeStr(formData.get(`${prefix}.phone`), 50),
+  }
+}
+
 export async function setAddresses(currentState: unknown, formData: FormData) {
   try {
     if (!formData) {
@@ -353,41 +329,15 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
       throw new Error("No existing cart found when setting addresses")
     }
 
-    const safeStr = (val: FormDataEntryValue | null, maxLen = 100) => 
-      val ? String(val).slice(0, maxLen).trim() : ""
+    const shipping = parseAddress(formData, "shipping_address")
+    const sameAsBilling = formData.get("same_as_billing") === "on"
 
-    const data = {
-      shipping_address: {
-        first_name: safeStr(formData.get("shipping_address.first_name"), 50),
-        last_name: safeStr(formData.get("shipping_address.last_name"), 50),
-        address_1: safeStr(formData.get("shipping_address.address_1"), 250),
-        address_2: "",
-        company: safeStr(formData.get("shipping_address.company"), 100),
-        postal_code: safeStr(formData.get("shipping_address.postal_code"), 20),
-        city: safeStr(formData.get("shipping_address.city"), 100),
-        country_code: safeStr(formData.get("shipping_address.country_code"), 10),
-        province: safeStr(formData.get("shipping_address.province"), 50),
-        phone: safeStr(formData.get("shipping_address.phone"), 50),
-      },
+    const data: HttpTypes.StoreUpdateCart = {
+      shipping_address: shipping,
+      billing_address: sameAsBilling ? shipping : parseAddress(formData, "billing_address"),
       email: safeStr(formData.get("email"), 150),
-    } as any
+    }
 
-    const sameAsBilling = formData.get("same_as_billing")
-    if (sameAsBilling === "on") data.billing_address = data.shipping_address
-
-    if (sameAsBilling !== "on")
-      data.billing_address = {
-        first_name: safeStr(formData.get("billing_address.first_name"), 50),
-        last_name: safeStr(formData.get("billing_address.last_name"), 50),
-        address_1: safeStr(formData.get("billing_address.address_1"), 250),
-        address_2: "",
-        company: safeStr(formData.get("billing_address.company"), 100),
-        postal_code: safeStr(formData.get("billing_address.postal_code"), 20),
-        city: safeStr(formData.get("billing_address.city"), 100),
-        country_code: safeStr(formData.get("billing_address.country_code"), 10),
-        province: safeStr(formData.get("billing_address.province"), 50),
-        phone: safeStr(formData.get("billing_address.phone"), 50),
-      }
     await updateCart(data)
   } catch (e: any) {
     return e.message
@@ -458,8 +408,10 @@ export async function placeOrder(cartId?: string) {
     }
 
     await sdk.store.cart.update(id, { metadata }, {}, headers)
-  } catch {
-    // Non-critical — proceed with order completion even if metadata fails
+  } catch (err) {
+    // Non-blocking — checkout proceeds, but log so Sentry/console flag
+    // missing attribution data (otherwise we silently lose conversion tracking).
+    console.error("placeOrder: failed to attach attribution metadata to cart", err)
   }
 
   const cartRes = await sdk.store.cart
