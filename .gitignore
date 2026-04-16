@@ -43,3 +43,13 @@ apps/scraped-images/
 apps/backend/static/
 apps/backend/src/scripts/*.py
 apps/backend/src/scripts/*.xlsx
+.gitnexus
+
+# Session artifacts (screenshots, mockups, MCP logs) — preserved in git history
+screenshots/
+apps/storefront/screenshots/
+apps/storefront/mockups/
+.playwright-mcp/
+
+# OS-created duplicates
+node_modules 2/
