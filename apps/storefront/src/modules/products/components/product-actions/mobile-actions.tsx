@@ -3,9 +3,9 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { Button, clx } from "@medusajs/ui"
 import React, { Fragment, useMemo } from "react"
-import { usePathname } from "next/navigation"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
+import { useLang } from "@lib/i18n/context"
 import ChevronDown from "@modules/common/icons/chevron-down"
 import X from "@modules/common/icons/x"
 
@@ -37,8 +37,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
 }) => {
-  const pathname = usePathname()
-  const lang = pathname.includes("/en/") ? "en" : "es"
+  const lang = useLang()
   const labels = lang === "en" ? {
     addToCart: "Add to cart",
     outOfStock: "Out of stock",

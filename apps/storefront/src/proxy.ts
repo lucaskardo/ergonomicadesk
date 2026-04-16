@@ -257,21 +257,32 @@ export async function proxy(request: NextRequest) {
     : "/" + pathParts.slice(2).join("/")
   const canonicalPath = pathAfterCountry === "/" ? "/" : pathAfterCountry.replace(/\/$/, "") || "/"
 
-  if (urlHasCountryCode && cacheIdCookie) {
+  if (urlHasCountryCode) {
     const requestHeaders = new Headers(request.headers)
     requestHeaders.set("x-lang", lang)
     requestHeaders.set("x-canonical-path", canonicalPath)
-    return NextResponse.next({ request: { headers: requestHeaders } })
-  }
 
-  if (urlHasCountryCode && !cacheIdCookie) {
-    const requestHeaders = new Headers(request.headers)
-    requestHeaders.set("x-lang", lang)
-    requestHeaders.set("x-canonical-path", canonicalPath)
-    response = NextResponse.next({ request: { headers: requestHeaders } })
-    response.cookies.set("_medusa_cache_id", cacheId, {
-      maxAge: 60 * 60 * 24,
-    })
+    // Single ES tree serves both languages. For /[cc]/en/X requests we rewrite
+    // to the equivalent /[cc]/X route while preserving the browser URL.
+    // Pages read x-lang via getLang()/useLang() to render the correct content.
+    if (lang === "en") {
+      const rewriteUrl = new URL(
+        `/${countryCode}${pathAfterCountry === "/" ? "" : pathAfterCountry}`,
+        request.url
+      )
+      rewriteUrl.search = request.nextUrl.search
+      response = NextResponse.rewrite(rewriteUrl, {
+        request: { headers: requestHeaders },
+      })
+    } else {
+      response = NextResponse.next({ request: { headers: requestHeaders } })
+    }
+
+    if (!cacheIdCookie) {
+      response.cookies.set("_medusa_cache_id", cacheId, {
+        maxAge: 60 * 60 * 24,
+      })
+    }
     return response
   }
 

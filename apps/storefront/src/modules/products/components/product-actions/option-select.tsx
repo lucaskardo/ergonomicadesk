@@ -2,7 +2,7 @@
 
 import { HttpTypes } from "@medusajs/types"
 import React from "react"
-import { usePathname } from "next/navigation"
+import { useLang } from "@lib/i18n/context"
 
 type OptionSelectProps = {
   option: HttpTypes.StoreProductOption
@@ -21,8 +21,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   "data-testid": dataTestId,
   disabled,
 }) => {
-  const pathname = usePathname()
-  const lang = pathname.includes("/en/") ? "en" : "es"
+  const lang = useLang()
   const filteredOptions = (option.values ?? []).map((v) => v.value)
 
   return (

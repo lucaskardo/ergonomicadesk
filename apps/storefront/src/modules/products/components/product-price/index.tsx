@@ -4,7 +4,7 @@ import { clx } from "@medusajs/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
-import { usePathname } from "next/navigation"
+import { useLang } from "@lib/i18n/context"
 
 export default function ProductPrice({
   product,
@@ -13,8 +13,7 @@ export default function ProductPrice({
   product: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
 }) {
-  const pathname = usePathname()
-  const lang = pathname.includes("/en/") ? "en" : "es"
+  const lang = useLang()
 
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,

@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
+import { useLang } from "@lib/i18n/context"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -38,6 +39,8 @@ export default function ProductActions({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const lang = useLang()
+  const langPrefix = lang === "en" ? "/en" : ""
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
@@ -107,7 +110,7 @@ export default function ProductActions({
 
   useEffect(() => {
     if (!isValidVariant || !selectedVariant?.id) return
-    const basePath = pathname.includes("/en/") ? `/${countryCode}/en/productos` : `/${countryCode}/productos`
+    const basePath = `/${countryCode}${langPrefix}/productos`
     const targetUrl = `${basePath}/${product.handle}?v_id=${selectedVariant.id}`
     // Strip existing ?v_id for comparison so we don't re-push the same variant
     const currentBase = pathname.split("?")[0]
@@ -135,8 +138,6 @@ export default function ProductActions({
     if (selectedVariant.allow_backorder) return 99
     return selectedVariant.inventory_quantity || 1
   }, [selectedVariant])
-
-  const lang = pathname.includes("/en/") ? "en" : "es"
 
   const labels = lang === "en" ? {
     addToCart: "Add to cart",

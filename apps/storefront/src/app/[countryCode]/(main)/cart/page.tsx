@@ -2,11 +2,18 @@ import { retrieveCart } from "@lib/data/cart"
 import CartTemplate from "@modules/cart/templates"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { getLang } from "@lib/i18n"
 
-export const metadata: Metadata = {
-  title: "Carrito",
-  description: "Ver tu carrito de compras",
-  robots: { index: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang()
+  return {
+    title: lang === "en" ? "Shopping Cart" : "Carrito",
+    description:
+      lang === "en"
+        ? "View your shopping cart"
+        : "Ver tu carrito de compras",
+    robots: { index: false },
+  }
 }
 
 export default async function Cart() {

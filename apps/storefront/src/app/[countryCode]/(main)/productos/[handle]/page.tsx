@@ -6,6 +6,7 @@ import ProductTemplate from "@modules/products/templates"
 import { ProductJsonLd } from "@modules/common/components/json-ld/product"
 import { BreadcrumbJsonLd } from "@modules/common/components/json-ld/breadcrumb"
 import { productCanonical, categoryCanonical, alternateUrls, productPath, SITE_URL } from "@lib/util/routes"
+import { getLang } from "@lib/i18n"
 import { HttpTypes } from "@medusajs/types"
 
 type Props = {
@@ -90,22 +91,27 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
-  const canonical = productCanonical(params.countryCode, "es", handle)
+  const lang = await getLang()
+  const isEn = lang === "en"
+  const canonical = productCanonical(params.countryCode, lang, handle)
+  const fallbackDescription = isEn
+    ? `${product.title} — Buy at Ergonómica Panama. Free shipping in Panama City. Warranty included.`
+    : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`
+  const description = product.description
+    ? product.description.slice(0, 160)
+    : fallbackDescription
+  const title = `${product.title} | Ergonómica Panamá`
 
   return {
-    title: `${product.title} | Ergonómica Panamá`,
-    description: product.description
-      ? product.description.slice(0, 160)
-      : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
+    title,
+    description,
     alternates: {
       canonical,
       languages: alternateUrls(params.countryCode, productPath(handle)),
     },
     openGraph: {
-      title: `${product.title} | Ergonómica Panamá`,
-      description: product.description
-        ? product.description.slice(0, 160)
-        : `${product.title} — Compra en Ergonómica Panamá. Envío gratis en Ciudad de Panamá. Garantía incluida.`,
+      title,
+      description,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
   }
@@ -143,7 +149,31 @@ export default async function ProductPage(props: Props) {
     firstVariant?.calculated_price?.original_amount ??
     0
 
-  const canonicalUrl = productCanonical(params.countryCode, "es", params.handle)
+  const lang = await getLang()
+  const isEn = lang === "en"
+  const langPrefix = isEn ? "/en" : ""
+  const canonicalUrl = productCanonical(params.countryCode, lang, params.handle)
+  const specLabels = isEn
+    ? {
+        warranty: "Warranty",
+        max_weight_capacity: "Weight capacity",
+        speed: "Speed",
+        memory_presets: "Memory presets",
+        dimensions: "Dimensions",
+        motors: "Motors",
+        lumbar: "Lumbar support",
+      }
+    : {
+        warranty: "Garantía",
+        max_weight_capacity: "Capacidad de peso",
+        speed: "Velocidad",
+        memory_presets: "Posiciones de memoria",
+        dimensions: "Dimensiones",
+        motors: "Motores",
+        lumbar: "Soporte lumbar",
+      }
+  const homeLabel = isEn ? "Home" : "Inicio"
+  const storeLabel = isEn ? "Store" : "Tienda"
 
   return (
     <>
@@ -155,7 +185,7 @@ export default async function ProductPage(props: Props) {
         price={priceAmount}
         currency="USD"
         url={canonicalUrl}
-        lang="es"
+        lang={lang}
         inStock={(firstVariant?.inventory_quantity ?? 1) > 0}
         weight={(pricedProduct as any).metadata?.weight_kg ? Number((pricedProduct as any).metadata.weight_kg) : null}
         material={(pricedProduct as any).metadata?.material ?? null}
@@ -164,21 +194,21 @@ export default async function ProductPage(props: Props) {
           const m = (pricedProduct as any).metadata
           if (!m) return null
           const s: Record<string, string> = {}
-          if (m.warranty) s["Garantía"] = m.warranty
-          if (m.max_weight_capacity) s["Capacidad de peso"] = m.max_weight_capacity
-          if (m.speed) s["Velocidad"] = m.speed
-          if (m.memory_presets) s["Posiciones de memoria"] = m.memory_presets
-          if (m.dimensions) s["Dimensiones"] = m.dimensions
-          if (m.motors) s["Motores"] = m.motors
-          if (m.lumbar) s["Soporte lumbar"] = m.lumbar
+          if (m.warranty) s[specLabels.warranty] = m.warranty
+          if (m.max_weight_capacity) s[specLabels.max_weight_capacity] = m.max_weight_capacity
+          if (m.speed) s[specLabels.speed] = m.speed
+          if (m.memory_presets) s[specLabels.memory_presets] = m.memory_presets
+          if (m.dimensions) s[specLabels.dimensions] = m.dimensions
+          if (m.motors) s[specLabels.motors] = m.motors
+          if (m.lumbar) s[specLabels.lumbar] = m.lumbar
           return Object.keys(s).length > 0 ? s : null
         })()}
       />
       <BreadcrumbJsonLd items={[
-        { name: "Inicio", url: `${SITE_URL}/${params.countryCode}` },
+        { name: homeLabel, url: `${SITE_URL}/${params.countryCode}${langPrefix}` },
         ...(pricedProduct.categories?.[0]
-          ? [{ name: pricedProduct.categories[0].name ?? "", url: categoryCanonical(params.countryCode, "es", pricedProduct.categories[0].handle ?? "") }]
-          : [{ name: "Tienda", url: `${SITE_URL}/${params.countryCode}/store` }]),
+          ? [{ name: pricedProduct.categories[0].name ?? "", url: categoryCanonical(params.countryCode, lang, pricedProduct.categories[0].handle ?? "") }]
+          : [{ name: storeLabel, url: `${SITE_URL}/${params.countryCode}${langPrefix}/store` }]),
         { name: pricedProduct.title ?? "", url: canonicalUrl },
       ]} />
       <ProductTemplate
@@ -187,7 +217,7 @@ export default async function ProductPage(props: Props) {
         countryCode={params.countryCode}
         images={images ?? []}
         selectedVariant={selectedVariant}
-        lang="es"
+        lang={lang}
       />
     </>
   )

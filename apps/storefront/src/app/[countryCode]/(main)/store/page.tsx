@@ -2,7 +2,8 @@ import { Metadata } from "next"
 
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import StoreTemplate from "@modules/store/templates"
-import { SITE_URL } from "@lib/util/routes"
+import { getLang } from "@lib/i18n"
+import { buildMetadata } from "@lib/util/metadata"
 
 type Params = {
   searchParams: Promise<{
@@ -18,20 +19,17 @@ type Params = {
 
 export async function generateMetadata(props: Params): Promise<Metadata> {
   const { countryCode } = await props.params
-  const baseUrl = `${SITE_URL}/${countryCode}`
-  return {
-    title: "Tienda | Ergonómica",
-    description:
-      "Explora nuestra selección de escritorios standing, sillas ergonómicas y accesorios para tu home office.",
-    alternates: {
-      canonical: `${baseUrl}/store`,
-      languages: {
-        es: `${baseUrl}/store`,
-        en: `${baseUrl}/en/store`,
-        "x-default": `${baseUrl}/store`,
-      },
-    },
-  }
+  const lang = await getLang()
+  const isEn = lang === "en"
+  return buildMetadata({
+    title: isEn ? "Store" : "Tienda",
+    description: isEn
+      ? "Explore our selection of standing desks, ergonomic chairs and accessories for your home office."
+      : "Explora nuestra selección de escritorios standing, sillas ergonómicas y accesorios para tu home office.",
+    countryCode,
+    lang,
+    path: "/store",
+  })
 }
 
 export default async function StorePage(props: Params) {

@@ -8,8 +8,16 @@
 - `<BreadcrumbJsonLd>` de `@modules/common/components/json-ld/breadcrumb`
 - JSON-LD por tipo: ProductJsonLd (PDP), ArticleJsonLd (blog), FAQPageJsonLd (FAQ)
 - JSON-LD = server-rendered RSC, nunca en client components
-- Ruta EN = re-export: `export { default, generateMetadata } from "../../../(main)/page"`
 - Entrada en `src/app/sitemap.ts` con alternates hreflang
+
+### i18n
+- Una sola página `(main)/X/page.tsx` por ruta — ES y EN se sirven desde el mismo source
+- Server component: detectar idioma con `await getLang()` de `@lib/i18n`
+- Client component: `useLang()` de `@lib/i18n/context`
+- Metadata: usar `buildMetadata({ ..., lang })` o `lang === "en" ? "..." : "..."` inline
+- El proxy reescribe `/[cc]/en/X` → `/[cc]/X` con header `x-lang: en` — la URL del browser NO cambia
+- Hrefs internos: `LocalizedClientLink` ya prefija `/en` automáticamente cuando lang es EN
+- NO crear árbol `app/[countryCode]/en/` — fue eliminado en S38, reintroducirlo regresa al bug `/pa/en/en/X`
 
 ### Tracking
 - Todas las funciones en `src/lib/tracking/index.ts`
