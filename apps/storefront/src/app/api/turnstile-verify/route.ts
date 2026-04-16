@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import { env } from "@lib/util/env"
 
-const EXPECTED_HOSTNAME = process.env.NEXT_PUBLIC_BASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_BASE_URL).hostname
-  : "ergonomicadesk.com"
+const EXPECTED_HOSTNAME = new URL(env.NEXT_PUBLIC_BASE_URL).hostname
 
 /**
  * Validates a Cloudflare Turnstile token.
@@ -14,8 +13,8 @@ const EXPECTED_HOSTNAME = process.env.NEXT_PUBLIC_BASE_URL
  * to prevent checkout from proceeding without bot protection.
  */
 export async function POST(req: NextRequest) {
-  const secretKey = process.env.TURNSTILE_SECRET_KEY
-  const isDev = process.env.NODE_ENV !== "production"
+  const secretKey = env.TURNSTILE_SECRET_KEY
+  const isDev = env.NODE_ENV !== "production"
 
   if (!secretKey) {
     if (isDev) {

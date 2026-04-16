@@ -1,9 +1,14 @@
 /**
  * Route Manifest — single source of truth for all public URLs.
  * Every internal link, canonical, sitemap entry, and JSON-LD url MUST use these helpers.
+ *
+ * NOTE: This module is imported by both client and server code. We read
+ * NEXT_PUBLIC_BASE_URL via process.env (Next inlines NEXT_PUBLIC_* at build time)
+ * rather than importing @lib/util/env, because env.ts validates server-only vars
+ * (e.g. MEDUSA_BACKEND_URL) and would throw at module load on the client.
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://ergonomicadesk.com"
+const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://ergonomicadesk.com"
 
 // ── Path builders (relative, for internal links via LocalizedClientLink) ──
 

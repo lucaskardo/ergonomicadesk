@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { SITE_URL, categoryPath, collectionPath, PATHS } from "@lib/util/routes"
+import { env } from "@lib/util/env"
 
-const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
-const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+const BACKEND_URL = env.MEDUSA_BACKEND_URL
+const API_KEY = env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const COUNTRY = "pa"
 
 export async function GET() {

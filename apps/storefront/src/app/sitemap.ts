@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next"
 import { SITE_URL, productPath, categoryPath, collectionPath, blogPath, commercialPath, alternateUrls } from "@lib/util/routes"
+import { env } from "@lib/util/env"
 
-const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
-const API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+const BACKEND_URL = env.MEDUSA_BACKEND_URL
+const API_KEY = env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
 async function getProducts(): Promise<Array<{ handle: string; updated_at: string }>> {
   try {

@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache"
 import { type NextRequest, NextResponse } from "next/server"
 import { parseBody } from "next-sanity/webhook"
+import { env } from "@lib/util/env"
 
 type WebhookPayload = {
   _type?: string
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const { isValidSignature, body } = await parseBody<WebhookPayload>(
       req,
-      process.env.SANITY_REVALIDATE_SECRET,
+      env.SANITY_REVALIDATE_SECRET,
       true // delay to allow CDN to update
     )
 

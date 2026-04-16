@@ -1,13 +1,14 @@
 import { defineLive } from "next-sanity/live"
+import { env } from "@lib/util/env"
 import { client } from "../client"
 
 // Fail fast when deployed to Railway without the required read token.
 // NODE_ENV is "production" on both Railway and local `next build`, so we scope
 // to Railway by checking RAILWAY_ENVIRONMENT_NAME (set by Railway on all deployments).
 if (
-  process.env.NODE_ENV === "production" &&
-  process.env.RAILWAY_ENVIRONMENT_NAME &&
-  !process.env.SANITY_API_READ_TOKEN
+  env.NODE_ENV === "production" &&
+  env.RAILWAY_ENVIRONMENT_NAME &&
+  !env.SANITY_API_READ_TOKEN
 ) {
   throw new Error(
     "SANITY_API_READ_TOKEN is required in production. " +
@@ -17,7 +18,5 @@ if (
 
 export const { sanityFetch, SanityLive } = defineLive({
   client: client.withConfig({ apiVersion: "2025-03-18" }),
-  // serverToken: used for server-side Live Content API fetches
-  serverToken: process.env.SANITY_API_READ_TOKEN,
-  // browserToken omitted — no visual editing / Draft Mode in published-only mode
+  serverToken: env.SANITY_API_READ_TOKEN,
 })
