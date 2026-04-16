@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidatePath } from "next/cache"
 import { type NextRequest, NextResponse } from "next/server"
 import { parseBody } from "next-sanity/webhook"
 
@@ -25,33 +25,28 @@ export async function POST(req: NextRequest) {
 
     const { _type, slug } = body
 
+    // EN URLs are served by the same ES route via proxy rewrite,
+    // so invalidating the ES path invalidates both /pa/X and /pa/en/X.
     switch (_type) {
       case "homepage":
         revalidatePath("/[countryCode]", "page")
-        revalidatePath("/[countryCode]/en", "page")
         break
 
       case "siteSettings":
       case "headerNav":
       case "footerNav":
       case "announcementBar":
-        // These are in every page via layout
         revalidatePath("/[countryCode]", "layout")
-        revalidatePath("/[countryCode]/en", "layout")
         break
 
       case "blogPost":
         if (slug?.current) {
           revalidatePath(`/[countryCode]/blog/${slug.current}`, "page")
-          revalidatePath(`/[countryCode]/en/blog/${slug.current}`, "page")
         }
-        // Also revalidate blog index
         revalidatePath("/[countryCode]/blog", "page")
-        revalidatePath("/[countryCode]/en/blog", "page")
         break
 
       default:
-        // Unknown type — no-op
         break
     }
 
