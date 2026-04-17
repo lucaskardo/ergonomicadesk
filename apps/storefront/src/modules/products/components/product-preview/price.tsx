@@ -18,7 +18,7 @@ export default async function PreviewPrice({ price }: { price: VariantPrice }) {
       )}
       <span
         className={clx("text-sm font-semibold", {
-          "text-teal-600": price.price_type === "sale",
+          "text-ergo-sky-dark": price.price_type === "sale",
           "text-ui-fg-base": price.price_type !== "sale",
         })}
         data-testid="price"

@@ -163,12 +163,12 @@ export default function CommercialPreview({
                   src={sector.image}
                   alt={sector.title[lang]}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-base group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, 50vw"
                 />
                 {/* Overlay */}
                 <div
-                  className="absolute inset-0 transition-all duration-300"
+                  className="absolute inset-0 transition duration-base"
                   style={{
                     background: isActive
                       ? "linear-gradient(to top, rgba(42,139,191,0.85) 0%, rgba(28,28,26,0.6) 100%)"
@@ -187,7 +187,7 @@ export default function CommercialPreview({
                     {sector.tagline[lang]}
                   </p>
                   <span
-                    className={`inline-flex items-center gap-1 text-[0.75rem] font-semibold uppercase tracking-[0.06em] transition-all duration-300 ${isActive ? "text-white" : "text-ergo-sky"}`}
+                    className={`inline-flex items-center gap-1 text-[0.75rem] font-semibold uppercase tracking-[0.06em] transition duration-base ${isActive ? "text-white" : "text-ergo-sky"}`}
                   >
                     {isActive ? (
                       <>
@@ -213,7 +213,7 @@ export default function CommercialPreview({
 
         {/* Expandable spaces panel */}
         <div
-          className="overflow-hidden transition-all duration-500 ease-in-out"
+          className="overflow-hidden transition duration-base ease-in-out"
           style={{
             maxHeight: active ? 400 : 0,
             opacity: active ? 1 : 0,
@@ -232,7 +232,7 @@ export default function CommercialPreview({
                       <Link
                         key={space.key}
                         href={`${base}${commercialPath(active.slug, space.key)}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 text-[0.78rem] font-medium transition-all duration-200 border"
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 text-[0.78rem] font-medium transition duration-fast border"
                         style={{
                           background: "rgba(255,255,255,0.06)",
                           borderColor: "rgba(255,255,255,0.08)",
@@ -258,7 +258,7 @@ export default function CommercialPreview({
                 {/* Right: CTA to sector page */}
                 <Link
                   href={`${base}${commercialPath(active.slug)}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-[0.82rem] tracking-[0.01em] transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 self-end bg-ergo-sky text-ergo-950"
+                  className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-[0.82rem] tracking-[0.01em] transition duration-base hover:-translate-y-0.5 flex-shrink-0 self-end bg-ergo-sky text-ergo-950"
                 >
                   {lang === "en" ? `Explore ${active.title.en}` : `Explorar ${active.title.es}`}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

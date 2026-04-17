@@ -402,7 +402,7 @@ export default function BuildYourDesk({
               <div className="flex flex-wrap gap-2">
                 {FRAMES.map((f, i) => (
                   <button key={f.id} onClick={() => setFrameIdx(i)}
-                    className={`px-3 py-2 text-[0.78rem] font-medium border transition-all duration-150 ${
+                    className={`px-3 py-2 text-[0.78rem] font-medium border transition duration-fast ${
                       frameIdx === i ? "bg-ergo-sky-dark border-ergo-sky text-white" : "bg-transparent border-ergo-800 text-ergo-400 hover:border-ergo-500 hover:text-ergo-200"
                     }`}>
                     {es ? f.label : f.labelEn}
@@ -413,7 +413,7 @@ export default function BuildYourDesk({
               <div className="flex gap-2 mt-2">
                 {FRAME_COLORS.map((c) => (
                   <button key={c.id} onClick={() => setFrameColor(c.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[0.75rem] font-medium border transition-all duration-150 min-h-[44px] ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[0.75rem] font-medium border transition duration-fast min-h-[44px] ${
                       frameColor === c.id ? "border-ergo-sky text-white" : "border-ergo-800 text-ergo-400 hover:border-ergo-500"
                     }`}>
                     <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: c.hex }} />
@@ -429,7 +429,7 @@ export default function BuildYourDesk({
               <div className="flex gap-2">
                 {(["melamina", "madera"] as const).map((t) => (
                   <button key={t} onClick={() => setTopType(t)}
-                    className={`px-4 py-2 text-[0.78rem] font-medium border transition-all duration-150 ${
+                    className={`px-4 py-2 text-[0.78rem] font-medium border transition duration-fast ${
                       topType === t ? "bg-ergo-sky-dark border-ergo-sky text-white" : "bg-transparent border-ergo-800 text-ergo-400 hover:border-ergo-500"
                     }`}>
                     {t === "melamina" ? (es ? "Melamina" : "Melamine") : (es ? "Madera Natural" : "Natural Wood")}
@@ -444,7 +444,7 @@ export default function BuildYourDesk({
               <div className="flex flex-wrap gap-2">
                 {TOP_SIZES.map((s, i) => (
                   <button key={s.sizeKey} onClick={() => setTopSizeIdx(i)}
-                    className={`px-4 py-2 text-[0.78rem] font-medium border transition-all duration-150 ${
+                    className={`px-4 py-2 text-[0.78rem] font-medium border transition duration-fast ${
                       topSizeIdx === i ? "bg-ergo-sky-dark border-ergo-sky text-white" : "bg-transparent border-ergo-800 text-ergo-400 hover:border-ergo-500 hover:text-ergo-200"
                     }`}>
                     {s.label}
@@ -465,7 +465,7 @@ export default function BuildYourDesk({
                 {topType === "melamina" ? (
                   MELA_COLORS.map((col) => (
                     <button key={col.id} onClick={() => setMelaColor(col.id)}
-                      className={`flex items-center gap-1.5 px-3 py-2 text-[0.76rem] font-medium border transition-all duration-150 ${
+                      className={`flex items-center gap-1.5 px-3 py-2 text-[0.76rem] font-medium border transition duration-fast ${
                         melaColor === col.id ? "border-ergo-sky text-white" : "border-ergo-800 text-ergo-400 hover:border-ergo-500 hover:text-ergo-200"
                       }`}>
                       <span className="w-3.5 h-3.5 rounded-full flex-shrink-0 border border-white/10" style={{ background: col.hex }} />
@@ -475,7 +475,7 @@ export default function BuildYourDesk({
                 ) : (
                   WOOD_TYPES.map((w) => (
                     <button key={w.id} onClick={() => setWoodType(w.id)}
-                      className={`flex items-center gap-1.5 px-3 py-2 text-[0.76rem] font-medium border transition-all duration-150 ${
+                      className={`flex items-center gap-1.5 px-3 py-2 text-[0.76rem] font-medium border transition duration-fast ${
                         woodType === w.id ? "border-ergo-sky text-white" : "border-ergo-800 text-ergo-400 hover:border-ergo-500 hover:text-ergo-200"
                       }`}>
                       <span className="w-3.5 h-3.5 rounded-full flex-shrink-0 border border-white/10" style={{ background: w.hex }} />
@@ -523,7 +523,7 @@ export default function BuildYourDesk({
                       <button
                         key={c.id}
                         onClick={() => setArmColor(c.id)}
-                        className={`w-9 h-9 rounded-full border-2 transition-all ${
+                        className={`w-9 h-9 rounded-full border-2 transition ${
                           armColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
                         }`}
                         style={{ background: c.hex }}
@@ -569,7 +569,7 @@ export default function BuildYourDesk({
                       <button
                         key={c.id}
                         onClick={() => setCabinetColor(c.id)}
-                        className={`w-9 h-9 rounded-full border-2 transition-all ${
+                        className={`w-9 h-9 rounded-full border-2 transition ${
                           cabinetColor === c.id ? "border-ergo-sky scale-110" : "border-ergo-700"
                         }`}
                         style={{ background: c.hex }}
@@ -596,10 +596,10 @@ export default function BuildYourDesk({
                         </span>
                         <button
                           onClick={() => setStands(prev => prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id])}
-                          className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none ${isActive ? "bg-ergo-sky-dark" : "bg-ergo-800"}`}
+                          className={`relative w-10 h-5 rounded-full transition-colors duration-fast focus:outline-none ${isActive ? "bg-ergo-sky-dark" : "bg-ergo-800"}`}
                           aria-pressed={isActive}
                         >
-                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isActive ? "translate-x-5" : "translate-x-0"}`} />
+                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-fast ${isActive ? "translate-x-5" : "translate-x-0"}`} />
                         </button>
                       </div>
                     )
@@ -615,8 +615,8 @@ export default function BuildYourDesk({
                 <div className="text-2xl font-bold text-white font-display">${total}</div>
               </div>
               <button onClick={handleAddToCart} disabled={isAdding}
-                className={`inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[0.84rem] transition-all duration-200 min-h-[48px] ${
-                  addedFeedback ? "bg-emerald-600 text-white" : "bg-ergo-sky-dark text-white hover:bg-ergo-sky"
+                className={`inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[0.84rem] transition duration-fast min-h-[48px] ${
+                  addedFeedback ? "bg-ergo-success text-white" : "bg-ergo-sky-dark text-white hover:bg-ergo-sky"
                 } disabled:opacity-60`}>
                 {isAdding ? (
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">

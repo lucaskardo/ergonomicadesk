@@ -113,7 +113,7 @@ const CategorySidebar = ({ categories, activeCategoryId }: CategorySidebarProps)
                     aria-label={isExpanded ? "Collapse" : "Expand"}
                   >
                     <span
-                      className="inline-block transition-transform duration-150"
+                      className="inline-block transition-transform duration-fast"
                       style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)" }}
                     >
                       ▶

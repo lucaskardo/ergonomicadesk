@@ -98,7 +98,7 @@ export default async function CatalogPage({
                     src={thumbnail}
                     alt={category.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover group-hover:scale-105 transition-transform duration-base"
                     sizes="(max-width: 768px) 50vw, 33vw"
                   />
                 ) : (

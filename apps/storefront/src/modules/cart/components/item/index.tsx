@@ -92,7 +92,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
                 currency_code: currencyCode,
               })}
             </span>
-            <div className="text-xs text-emerald-600 font-medium">
+            <div className="text-xs text-ergo-success font-medium">
               {(item.metadata as any).bundle_discount_pct}%{" "}
               {(item.metadata as any).bundle_name ? `(${(item.metadata as any).bundle_name})` : "desc."}{" "}
               {convertToLocale({

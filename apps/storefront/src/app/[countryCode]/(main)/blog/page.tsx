@@ -105,7 +105,7 @@ export default async function BlogPage(
           <Link
             key={post.slug}
             href={`/${countryCode}/blog/${post.slug}`}
-            className="group flex flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+            className="group flex flex-col overflow-hidden transition-transform duration-base hover:-translate-y-1"
           >
             {/* Image or dark header */}
             {post.image ? (
@@ -114,7 +114,7 @@ export default async function BlogPage(
                   src={post.image}
                   alt={post.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-105 transition-transform duration-base"
                 />
                 <div className="absolute inset-0 bg-ergo-950/30" />
                 <span className="absolute top-3 left-3 text-[0.6rem] uppercase tracking-[0.12em] text-white bg-ergo-sky px-2 py-0.5 font-semibold rounded-soft">

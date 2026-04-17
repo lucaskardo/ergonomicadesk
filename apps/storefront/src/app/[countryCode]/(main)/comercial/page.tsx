@@ -227,7 +227,7 @@ export default async function ComercialPage(
                 <LocalizedClientLink
                   key={sector.slug}
                   href={commercialPath(sector.slug)}
-                  className="group flex flex-col overflow-hidden border border-ergo-100 hover:border-ergo-sky/50 hover:-translate-y-1 transition-all duration-300"
+                  className="group flex flex-col overflow-hidden border border-ergo-100 hover:border-ergo-sky/50 hover:-translate-y-1 transition duration-base"
                 >
                   {/* Image with overlay */}
                   <div className="relative w-full aspect-[16/9] overflow-hidden bg-ergo-100">
@@ -236,7 +236,7 @@ export default async function ComercialPage(
                         src={sector.image}
                         alt={sector.imageAlt || sector.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover group-hover:scale-105 transition-transform duration-base"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-ergo-200 to-ergo-300" />

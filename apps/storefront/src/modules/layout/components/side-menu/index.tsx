@@ -89,10 +89,10 @@ const SideMenu = ({ regions, locales, currentLocale, sanityNavLinks }: SideMenuP
         <Dialog onClose={close} className="relative z-[100]">
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-200"
+            enter="ease-out duration-fast"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-150"
+            leave="ease-in duration-fast"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
@@ -105,10 +105,10 @@ const SideMenu = ({ regions, locales, currentLocale, sanityNavLinks }: SideMenuP
 
           <Transition.Child
             as={Fragment}
-            enter="transform transition ease-out duration-300"
+            enter="transform transition ease-out duration-base"
             enterFrom="-translate-x-full"
             enterTo="translate-x-0"
-            leave="transform transition ease-in duration-200"
+            leave="transform transition ease-in duration-fast"
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
@@ -147,7 +147,7 @@ const SideMenu = ({ regions, locales, currentLocale, sanityNavLinks }: SideMenuP
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2.2"
-                      className={`transition-transform duration-200 ${productosExpanded ? "rotate-180" : ""}`}
+                      className={`transition-transform duration-fast ${productosExpanded ? "rotate-180" : ""}`}
                       aria-hidden="true"
                     >
                       <path d="M6 9l6 6 6-6" />

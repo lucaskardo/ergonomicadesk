@@ -37,7 +37,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
           <button
             onClick={() => updateOption(option.id, v)}
             key={v}
-            className={`px-4 py-2.5 border text-[0.82rem] font-semibold transition-all duration-200 ${
+            className={`px-4 py-2.5 border text-[0.82rem] font-semibold transition duration-fast ${
               v === current
                 ? "border-ergo-sky-dark text-ergo-sky-dark bg-ergo-sky-50"
                 : "border-ergo-200/80 text-ergo-600 bg-white hover:border-ergo-600 hover:text-ergo-950"

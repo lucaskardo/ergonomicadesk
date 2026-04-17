@@ -86,7 +86,7 @@ export default function Newsletter({
             />
             <button
               type="submit"
-              className="px-7 py-3.5 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] hover:bg-ergo-sky transition-colors duration-300 flex-shrink-0 min-h-[48px]"
+              className="px-7 py-3.5 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] hover:bg-ergo-sky transition-colors duration-base flex-shrink-0 min-h-[48px]"
             >
               {c.cta}
             </button>

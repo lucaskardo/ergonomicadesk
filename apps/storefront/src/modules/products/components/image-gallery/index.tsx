@@ -67,7 +67,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
             key={image.id}
             onClick={() => scrollTo(index)}
             aria-label={`View image ${index + 1}`}
-            className={`relative w-[72px] h-[72px] overflow-hidden flex-shrink-0 transition-all border-2 ${
+            className={`relative w-[72px] h-[72px] overflow-hidden flex-shrink-0 transition border-2 ${
               index === selectedIndex
                 ? "border-ergo-sky-dark opacity-100"
                 : "border-transparent opacity-50 hover:opacity-80"
@@ -113,7 +113,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                 onClick={scrollPrev}
                 disabled={prevDisabled}
                 aria-label="Previous image"
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition-all disabled:opacity-30"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition disabled:opacity-30"
                 style={{ backdropFilter: "blur(8px)" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -124,7 +124,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                 onClick={scrollNext}
                 disabled={nextDisabled}
                 aria-label="Next image"
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition-all disabled:opacity-30"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/85 hover:bg-white flex items-center justify-center transition disabled:opacity-30"
                 style={{ backdropFilter: "blur(8px)" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -142,7 +142,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                   key={i}
                   onClick={() => scrollTo(i)}
                   aria-label={`Go to image ${i + 1}`}
-                  className={`h-1.5 transition-all ${
+                  className={`h-1.5 transition ${
                     i === selectedIndex
                       ? "bg-white w-4"
                       : "bg-white/60 w-1.5 hover:bg-white/80"
@@ -161,7 +161,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                 key={image.id}
                 onClick={() => scrollTo(index)}
                 aria-label={`View image ${index + 1}`}
-                className={`relative w-14 h-14 flex-shrink-0 overflow-hidden border-2 transition-all ${
+                className={`relative w-14 h-14 flex-shrink-0 overflow-hidden border-2 transition ${
                   index === selectedIndex
                     ? "border-ergo-sky-dark opacity-100"
                     : "border-transparent opacity-50 hover:opacity-80"

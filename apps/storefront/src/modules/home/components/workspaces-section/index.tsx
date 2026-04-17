@@ -71,7 +71,7 @@ export default function WorkspacesSection({
           </h2>
           <Link
             href={`${base}/${storePath}`}
-            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition-all duration-300 flex-shrink-0"
+            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition duration-base flex-shrink-0"
           >
             {c.viewAll}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -91,7 +91,7 @@ export default function WorkspacesSection({
             >
               {/* Background */}
               <div
-                className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.04]"
+                className="absolute inset-0 transition-transform duration-slow group-hover:scale-[1.04]"
                 style={{ background: ws.bg }}
               />
               {/* Overlay */}
@@ -112,7 +112,7 @@ export default function WorkspacesSection({
                 <p className="text-[0.8rem] leading-[1.5] mb-3.5" style={{ color: "rgba(255,255,255,0.65)", maxWidth: 340 }}>
                   {ws.description}
                 </p>
-                <span className="inline-flex items-center gap-1.5 text-white text-[0.8rem] font-semibold group-hover:gap-3 transition-all duration-300">
+                <span className="inline-flex items-center gap-1.5 text-white text-[0.8rem] font-semibold group-hover:gap-3 transition duration-base">
                   {ws.cta}
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />

@@ -38,11 +38,11 @@ export default function WhatsAppButton() {
     >
       <div className="relative flex items-center">
         {/* Tooltip */}
-        <span className="absolute right-14 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <span className="absolute right-14 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-fast pointer-events-none">
           {tooltip}
         </span>
         {/* Button */}
-        <div className="w-14 h-14 bg-whatsapp rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-fast ease-out-soft">
+        <div className="w-14 h-14 bg-whatsapp rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:shadow-xl transition duration-fast ease-out-soft">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"

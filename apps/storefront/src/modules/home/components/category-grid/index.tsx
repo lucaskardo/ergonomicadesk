@@ -60,7 +60,7 @@ export default function CategoryGrid({
           </div>
           <Link
             href={`${base}/${storePath}`}
-            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition-all duration-300 flex-shrink-0"
+            className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-ergo-sky-dark hover:gap-3 transition duration-base flex-shrink-0"
           >
             {c.viewAll}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -78,7 +78,7 @@ export default function CategoryGrid({
               className="relative overflow-hidden cursor-pointer group aspect-square"
             >
               <div
-                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 transition-transform duration-slow group-hover:scale-105"
                 style={{ background: cat.bg }}
               />
               <div
@@ -123,7 +123,7 @@ export default function CategoryGrid({
             >
               {/* Background */}
               <div
-                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 transition-transform duration-slow group-hover:scale-105"
                 style={{ background: cat.bg }}
               />
               {/* Bottom overlay */}
@@ -150,7 +150,7 @@ export default function CategoryGrid({
               </div>
               {/* Arrow on hover */}
               <div
-                className="absolute top-3.5 right-3.5 z-20 w-[34px] h-[34px] flex items-center justify-center text-white opacity-0 group-hover:opacity-100 translate-x-1.5 -translate-y-1.5 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300"
+                className="absolute top-3.5 right-3.5 z-20 w-[34px] h-[34px] flex items-center justify-center text-white opacity-0 group-hover:opacity-100 translate-x-1.5 -translate-y-1.5 group-hover:translate-x-0 group-hover:translate-y-0 transition duration-base"
                 style={{
                   background: "rgba(255,255,255,0.15)",
                   backdropFilter: "blur(8px)",

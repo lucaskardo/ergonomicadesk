@@ -255,7 +255,7 @@ export default async function BlogPostPage(props: Props) {
                 <Link
                   key={related.slug}
                   href={`/${countryCode}/blog/${related.slug}`}
-                  className="group bg-ergo-950 p-5 flex flex-col min-h-[160px] transition-transform duration-300 hover:-translate-y-1"
+                  className="group bg-ergo-950 p-5 flex flex-col min-h-[160px] transition-transform duration-base hover:-translate-y-1"
                 >
                   <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ergo-sky font-semibold">
                     {related.tag}

@@ -78,10 +78,10 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
           {/* Backdrop */}
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-200"
+            enter="ease-out duration-fast"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-150"
+            leave="ease-in duration-fast"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
@@ -94,14 +94,14 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
           {/* Slide-in panel */}
           <Transition.Child
             as={Fragment}
-            enter="transform transition ease-out duration-300"
+            enter="transform transition ease-spring duration-base"
             enterFrom="translate-x-full"
             enterTo="translate-x-0"
-            leave="transform transition ease-in duration-200"
+            leave="transform transition ease-in-soft duration-fast"
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl flex flex-col">
+            <Dialog.Panel className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-elevated flex flex-col">
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <Dialog.Title className="text-lg font-semibold text-ui-fg-base">
@@ -158,7 +158,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                                 <LocalizedClientLink
                                   href={productPath(item.product_handle || "")}
                                   onClick={close}
-                                  className="text-sm font-medium text-ui-fg-base hover:text-teal-600 transition-colors line-clamp-2"
+                                  className="text-sm font-medium text-ui-fg-base hover:text-ergo-sky-dark transition-colors line-clamp-2"
                                   data-testid="product-link"
                                 >
                                   {item.product_title || item.title}
@@ -176,7 +176,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                                         currency_code: cartState.currency_code,
                                       })}
                                     </span>
-                                    <span className="text-xs text-emerald-600 font-medium ml-1.5">
+                                    <span className="text-xs text-ergo-success font-medium ml-1.5">
                                       {(item.metadata as any).bundle_discount_pct}% desc.{" "}
                                       {convertToLocale({
                                         amount: item.subtotal ?? 0,
@@ -218,11 +218,11 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                   <div className="border-t border-gray-100 px-6 py-5 space-y-4 bg-gray-50">
                     {/* Free shipping nudge */}
                     {subtotal < 10000 && (
-                      <div className="text-xs text-ui-fg-subtle bg-teal-50 border border-teal-100 rounded-lg px-3 py-2">
+                      <div className="text-xs text-ui-fg-subtle bg-ergo-sky-50 border border-ergo-sky-light rounded-lg px-3 py-2">
                         {lang === "es" ? (
                           <>
                             Agrega{" "}
-                            <span className="font-semibold text-teal-700">
+                            <span className="font-semibold text-ergo-sky-dark">
                               {convertToLocale({
                                 amount: 10000 - subtotal,
                                 currency_code: cartState.currency_code,
@@ -233,7 +233,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                         ) : (
                           <>
                             Add{" "}
-                            <span className="font-semibold text-teal-700">
+                            <span className="font-semibold text-ergo-sky-dark">
                               {convertToLocale({
                                 amount: 10000 - subtotal,
                                 currency_code: cartState.currency_code,
@@ -245,7 +245,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                       </div>
                     )}
                     {subtotal >= 10000 && (
-                      <div className="text-xs text-teal-700 bg-teal-50 border border-teal-100 rounded-lg px-3 py-2 font-medium">
+                      <div className="text-xs text-ergo-sky-dark bg-ergo-sky-50 border border-ergo-sky-light rounded-lg px-3 py-2 font-medium">
                         {lang === "es"
                           ? "¡Envío gratis en Ciudad de Panamá!"
                           : "Free delivery in Panama City!"}
@@ -275,7 +275,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                         href="/cart"
                         onClick={close}
                         prefetch={true}
-                        className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg text-center transition-colors"
+                        className="w-full py-3 px-4 bg-ergo-sky-dark hover:bg-ergo-sky text-white text-sm font-semibold rounded-lg text-center transition-colors"
                         data-testid="go-to-cart-button"
                       >
                         {t.cart.go_to_cart}
@@ -323,7 +323,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                   <LocalizedClientLink
                     href="/store"
                     onClick={close}
-                    className="mt-2 py-2.5 px-6 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                    className="mt-2 py-2.5 px-6 bg-ergo-sky-dark hover:bg-ergo-sky text-white text-sm font-semibold rounded-lg transition-colors"
                   >
                     {t.store.all_products}
                   </LocalizedClientLink>

@@ -221,7 +221,7 @@ export default async function CommercialSectorPage(
                   ? urlFor(space.image).width(640).height(420).fit("crop").url()
                   : undefined
                 const cardContent = (
-                  <div className="group flex flex-col overflow-hidden border border-ergo-100 hover:border-ergo-sky/50 hover:-translate-y-1 transition-all duration-300 bg-white">
+                  <div className="group flex flex-col overflow-hidden border border-ergo-100 hover:border-ergo-sky/50 hover:-translate-y-1 transition duration-base bg-white">
                     {/* Photo */}
                     <div className="relative w-full aspect-[4/3] overflow-hidden">
                       {spaceImageUrl ? (
@@ -229,7 +229,7 @@ export default async function CommercialSectorPage(
                           src={spaceImageUrl}
                           alt={space.image?.alt ?? spaceName}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="object-cover group-hover:scale-105 transition-transform duration-base"
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-ergo-100 to-ergo-200" />

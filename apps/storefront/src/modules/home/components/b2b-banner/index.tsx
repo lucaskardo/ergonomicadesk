@@ -39,7 +39,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[440px]">
           {/* Content side */}
           <div className="bg-gray-900 flex flex-col justify-center px-8 py-12 sm:px-12 lg:px-14">
-            <p className="text-teal-400 text-xs uppercase tracking-widest font-semibold mb-4">
+            <p className="text-ergo-sky text-xs uppercase tracking-widest font-semibold mb-4">
               {content.pretitle}
             </p>
 
@@ -80,12 +80,12 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
             {/* Stats row */}
             <div className="flex gap-8 mb-8">
               <div>
-                <p className="text-teal-400 text-2xl font-bold">{content.stat1}</p>
+                <p className="text-ergo-sky text-2xl font-bold">{content.stat1}</p>
                 <p className="text-gray-500 text-xs mt-0.5">{content.stat1label}</p>
               </div>
               <div className="w-px bg-gray-700" />
               <div>
-                <p className="text-teal-400 text-2xl font-bold">{content.stat2}</p>
+                <p className="text-ergo-sky text-2xl font-bold">{content.stat2}</p>
                 <p className="text-gray-500 text-xs mt-0.5">{content.stat2label}</p>
               </div>
             </div>
@@ -94,7 +94,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 self-start bg-teal-500 hover:bg-teal-400 text-gray-900 transition-colors duration-200 px-7 py-3 rounded-lg font-semibold text-sm"
+              className="inline-flex items-center gap-2 self-start bg-ergo-sky hover:bg-ergo-sky-hover text-gray-900 transition-colors duration-fast px-7 py-3 rounded-lg font-semibold text-sm"
             >
               {content.cta}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

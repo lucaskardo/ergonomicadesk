@@ -21,7 +21,7 @@ export default function NotFound() {
       >
         <Text className="text-ui-fg-interactive">Go to frontpage</Text>
         <ArrowUpRightMini
-          className="group-hover:rotate-45 ease-in-out duration-150"
+          className="group-hover:rotate-45 ease-in-out duration-fast"
           color="var(--fg-interactive)"
         />
       </Link>

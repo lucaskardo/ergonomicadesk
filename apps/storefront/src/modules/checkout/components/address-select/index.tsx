@@ -47,7 +47,7 @@ const AddressSelect = ({
                   : "Choose an address"}
               </span>
               <ChevronUpDown
-                className={clx("transition-rotate duration-200", {
+                className={clx("transition-rotate duration-fast", {
                   "transform rotate-180": open,
                 })}
               />
@@ -56,7 +56,7 @@ const AddressSelect = ({
         </Listbox.Button>
         <Transition
           as={Fragment as unknown as React.ElementType}
-          leave="transition ease-in duration-100"
+          leave="transition ease-in duration-fast"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >

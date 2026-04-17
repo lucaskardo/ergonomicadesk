@@ -148,7 +148,7 @@ export default function Hero({
         <div className="flex flex-wrap gap-3 mt-8">
           <Link
             href={c.ctaPrimaryHref}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] tracking-[0.01em] hover:bg-ergo-sky transition-all duration-300 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-ergo-sky-dark text-white font-semibold text-[0.84rem] tracking-[0.01em] hover:bg-ergo-sky transition duration-base hover:-translate-y-0.5"
             style={{ boxShadow: "none" }}
           >
             {c.ctaPrimary}
@@ -160,7 +160,7 @@ export default function Hero({
             href={c.ctaSecondaryHref}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] font-semibold text-[0.84rem] transition-all duration-300 ${
+            className={`inline-flex items-center gap-2 px-7 py-[13px] border-[1.5px] font-semibold text-[0.84rem] transition duration-base ${
               heroImageUrl
                 ? "border-white/30 text-white hover:border-white hover:bg-white/10"
                 : "border-ergo-200 text-ergo-800 hover:border-ergo-950 hover:bg-ergo-950/[0.02]"

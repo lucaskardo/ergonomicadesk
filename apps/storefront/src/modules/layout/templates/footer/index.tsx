@@ -135,7 +135,7 @@ export default function Footer({ sanityColumns }: { sanityColumns?: SanityFooter
                   target="_blank"
                   rel="noreferrer"
                   aria-label={social.name}
-                  className="w-8 h-8 flex items-center justify-center border border-white/10 transition-all duration-200 hover:border-ergo-sky hover:text-ergo-sky hover:bg-ergo-sky/[0.08]"
+                  className="w-8 h-8 flex items-center justify-center border border-white/10 transition duration-fast hover:border-ergo-sky hover:text-ergo-sky hover:bg-ergo-sky/[0.08]"
                   style={{ color: "rgba(255,255,255,0.4)" }}
                 >
                   {social.icon}

@@ -61,7 +61,7 @@ export default function BlogPreview({ lang }: { lang: "es" | "en" }) {
           {c.posts.map((post) => (
             <div
               key={post.title}
-              className="flex flex-col p-7 cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+              className="flex flex-col p-7 cursor-pointer transition-transform duration-base hover:-translate-y-1"
               style={{
                 background: "linear-gradient(135deg, #2E2E2B, #4A4A45)",
                 minHeight: "260px",

@@ -36,7 +36,7 @@ export function FAQAccordion({ faqs, lang }: { faqs: FAQItem[]; lang: "es" | "en
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  className={`text-ergo-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                  className={`text-ergo-400 transition-transform duration-fast ${isOpen ? "rotate-180" : ""}`}
                 >
                   <path d="M6 9l6 6 6-6" />
                 </svg>

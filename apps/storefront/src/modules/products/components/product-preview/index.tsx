@@ -23,13 +23,13 @@ export default async function ProductPreview({
   return (
     <LocalizedClientLink
       href={productHref}
-      className="group bg-white border border-ergo-200/60 overflow-hidden transition-all duration-300 cursor-pointer hover:border-transparent hover:-translate-y-1"
+      className="group bg-white border border-ergo-200/60 overflow-hidden transition duration-base cursor-pointer hover:border-transparent hover:-translate-y-1"
       style={{ display: "block" }}
     >
       <div data-testid="product-wrapper" className="flex flex-col">
         {/* Image */}
         <div className="relative aspect-square bg-ergo-bg-warm overflow-hidden">
-          <div className="w-full h-full transition-transform duration-500 group-hover:scale-[1.03]">
+          <div className="w-full h-full transition-transform duration-base group-hover:scale-[1.03]">
             <Thumbnail
               thumbnail={product.thumbnail}
               images={product.images}
@@ -39,7 +39,7 @@ export default async function ProductPreview({
             />
           </div>
           {/* Heart icon on hover */}
-          <button className="absolute top-2.5 right-2.5 w-8 h-8 bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" aria-label="Save">
+          <button className="absolute top-2.5 right-2.5 w-8 h-8 bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition duration-base" aria-label="Save">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-ergo-400">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>

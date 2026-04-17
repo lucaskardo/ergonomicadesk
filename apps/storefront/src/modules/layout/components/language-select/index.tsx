@@ -151,7 +151,7 @@ const LanguageSelect = ({
           <Transition
             show={state}
             as={Fragment}
-            leave="transition ease-in duration-150"
+            leave="transition ease-in duration-fast"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
