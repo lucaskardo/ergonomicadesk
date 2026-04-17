@@ -67,7 +67,7 @@ export default function WorkspacesSection({
             style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
           >
             {c.heading}{" "}
-            <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+            <span className="text-ergo-sky-dark">{c.headingAccent}</span>
           </h2>
           <Link
             href={`${base}/${storePath}`}

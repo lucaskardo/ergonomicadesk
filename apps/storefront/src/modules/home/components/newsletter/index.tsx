@@ -65,12 +65,12 @@ export default function Newsletter({
           style={{ fontSize: "clamp(1.4rem, 2.2vw, 1.8rem)", letterSpacing: "-0.02em" }}
         >
           {c.heading}{" "}
-          <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+          <span className="text-ergo-sky-dark">{c.headingAccent}</span>
         </h2>
         <p className="text-[0.88rem] text-ergo-400 mt-2">{c.subtitle}</p>
 
         {submitted ? (
-          <p className="mt-8 font-semibold text-[0.9rem]" style={{ color: "#2A8BBF" }}>{c.success}</p>
+          <p className="mt-8 font-semibold text-[0.9rem] text-ergo-sky-dark">{c.success}</p>
         ) : (
           <form
             onSubmit={handleSubmit}

@@ -39,7 +39,13 @@ module.exports = {
           100: "#EDEDE8",
           bg: "#F8F5F0",
           "bg-warm": "#F3EDE5",
+          // Semántico
+          warning: "#F59E0B",
+          success: "#16a34a",
         },
+        // WhatsApp brand (legítimo, no acento)
+        whatsapp: "#25D366",
+        "whatsapp-hover": "#1FB955",
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -81,6 +87,16 @@ module.exports = {
       },
       fontSize: {
         "3xl": "2rem",
+        // S39 modular scale (ratio 1.25 — Major Third). Use on new code.
+        "display-lg": ["4rem", { lineHeight: "1.05", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "display": ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "h1": ["2.25rem", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "500" }],
+        "h2": ["1.75rem", { lineHeight: "1.25", letterSpacing: "-0.01em", fontWeight: "500" }],
+        "h3": ["1.375rem", { lineHeight: "1.3", fontWeight: "500" }],
+        "lead": ["1.125rem", { lineHeight: "1.6", fontWeight: "400" }],
+        "body": ["1rem", { lineHeight: "1.6", fontWeight: "400" }],
+        "small": ["0.875rem", { lineHeight: "1.5", fontWeight: "400" }],
+        "caption": ["0.75rem", { lineHeight: "1.4", fontWeight: "500", letterSpacing: "0.01em" }],
       },
       fontFamily: {
         sans: [
@@ -94,6 +110,23 @@ module.exports = {
           "system-ui",
           "sans-serif",
         ],
+      },
+      // S39 motion system
+      transitionDuration: {
+        fast: "150ms",
+        base: "250ms",
+        slow: "400ms",
+      },
+      transitionTimingFunction: {
+        "out-soft": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "in-soft": "cubic-bezier(0.64, 0, 0.78, 0)",
+        "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      },
+      // S39 shadow system — warm neutral (rgb 28 28 26 = ergo-950)
+      boxShadow: {
+        soft: "0 1px 2px rgb(28 28 26 / 0.04), 0 1px 3px rgb(28 28 26 / 0.06)",
+        medium: "0 4px 12px rgb(28 28 26 / 0.06), 0 2px 4px rgb(28 28 26 / 0.04)",
+        elevated: "0 12px 32px rgb(28 28 26 / 0.08), 0 4px 8px rgb(28 28 26 / 0.04)",
       },
       keyframes: {
         ring: {

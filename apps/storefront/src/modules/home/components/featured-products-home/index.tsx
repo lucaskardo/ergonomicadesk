@@ -144,7 +144,7 @@ export default async function FeaturedProductsHome({
               style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
             >
               {c.heading}{" "}
-              <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+              <span className="text-ergo-sky-dark">{c.headingAccent}</span>
             </h2>
             <p className="text-[0.88rem] text-ergo-400 mt-1.5">{c.subtitle}</p>
           </div>

@@ -16,10 +16,9 @@ export default function ScrollProgress() {
 
   return (
     <div
-      className="fixed top-0 left-0 h-[2.5px] z-[9999] pointer-events-none"
+      className="fixed top-0 left-0 h-[2.5px] z-[9999] pointer-events-none bg-gradient-to-r from-ergo-sky to-ergo-sky-dark"
       style={{
         width: "100%",
-        background: "linear-gradient(90deg, #5BC0EB, #2A8BBF)",
         transformOrigin: "left",
         transform: `scaleX(${progress})`,
         transition: "transform 0.08s linear",

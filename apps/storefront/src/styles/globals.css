@@ -2,35 +2,82 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Exception: explicit circular elements (color swatches, avatars) */
+/* ── Root tokens (mirror tailwind.config.js colors.ergo.*) ── */
+:root {
+  --ergo-sky: theme('colors.ergo.sky');
+  --ergo-sky-hover: theme('colors.ergo.sky-hover');
+  --ergo-sky-dark: theme('colors.ergo.sky-dark');
+  --ergo-sky-light: theme('colors.ergo.sky-light');
+  --ergo-sky-50: theme('colors.ergo.sky-50');
+  --ergo-bg: theme('colors.ergo.bg');
+  --ergo-char: theme('colors.ergo.char');
+  --ergo-950: theme('colors.ergo.950');
+  --ergo-800: theme('colors.ergo.800');
+  --ergo-600: theme('colors.ergo.600');
+  --ergo-200: theme('colors.ergo.200');
+  --ergo-100: theme('colors.ergo.100');
+}
+
+/* ── Base ── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply font-sans;
+  background-color: theme('colors.ergo.bg');
+  color: theme('colors.ergo.800');
+}
+
+::selection {
+  background-color: theme('colors.ergo.sky-light');
+  color: theme('colors.ergo.950');
+}
+
+:focus-visible {
+  outline: 2px solid theme('colors.ergo.sky');
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid theme('colors.ergo.sky');
+  outline-offset: 2px;
+}
+
+/* Keep circular elements explicit (avatars, color swatches) */
 .rounded-full-override {
   border-radius: 9999px !important;
 }
 
-/* ── Base styles ── */
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  background-color: #F8F5F0;
-  color: #2E2E2B;
+/* Shimmer keyframes for skeleton loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @layer utilities {
-  /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-
   .no-scrollbar::-webkit-scrollbar-track {
     background-color: transparent;
   }
-
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   input:focus ~ label,
@@ -51,9 +98,9 @@ body {
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid theme('colors.ergo.950');
+    -webkit-text-fill-color: theme('colors.ergo.950');
+    -webkit-box-shadow: 0 0 0px 1000px theme('colors.ergo.bg') inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -65,8 +112,7 @@ body {
   }
 
   /* Vertical rhythm for homepage and landing sections.
-     Mobile: 64px, Tablet: 96px, Desktop: 128px
-     Matches Branch Furniture / Herman Miller / Vitra spacing. */
+     Mobile: 64px, Tablet: 96px, Desktop: 128px */
   .section-y {
     padding-top: 4rem;
     padding-bottom: 4rem;
@@ -83,7 +129,6 @@ body {
       padding-bottom: 8rem;
     }
   }
-  /* Tight version for dense sections like trust bars */
   .section-y-tight {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
@@ -95,11 +140,23 @@ body {
     }
   }
 
+  /* Shimmer utility for skeletons */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      theme('colors.ergo.100') 0%,
+      theme('colors.ergo.200') 50%,
+      theme('colors.ergo.100') 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+
   /* Branded override for Medusa UI Button in cart/checkout flow.
-     Keeps Medusa UI logic (useFormStatus, isLoading, disabled chains,
-     NMI/Stripe integration) intact while forcing the visual style. */
+     Forces visual style while keeping Medusa UI logic (useFormStatus, isLoading,
+     disabled chains, NMI/Stripe integration) intact. */
   .ergo-checkout-btn {
-    background-color: #2A8BBF !important;
+    background-color: theme('colors.ergo.sky-dark') !important;
     color: #ffffff !important;
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
@@ -112,16 +169,16 @@ body {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: background-color 0.2s !important;
+    transition: background-color 150ms cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
   .ergo-checkout-btn:hover:not(:disabled):not([data-disabled]) {
-    background-color: #5BC0EB !important;
+    background-color: theme('colors.ergo.sky') !important;
   }
   .ergo-checkout-btn:disabled,
   .ergo-checkout-btn[data-disabled],
   .ergo-checkout-btn[aria-disabled="true"] {
-    background-color: #D6D2CB !important;
-    color: #8A8A82 !important;
+    background-color: theme('colors.ergo.200') !important;
+    color: theme('colors.ergo.400') !important;
     cursor: not-allowed !important;
   }
 }
@@ -132,58 +189,123 @@ body {
   }
 
   .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-fast ease-out-soft;
   }
 
   .text-xsmall-regular {
     @apply text-[10px] leading-4 font-normal;
   }
-
   .text-small-regular {
     @apply text-xs leading-5 font-normal;
   }
-
   .text-small-semi {
     @apply text-xs leading-5 font-semibold;
   }
-
   .text-base-regular {
     @apply text-sm leading-6 font-normal;
   }
-
   .text-base-semi {
     @apply text-sm leading-6 font-semibold;
   }
-
   .text-large-regular {
     @apply text-base leading-6 font-normal;
   }
-
   .text-large-semi {
     @apply text-base leading-6 font-semibold;
   }
-
   .text-xl-regular {
-    @apply text-2xl leading-[36px] font-normal;
+    @apply text-2xl leading-9 font-normal;
   }
-
   .text-xl-semi {
-    @apply text-2xl leading-[36px] font-semibold;
+    @apply text-2xl leading-9 font-semibold;
   }
-
   .text-2xl-regular {
     @apply text-[30px] leading-[48px] font-normal;
   }
-
   .text-2xl-semi {
     @apply text-[30px] leading-[48px] font-semibold;
   }
-
   .text-3xl-regular {
-    @apply text-[32px] leading-[44px] font-normal;
+    @apply text-3xl leading-[44px] font-normal;
+  }
+  .text-3xl-semi {
+    @apply text-3xl leading-[44px] font-semibold;
   }
 
-  .text-3xl-semi {
-    @apply text-[32px] leading-[44px] font-semibold;
+  /* ── Blog prose (migrated from deprecated src/app/globals.css) ── */
+  .prose-ergo {
+    color: theme('colors.ergo.800');
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose-ergo p {
+    margin-bottom: 1.25rem;
+  }
+  .prose-ergo p.blog-lead {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: theme('colors.ergo.950');
+    border-left: 3px solid theme('colors.ergo.sky');
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose-ergo h2 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: theme('colors.ergo.950');
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .prose-ergo h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: theme('colors.ergo.800');
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+  .prose-ergo ul,
+  .prose-ergo ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose-ergo ul { list-style-type: disc; }
+  .prose-ergo ol { list-style-type: decimal; }
+  .prose-ergo li { margin-bottom: 0.4rem; }
+  .prose-ergo strong {
+    font-weight: 600;
+    color: theme('colors.ergo.950');
+  }
+  .prose-ergo em { font-style: italic; }
+  .prose-ergo a {
+    color: theme('colors.ergo.sky-dark');
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .prose-ergo a:hover {
+    color: theme('colors.ergo.sky');
+  }
+
+  /* Inline CTA button links inside blog */
+  .prose-ergo a.blog-cta,
+  a.blog-cta {
+    display: inline-block;
+    background-color: theme('colors.ergo.sky');
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 0.55rem 1.25rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    transition: background-color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .prose-ergo a.blog-cta:hover,
+  a.blog-cta:hover {
+    background-color: theme('colors.ergo.sky-hover');
   }
 }

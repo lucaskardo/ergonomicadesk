@@ -117,8 +117,7 @@ export default function Hero({
         <div className="flex items-center gap-2 mb-5">
           <span className="block w-6 h-[1.5px] bg-ergo-sky-dark" />
           <span
-            className="text-[0.7rem] font-semibold uppercase tracking-[0.14em]"
-            style={{ color: heroImageUrl ? "#5BC0EB" : "#2A8BBF" }}
+            className={`text-[0.7rem] font-semibold uppercase tracking-[0.14em] ${heroImageUrl ? "text-ergo-sky" : "text-ergo-sky-dark"}`}
           >
             {c.label}
           </span>
@@ -134,7 +133,7 @@ export default function Hero({
           }}
         >
           {c.title}{" "}
-          <span style={{ color: "#5BC0EB" }}>{c.titleAccent}</span>
+          <span className="text-ergo-sky">{c.titleAccent}</span>
         </h1>
 
         {/* Subtitle */}

@@ -128,7 +128,7 @@ export default function CommercialPreview({
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] mb-4" style={{ color: "#5BC0EB" }}>
+          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] mb-4 text-ergo-sky">
             {l.eyebrow}
           </p>
           <h2
@@ -136,7 +136,7 @@ export default function CommercialPreview({
             style={{ fontSize: "clamp(1.8rem, 3.2vw, 2.8rem)", letterSpacing: "-0.02em" }}
           >
             {l.heading}{" "}
-            <span style={{ color: "#5BC0EB" }}>{l.headingAccent}</span>
+            <span className="text-ergo-sky">{l.headingAccent}</span>
           </h2>
           <p
             className="text-[0.92rem] mt-4 mx-auto max-w-[520px] leading-relaxed"
@@ -187,8 +187,7 @@ export default function CommercialPreview({
                     {sector.tagline[lang]}
                   </p>
                   <span
-                    className="inline-flex items-center gap-1 text-[0.75rem] font-semibold uppercase tracking-[0.06em] transition-all duration-300"
-                    style={{ color: isActive ? "#fff" : "#5BC0EB" }}
+                    className={`inline-flex items-center gap-1 text-[0.75rem] font-semibold uppercase tracking-[0.06em] transition-all duration-300 ${isActive ? "text-white" : "text-ergo-sky"}`}
                   >
                     {isActive ? (
                       <>
@@ -205,7 +204,7 @@ export default function CommercialPreview({
                 </div>
                 {/* Active indicator */}
                 {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ background: "#5BC0EB" }} />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-ergo-sky" />
                 )}
               </button>
             )
@@ -242,7 +241,7 @@ export default function CommercialPreview({
                         onMouseEnter={(e) => {
                           e.currentTarget.style.background = "rgba(91,192,235,0.15)"
                           e.currentTarget.style.borderColor = "rgba(91,192,235,0.4)"
-                          e.currentTarget.style.color = "#5BC0EB"
+                          e.currentTarget.style.color = "rgb(91 192 235)"
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.background = "rgba(255,255,255,0.06)"
@@ -259,8 +258,7 @@ export default function CommercialPreview({
                 {/* Right: CTA to sector page */}
                 <Link
                   href={`${base}${commercialPath(active.slug)}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-[0.82rem] tracking-[0.01em] transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 self-end"
-                  style={{ background: "#5BC0EB", color: "#1C1C1A" }}
+                  className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-[0.82rem] tracking-[0.01em] transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 self-end bg-ergo-sky text-ergo-950"
                 >
                   {lang === "en" ? `Explore ${active.title.en}` : `Explorar ${active.title.es}`}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -276,7 +274,7 @@ export default function CommercialPreview({
         <div className="grid grid-cols-3 gap-4 py-10 border-t border-b border-white/10 my-10">
           {l.stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="font-display font-bold text-white text-[1.6rem] sm:text-[2rem] leading-none" style={{ color: "#5BC0EB" }}>
+              <span className="font-display font-bold text-ergo-sky text-[1.6rem] sm:text-[2rem] leading-none">
                 {stat.value}
               </span>
               <p className="text-[0.72rem] sm:text-[0.78rem] mt-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>

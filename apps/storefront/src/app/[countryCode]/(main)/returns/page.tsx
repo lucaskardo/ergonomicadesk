@@ -159,7 +159,7 @@ export default async function ReturnsPage({
                 href="https://wa.me/50769533776"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#22c55e] transition-colors"
+                className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 WhatsApp
               </a>

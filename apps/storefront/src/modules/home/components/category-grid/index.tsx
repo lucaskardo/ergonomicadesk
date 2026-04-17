@@ -13,47 +13,22 @@ const CONTENT = {
   },
 }
 
+// Decorative placeholder backgrounds — warm ergo neutrals.
+// When real category imagery is wired up, these become fallbacks behind <Image />.
+const CATEGORY_BG = [
+  "linear-gradient(145deg, #EDEDE8 0%, #B0B0A8 100%)",
+  "linear-gradient(145deg, #D4D4CC 0%, #8A8A82 100%)",
+  "linear-gradient(145deg, #F3EDE5 0%, #B0B0A8 100%)",
+  "linear-gradient(145deg, #EDEDE8 0%, #8A8A82 100%)",
+  "linear-gradient(145deg, #F8F5F0 0%, #B0B0A8 100%)",
+]
+
 const CATEGORIES = [
-  {
-    handle: "standing-desks",
-    es: "Standing Desks",
-    en: "Standing Desks",
-    descEs: "Trabaja de pie, rinde más. Desde $299",
-    descEn: "Stand up, perform better. From $299",
-    bg: "linear-gradient(145deg, #c8d5e3 0%, #9bb0c9 100%)",
-  },
-  {
-    handle: "chairs",
-    es: "Sillas",
-    en: "Chairs",
-    descEs: "8 horas sin molestias. Desde $199",
-    descEn: "8 hours without discomfort. From $199",
-    bg: "linear-gradient(145deg, #b5c5d6 0%, #8ea3bb 100%)",
-  },
-  {
-    handle: "office",
-    es: "Oficina",
-    en: "Office",
-    descEs: "El centro de tu productividad. Desde $449",
-    descEn: "The center of your productivity. From $449",
-    bg: "linear-gradient(145deg, #bcc9d8 0%, #95a8be 100%)",
-  },
-  {
-    handle: "storage",
-    es: "Almacenamiento",
-    en: "Storage",
-    descEs: "Todo en su lugar, siempre. Desde $129",
-    descEn: "Everything in its place, always. From $129",
-    bg: "linear-gradient(145deg, #c0cdd9 0%, #9aadbe 100%)",
-  },
-  {
-    handle: "accessories",
-    es: "Accesorios",
-    en: "Accessories",
-    descEs: "Los detalles que completan tu setup. Desde $29",
-    descEn: "The details that complete your setup. From $29",
-    bg: "linear-gradient(145deg, #b8c7d8 0%, #92a5b9 100%)",
-  },
+  { handle: "standing-desks", es: "Standing Desks", en: "Standing Desks", descEs: "Trabaja de pie, rinde más. Desde $299", descEn: "Stand up, perform better. From $299", bg: CATEGORY_BG[0] },
+  { handle: "chairs", es: "Sillas", en: "Chairs", descEs: "8 horas sin molestias. Desde $199", descEn: "8 hours without discomfort. From $199", bg: CATEGORY_BG[1] },
+  { handle: "office", es: "Oficina", en: "Office", descEs: "El centro de tu productividad. Desde $449", descEn: "The center of your productivity. From $449", bg: CATEGORY_BG[2] },
+  { handle: "storage", es: "Almacenamiento", en: "Storage", descEs: "Todo en su lugar, siempre. Desde $129", descEn: "Everything in its place, always. From $129", bg: CATEGORY_BG[3] },
+  { handle: "accessories", es: "Accesorios", en: "Accessories", descEs: "Los detalles que completan tu setup. Desde $29", descEn: "The details that complete your setup. From $29", bg: CATEGORY_BG[4] },
 ]
 
 export default function CategoryGrid({
@@ -80,7 +55,7 @@ export default function CategoryGrid({
               style={{ fontSize: "clamp(1.7rem, 2.8vw, 2.4rem)", letterSpacing: "-0.02em" }}
             >
               {c.heading}{" "}
-              <span style={{ color: "#2A8BBF" }}>{c.headingAccent}</span>
+              <span className="text-ergo-sky-dark">{c.headingAccent}</span>
             </h2>
           </div>
           <Link
