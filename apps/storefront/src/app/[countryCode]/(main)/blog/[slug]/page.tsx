@@ -13,6 +13,7 @@ import { sanityFetch } from "@/sanity/lib/live"
 import { BLOG_POST_QUERY, BLOG_SLUGS_QUERY, BLOG_POSTS_QUERY } from "@/sanity/lib/queries"
 import { urlFor } from "@/sanity/lib/image"
 import BlogPortableText from "@modules/blog/components/portable-text"
+import { smartTypography } from "@lib/util/typography"
 
 type Props = {
   params: Promise<{ countryCode: string; slug: string }>
@@ -211,8 +212,9 @@ export default async function BlogPostPage(props: Props) {
           ) : post.htmlContent ? (
             /* dangerouslySetInnerHTML is safe here: post.htmlContent is static HTML
                authored in src/content/blog/posts.ts (committed to the repo).
-               There is no user-generated content. */
-            <div dangerouslySetInnerHTML={{ __html: post.htmlContent }} />
+               There is no user-generated content. smartTypography() curls quotes
+               and turns -- into em-dashes at render time. */
+            <div dangerouslySetInnerHTML={{ __html: smartTypography(post.htmlContent) }} />
           ) : null}
         </div>
 

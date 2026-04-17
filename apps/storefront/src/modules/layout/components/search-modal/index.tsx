@@ -215,7 +215,9 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           />
           {query && (
             <button
+              type="button"
               onClick={() => setQuery("")}
+              aria-label={lang === "en" ? "Clear search" : "Borrar búsqueda"}
               className="text-ui-fg-muted hover:text-ui-fg-base text-xs"
             >
               ✕
