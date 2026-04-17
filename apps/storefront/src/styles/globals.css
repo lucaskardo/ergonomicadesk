@@ -32,6 +32,26 @@ body {
   color: theme('colors.ergo.800');
 }
 
+/* Headings get balanced wrapping to avoid ugly widows.
+   Applies to h1/h2/h3 sitewide; body paragraphs stay with natural wrap. */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+/* Ensure prices + anything with monetary values align vertically.
+   Fallback for Medusa's built-in data-testid'd price elements;
+   custom components should prefer the `tabular-nums` Tailwind class. */
+.monetary,
+[data-price],
+[data-testid*="price"],
+[data-testid*="subtotal"],
+[data-testid*="total"],
+[data-testid*="shipping"],
+[data-testid*="taxes"],
+[data-testid*="discount"] {
+  font-variant-numeric: tabular-nums;
+}
+
 ::selection {
   background-color: theme('colors.ergo.sky-light');
   color: theme('colors.ergo.950');

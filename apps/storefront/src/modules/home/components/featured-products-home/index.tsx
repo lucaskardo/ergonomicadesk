@@ -82,7 +82,7 @@ function ProductCard({
           {product.title}
         </h3>
         {cheapestPrice && (
-          <span className="text-[1.05rem] font-bold text-ergo-950">
+          <span className="text-[1.05rem] font-bold text-ergo-950 tabular-nums">
             {c.from} {cheapestPrice.calculated_price}
           </span>
         )}
