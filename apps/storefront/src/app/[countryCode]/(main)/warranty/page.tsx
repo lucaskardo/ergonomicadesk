@@ -131,7 +131,7 @@ export default async function WarrantyPage({
               {warrantyItems.map((item) => (
                 <div
                   key={item.category}
-                  className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-4 border border-ui-border-base rounded-xl bg-ui-bg-base"
+                  className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-4 border border-ui-border-base rounded-lg bg-ui-bg-base"
                 >
                   <span className="font-medium text-ui-fg-base sm:w-56 shrink-0">
                     {item.category}
@@ -147,7 +147,7 @@ export default async function WarrantyPage({
             <h2 className="text-lg font-semibold text-ui-fg-base mb-3">
               {isEn ? "What the warranty covers" : "Qué cubre la garantía"}
             </h2>
-            <div className="flex gap-3 p-4 border border-green-200 bg-green-50 rounded-xl">
+            <div className="flex gap-3 p-4 border border-green-200 bg-green-50 rounded-lg">
               <span className="text-green-600 shrink-0 mt-0.5">✓</span>
               <p className="text-ui-fg-subtle">{covered}</p>
             </div>
@@ -169,7 +169,7 @@ export default async function WarrantyPage({
           </div>
 
           {/* Claim process */}
-          <div className="border border-ui-border-base rounded-xl p-6 bg-ui-bg-subtle">
+          <div className="border border-ui-border-base rounded-lg p-6 bg-ui-bg-subtle">
             <h2 className="text-base font-semibold text-ui-fg-base mb-3">
               {isEn ? "How to make a warranty claim" : "Cómo hacer válida la garantía"}
             </h2>

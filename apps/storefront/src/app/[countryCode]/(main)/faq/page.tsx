@@ -229,7 +229,7 @@ export default async function FAQPage({
         />
 
         {/* CTA */}
-        <div className="mt-12 p-6 bg-ui-bg-subtle rounded-xl text-center">
+        <div className="mt-12 p-6 bg-ui-bg-subtle rounded-lg text-center">
           <p className="text-ui-fg-base font-medium mb-2">
             {isEn ? "Still have questions?" : "¿Aún tienes dudas?"}
           </p>

@@ -48,12 +48,12 @@ export default function StoreSearch({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Buscar productos..."
-          className="w-full border border-gray-200 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+          className="w-full border border-ergo-200 rounded-base px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
         />
         {value && (
           <button
             onClick={() => setValue("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-ergo-400 hover:text-ergo-600 text-lg leading-none"
             aria-label="Limpiar búsqueda"
           >
             ×
@@ -61,7 +61,7 @@ export default function StoreSearch({
         )}
       </div>
       {value && totalCount !== undefined && (
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-ergo-600">
           {totalCount} resultado{totalCount !== 1 ? "s" : ""}
         </p>
       )}

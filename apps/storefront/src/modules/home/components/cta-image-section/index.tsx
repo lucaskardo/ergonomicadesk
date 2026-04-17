@@ -120,7 +120,7 @@ export default function CtaImageSection({
 
   return (
     <section className={`${bg} section-y`}>
-      <div className="max-w-[1360px] mx-auto overflow-hidden rounded-2xl m-4 lg:m-8">
+      <div className="max-w-[1360px] mx-auto overflow-hidden rounded-lg m-4 lg:m-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[420px]">
           {imageRight ? (
             <>

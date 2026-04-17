@@ -147,9 +147,9 @@ function FreeShippingInline({
   }
 }) {
   return (
-    <div className="bg-neutral-100 p-2 rounded-lg border">
+    <div className="bg-ergo-100 p-2 rounded-lg border">
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-neutral-600">
+        <div className="flex justify-between text-xs text-ergo-600">
           <div>
             {price.target_reached ? (
               <div className="flex items-center gap-1.5">
@@ -167,7 +167,7 @@ function FreeShippingInline({
             })}
           >
             Only{" "}
-            <span className="text-neutral-950">
+            <span className="text-ergo-950">
               {convertToLocale({
                 amount: price.target_remaining,
                 currency_code: cart.currency_code,
@@ -186,7 +186,7 @@ function FreeShippingInline({
             )}
             style={{ width: `${price.remaining_percentage}%` }}
           ></div>
-          <div className="bg-neutral-300 h-1 rounded-full w-fit flex-grow"></div>
+          <div className="bg-ergo-300 h-1 rounded-full w-fit flex-grow"></div>
         </div>
       </div>
     </div>
@@ -220,7 +220,7 @@ function FreeShippingPopup({
     >
       <div>
         <Button
-          className="rounded-full bg-neutral-900 shadow-none outline-none border-none text-[15px] p-2"
+          className="rounded-full bg-ergo-950 shadow-none outline-none border-none text-[15px] p-2"
           onClick={() => setIsClosed(true)}
         >
           <XMark />
@@ -230,7 +230,7 @@ function FreeShippingPopup({
       <div className="w-[400px] bg-black text-white p-6 rounded-lg ">
         <div className="pb-4">
           <div className="space-y-3">
-            <div className="flex justify-between text-[15px] text-neutral-400">
+            <div className="flex justify-between text-[15px] text-ergo-400">
               <div>
                 {price.target_reached ? (
                   <div className="flex items-center gap-1.5">
@@ -267,21 +267,21 @@ function FreeShippingPopup({
                 )}
                 style={{ width: `${price.remaining_percentage}%` }}
               ></div>
-              <div className="bg-zinc-600 h-1.5 rounded-full w-fit flex-grow"></div>
+              <div className="bg-ergo-600 h-1.5 rounded-full w-fit flex-grow"></div>
             </div>
           </div>
         </div>
 
         <div className="flex gap-3">
           <LocalizedClientLink
-            className="rounded-2xl bg-transparent shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4"
+            className="rounded-lg bg-transparent shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4"
             href="/cart"
           >
             View cart
           </LocalizedClientLink>
 
           <LocalizedClientLink
-            className="flex-grow rounded-2xl bg-white text-neutral-950 shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4 text-center"
+            className="flex-grow rounded-lg bg-white text-ergo-950 shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4 text-center"
             href="/store"
           >
             View products

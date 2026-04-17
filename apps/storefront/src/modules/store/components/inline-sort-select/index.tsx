@@ -28,13 +28,13 @@ export default function InlineSortSelect({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-500 whitespace-nowrap">
+      <span className="text-sm text-ergo-600 whitespace-nowrap">
         {lang === "en" ? "Sort:" : "Ordenar:"}
       </span>
       <select
         value={sortBy}
         onChange={handleChange}
-        className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white cursor-pointer"
+        className="text-sm border border-ergo-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white cursor-pointer"
       >
         {sortOptions.map((o) => (
           <option key={o.value} value={o.value}>

@@ -35,24 +35,24 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
 
   return (
     <section className="section-y px-4 md:px-8">
-      <div className="max-w-[1360px] mx-auto overflow-hidden rounded-2xl">
+      <div className="max-w-[1360px] mx-auto overflow-hidden rounded-lg">
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[440px]">
           {/* Content side */}
-          <div className="bg-gray-900 flex flex-col justify-center px-8 py-12 sm:px-12 lg:px-14">
+          <div className="bg-ergo-950 flex flex-col justify-center px-8 py-12 sm:px-12 lg:px-14">
             <p className="text-ergo-sky text-xs uppercase tracking-widest font-semibold mb-4">
               {content.pretitle}
             </p>
 
             {/* Icon row */}
             <div className="flex gap-5 mb-6">
-              <div className="flex items-center gap-2 text-gray-400 text-xs">
+              <div className="flex items-center gap-2 text-ergo-400 text-xs">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <path d="M3 9h18M9 21V9" />
                 </svg>
                 <span>{content.offices}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-400 text-xs">
+              <div className="flex items-center gap-2 text-ergo-400 text-xs">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
@@ -61,7 +61,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
                 </svg>
                 <span>Coworkings</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-400 text-xs">
+              <div className="flex items-center gap-2 text-ergo-400 text-xs">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" y1="6" x2="21" y2="6" />
@@ -73,7 +73,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
             <h2 className="font-bold text-white leading-tight mb-4" style={{ fontSize: "clamp(1.4rem, 2.4vw, 2rem)" }}>
               {content.title}
             </h2>
-            <p className="text-gray-400 leading-relaxed text-sm mb-8 max-w-[420px]">
+            <p className="text-ergo-400 leading-relaxed text-sm mb-8 max-w-[420px]">
               {content.subtitle}
             </p>
 
@@ -81,12 +81,12 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
             <div className="flex gap-8 mb-8">
               <div>
                 <p className="text-ergo-sky text-2xl font-bold">{content.stat1}</p>
-                <p className="text-gray-500 text-xs mt-0.5">{content.stat1label}</p>
+                <p className="text-ergo-600 text-xs mt-0.5">{content.stat1label}</p>
               </div>
-              <div className="w-px bg-gray-700" />
+              <div className="w-px bg-ergo-800" />
               <div>
                 <p className="text-ergo-sky text-2xl font-bold">{content.stat2}</p>
-                <p className="text-gray-500 text-xs mt-0.5">{content.stat2label}</p>
+                <p className="text-ergo-600 text-xs mt-0.5">{content.stat2label}</p>
               </div>
             </div>
 
@@ -94,7 +94,7 @@ export default function B2BBanner({ lang }: { lang: "es" | "en" }) {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 self-start bg-ergo-sky hover:bg-ergo-sky-hover text-gray-900 transition-colors duration-fast px-7 py-3 rounded-lg font-semibold text-sm"
+              className="inline-flex items-center gap-2 self-start bg-ergo-sky hover:bg-ergo-sky-hover text-ergo-950 transition-colors duration-fast px-7 py-3 rounded-lg font-semibold text-sm"
             >
               {content.cta}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

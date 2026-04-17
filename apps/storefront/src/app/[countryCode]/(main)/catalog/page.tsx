@@ -91,7 +91,7 @@ export default async function CatalogPage({
               <LocalizedClientLink
                 key={category.id}
                 href={categoryPath(category.handle)}
-                className="group relative block overflow-hidden rounded-xl bg-gray-100 aspect-[4/3] shadow-sm hover:shadow-md transition-shadow"
+                className="group relative block overflow-hidden rounded-lg bg-ergo-100 aspect-[4/3] shadow-soft hover:shadow-medium transition-shadow"
               >
                 {thumbnail ? (
                   <Image

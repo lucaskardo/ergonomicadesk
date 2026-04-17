@@ -189,7 +189,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-xl bg-white rounded-lg shadow-elevated overflow-hidden">
         {/* Input */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-ui-border-base">
           <svg
@@ -246,7 +246,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       }}
                       className={`flex items-center gap-3 px-4 py-3 transition-colors ${index === activeIndex ? "bg-ui-bg-subtle" : "hover:bg-ui-bg-subtle"}`}
                     >
-                      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-ui-bg-subtle">
+                      <div className="w-12 h-12 flex-shrink-0 rounded-base overflow-hidden bg-ui-bg-subtle">
                         {result.thumbnail ? (
                           <Image
                             src={result.thumbnail}

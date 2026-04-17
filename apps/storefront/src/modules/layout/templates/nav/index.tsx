@@ -113,7 +113,7 @@ export default async function Nav() {
                   </svg>
                 </button>
                 <div
-                  className="absolute top-full left-0 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition duration-fast bg-white shadow-2xl border border-ergo-100 min-w-[260px] py-3 z-50"
+                  className="absolute top-full left-0 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition duration-fast bg-white shadow-elevated border border-ergo-100 min-w-[260px] py-3 z-50"
                   data-testid="nav-productos-dropdown"
                 >
                   {navCategories.map((cat) => (

@@ -71,7 +71,7 @@ export default function TrustBar({
                   i < sanityItems.length - 1 ? "border-r border-ergo-200/60" : ""
                 }`}
               >
-                <div className="w-10 h-10 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 text-[1.1rem] rounded-md transition-transform duration-base ease-out group-hover:scale-110 group-hover:rotate-3 shadow-sm">
+                <div className="w-10 h-10 bg-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 text-[1.1rem] rounded-base transition-transform duration-base ease-out group-hover:scale-110 group-hover:rotate-3 shadow-soft">
                   {item.emoji}
                 </div>
                 <div>
@@ -89,7 +89,7 @@ export default function TrustBar({
                   i < hardcodedItems.length - 1 ? "border-r border-ergo-200/60" : ""
                 }`}
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-ergo-sky-light/80 to-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 rounded-md transition duration-base ease-out group-hover:shadow-md group-hover:shadow-ergo-sky-light/50 ring-1 ring-black/5">
+                <div className="w-10 h-10 bg-gradient-to-br from-ergo-sky-light/80 to-ergo-sky-light text-ergo-sky-dark flex items-center justify-center flex-shrink-0 rounded-base transition duration-base ease-out group-hover:shadow-medium group-hover:shadow-ergo-sky-light/50 ring-1 ring-black/5">
                   <Icon />
                 </div>
                 <div className="overflow-hidden">

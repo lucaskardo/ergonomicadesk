@@ -69,7 +69,7 @@ export default async function ReturnsPage({
           </p>
 
           {/* Highlight box */}
-          <div className="bg-ui-bg-subtle border border-ui-border-base rounded-xl p-6 mb-10">
+          <div className="bg-ui-bg-subtle border border-ui-border-base rounded-lg p-6 mb-10">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl font-bold text-ui-fg-base">7</span>
               <span className="text-ui-fg-subtle">
@@ -134,7 +134,7 @@ export default async function ReturnsPage({
               </ul>
             </div>
 
-            <div className="border border-ui-border-base rounded-xl p-5 bg-ui-bg-subtle">
+            <div className="border border-ui-border-base rounded-lg p-5 bg-ui-bg-subtle">
               <h2 className="text-base font-semibold text-ui-fg-base mb-2">
                 {isEn ? "We do NOT accept returns for:" : "NO aceptamos devoluciones de:"}
               </h2>

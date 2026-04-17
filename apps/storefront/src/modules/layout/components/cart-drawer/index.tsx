@@ -103,7 +103,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
           >
             <Dialog.Panel className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-elevated flex flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-ergo-100">
                 <Dialog.Title className="text-lg font-semibold text-ui-fg-base">
                   {t.nav.cart}
                   {totalItems > 0 && (
@@ -114,7 +114,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                 </Dialog.Title>
                 <button
                   onClick={close}
-                  className="p-1.5 rounded-md hover:bg-gray-100 text-ui-fg-subtle hover:text-ui-fg-base transition-colors"
+                  className="p-1.5 rounded-base hover:bg-ergo-100 text-ui-fg-subtle hover:text-ui-fg-base transition-colors"
                   aria-label="Close cart"
                 >
                   <XMark className="w-5 h-5" />
@@ -133,7 +133,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                       .map((item) => (
                         <div
                           key={item.id}
-                          className="flex gap-4 pb-5 border-b border-gray-100 last:border-0"
+                          className="flex gap-4 pb-5 border-b border-ergo-100 last:border-0"
                           data-testid="cart-item"
                         >
                           {/* Thumbnail */}
@@ -203,7 +203,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                                 id={item.id}
                                 item={item}
                                 currencyCode={cartState.currency_code}
-                                className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+                                className="text-xs text-ergo-400 hover:text-red-500 transition-colors"
                                 data-testid="cart-item-remove-button"
                               >
                                 {t.cart.remove}
@@ -215,7 +215,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                   </div>
 
                   {/* Footer with totals + CTA */}
-                  <div className="border-t border-gray-100 px-6 py-5 space-y-4 bg-gray-50">
+                  <div className="border-t border-ergo-100 px-6 py-5 space-y-4 bg-ergo-bg">
                     {/* Free shipping nudge */}
                     {subtotal < 10000 && (
                       <div className="text-xs text-ui-fg-subtle bg-ergo-sky-50 border border-ergo-sky-light rounded-lg px-3 py-2">
@@ -282,7 +282,7 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
                       </LocalizedClientLink>
                       <button
                         onClick={close}
-                        className="w-full py-2.5 px-4 border border-gray-200 hover:border-gray-300 text-ui-fg-base text-sm rounded-lg text-center transition-colors"
+                        className="w-full py-2.5 px-4 border border-ergo-200 hover:border-ergo-300 text-ui-fg-base text-sm rounded-lg text-center transition-colors"
                       >
                         {lang === "es"
                           ? "Seguir comprando"
@@ -294,14 +294,14 @@ const CartDrawer = ({ cart: cartState }: CartDrawerProps) => {
               ) : (
                 /* Empty state */
                 <div className="flex-1 flex flex-col items-center justify-center px-6 gap-4 text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-ergo-100 flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-8 h-8 text-gray-400"
+                      className="w-8 h-8 text-ergo-400"
                     >
                       <path
                         strokeLinecap="round"

@@ -113,7 +113,7 @@ const SideMenu = ({ regions, locales, currentLocale, sanityNavLinks }: SideMenuP
             leaveTo="-translate-x-full"
           >
             <Dialog.Panel
-              className="fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-white text-ergo-950 flex flex-col shadow-2xl"
+              className="fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-white text-ergo-950 flex flex-col shadow-elevated"
               data-testid="nav-menu-popup"
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-ergo-100">

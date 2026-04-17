@@ -68,7 +68,7 @@ const CategorySidebar = ({ categories, activeCategoryId }: CategorySidebarProps)
       {/* All products */}
       <button
         onClick={() => setCategory(null)}
-        className={`text-left px-2 py-1 rounded-md transition-colors ${
+        className={`text-left px-2 py-1 rounded-base transition-colors ${
           !activeCategoryId
             ? "bg-ui-bg-interactive text-white font-medium"
             : "text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-subtle"
@@ -93,7 +93,7 @@ const CategorySidebar = ({ categories, activeCategoryId }: CategorySidebarProps)
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setCategory(cat.id)}
-                  className={`flex-1 text-left px-2 py-1 rounded-md transition-colors ${
+                  className={`flex-1 text-left px-2 py-1 rounded-base transition-colors ${
                     isActive
                       ? "bg-ui-bg-interactive text-white font-medium"
                       : "text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-subtle"
@@ -133,7 +133,7 @@ const CategorySidebar = ({ categories, activeCategoryId }: CategorySidebarProps)
                         <button
                           key={child.id}
                           onClick={() => setCategory(child.id)}
-                          className={`text-left px-2 py-1 rounded-md transition-colors ${
+                          className={`text-left px-2 py-1 rounded-base transition-colors ${
                             childActive
                               ? "bg-ui-bg-interactive text-white font-medium"
                               : "text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-subtle"
