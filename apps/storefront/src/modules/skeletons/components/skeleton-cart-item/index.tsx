@@ -4,28 +4,28 @@ const SkeletonCartItem = () => {
   return (
     <Table.Row className="w-full m-4">
       <Table.Cell className="!pl-0 p-4 w-24">
-        <div className="flex w-24 h-24 p-4 bg-ergo-200 rounded-large animate-pulse" />
+        <div className="flex w-24 h-24 p-4 animate-shimmer rounded-large animate-pulse" />
       </Table.Cell>
       <Table.Cell className="text-left">
         <div className="flex flex-col gap-y-2">
-          <div className="w-32 h-4 bg-ergo-200 animate-pulse" />
-          <div className="w-24 h-4 bg-ergo-200 animate-pulse" />
+          <div className="w-32 h-4 animate-shimmer" />
+          <div className="w-24 h-4 animate-shimmer" />
         </div>
       </Table.Cell>
       <Table.Cell>
         <div className="flex gap-2 items-center">
-          <div className="w-6 h-8 bg-ergo-200 animate-pulse" />
-          <div className="w-14 h-10 bg-ergo-200 animate-pulse" />
+          <div className="w-6 h-8 animate-shimmer" />
+          <div className="w-14 h-10 animate-shimmer" />
         </div>
       </Table.Cell>
       <Table.Cell>
         <div className="flex gap-2">
-          <div className="w-12 h-6 bg-ergo-200 animate-pulse" />
+          <div className="w-12 h-6 animate-shimmer" />
         </div>
       </Table.Cell>
       <Table.Cell className="!pr-0 text-right">
         <div className="flex gap-2 justify-end">
-          <div className="w-12 h-6 bg-ergo-200 animate-pulse" />
+          <div className="w-12 h-6 animate-shimmer" />
         </div>
       </Table.Cell>
     </Table.Row>
